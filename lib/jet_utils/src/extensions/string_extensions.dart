@@ -1,4 +1,4 @@
-import '../jet_utils/jet_utils.dart';
+import '../get_utils/jet_utils.dart';
 
 extension GetStringUtils on String {
   /// Discover if the String is a valid number

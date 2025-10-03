@@ -1,4 +1,4 @@
-import '../jet_utils/jet_utils.dart';
+import '../get_utils/jet_utils.dart';
 
 extension GetDynamicUtils on dynamic {
   bool? get isBlank => JetUtils.isBlank(this);

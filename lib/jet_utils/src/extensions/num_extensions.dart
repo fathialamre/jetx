@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import '../jet_utils/jet_utils.dart';
+import '../get_utils/jet_utils.dart';
 
 extension GetNumUtils on num {
   bool isLowerThan(num b) => JetUtils.isLowerThan(this, b);
