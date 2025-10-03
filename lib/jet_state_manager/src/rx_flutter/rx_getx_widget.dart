@@ -62,17 +62,17 @@ class GetXState<T extends JetLifeCycleMixin> extends State<GetX<T>> {
 
   @override
   void initState() {
-    // var isPrepared = Get.isPrepared<T>(tag: widget.tag);
-    final isRegistered = Get.isRegistered<T>(tag: widget.tag);
+    // var isPrepared = Jet.isPrepared<T>(tag: widget.tag);
+    final isRegistered = Jet.isRegistered<T>(tag: widget.tag);
 
     if (widget.global) {
       if (isRegistered) {
-        _isCreator = Get.isPrepared<T>(tag: widget.tag);
-        controller = Get.find<T>(tag: widget.tag);
+        _isCreator = Jet.isPrepared<T>(tag: widget.tag);
+        controller = Jet.find<T>(tag: widget.tag);
       } else {
         controller = widget.init;
         _isCreator = true;
-        Get.put<T>(controller!, tag: widget.tag);
+        Jet.put<T>(controller!, tag: widget.tag);
       }
     } else {
       controller = widget.init;
@@ -80,7 +80,7 @@ class GetXState<T extends JetLifeCycleMixin> extends State<GetX<T>> {
       controller?.onStart();
     }
     widget.initState?.call(this);
-    if (widget.global && Get.smartManagement == SmartManagement.onlyBuilder) {
+    if (widget.global && Jet.smartManagement == SmartManagement.onlyBuilder) {
       controller?.onStart();
     }
 
@@ -105,8 +105,8 @@ class GetXState<T extends JetLifeCycleMixin> extends State<GetX<T>> {
   void dispose() {
     if (widget.dispose != null) widget.dispose!(this);
     if (_isCreator! || widget.assignId) {
-      if (widget.autoRemove && Get.isRegistered<T>(tag: widget.tag)) {
-        Get.delete<T>(tag: widget.tag);
+      if (widget.autoRemove && Jet.isRegistered<T>(tag: widget.tag)) {
+        Jet.delete<T>(tag: widget.tag);
       }
     }
 

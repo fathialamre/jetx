@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:jet/jet.dart';
 
 void main() {
-  Get.lazyPut<Controller2>(() => Controller2());
+  Jet.lazyPut<Controller2>(() => Controller2());
   testWidgets("JetController smoke test", (tester) async {
     await tester.pumpWidget(
       MaterialApp(
@@ -82,7 +82,7 @@ class ControllerNonGlobal extends JetController {
 }
 
 class Controller extends JetController {
-  static Controller get to => Get.find();
+  static Controller get to => Jet.find();
 
   RxInt counter = 0.obs;
   RxDouble doubleNum = 0.0.obs;

@@ -6,10 +6,10 @@
 /// of the cases you will want to keep this config untouched.
 /// If you new to GetX then don't change this.
 /// [SmartManagement.onlyBuilder] only controllers started in init:
-/// or loaded into a Binding with Get.lazyPut() will be disposed. If you use
-/// Get.put() or Get.putAsync() or any other approach, SmartManagement
+/// or loaded into a Binding with Jet.lazyPut() will be disposed. If you use
+/// Jet.put() or Jet.putAsync() or any other approach, SmartManagement
 /// will not have permissions to exclude this dependency. With the default
-/// behavior, even widgets instantiated with "Get.put" will be removed,
+/// behavior, even widgets instantiated with "Jet.put" will be removed,
 /// unlike SmartManagement.onlyBuilders.
 /// [SmartManagement.keepFactory]Just like SmartManagement.full,
 /// it will remove it's dependencies when it's not being used anymore.

@@ -3,12 +3,12 @@ import 'dart:collection';
 import '../../jet.dart';
 
 class RouterReportManager<T> {
-  /// Holds a reference to `Get.reference` when the Instance was
+  /// Holds a reference to `Jet.reference` when the Instance was
   /// created to manage the memory.
   final Map<T?, List<String>> _routesKey = {};
 
-  /// Stores the onClose() references of instances created with `Get.create()`
-  /// using the `Get.reference`.
+  /// Stores the onClose() references of instances created with `Jet.create()`
+  /// using the `Jet.reference`.
   /// Experimental feature to keep the lifecycle and memory management with
   /// non-singleton instances.
   final Map<T?, HashSet<Function>> _routesByCreate = {};
@@ -25,7 +25,7 @@ class RouterReportManager<T> {
   }
 
   void printInstanceStack() {
-    Get.log(_routesKey.toString());
+    Jet.log(_routesKey.toString());
   }
 
   T? _current;
@@ -53,12 +53,12 @@ class RouterReportManager<T> {
 
   void appendRouteByCreate(JetLifeCycleMixin i) {
     _routesByCreate[_current] ??= HashSet<Function>();
-    // _routesByCreate[Get.reference]!.add(i.onDelete as Function);
+    // _routesByCreate[Jet.reference]!.add(i.onDelete as Function);
     _routesByCreate[_current]!.add(i.onDelete);
   }
 
   void reportRouteDispose(T disposed) {
-    if (Get.smartManagement != SmartManagement.onlyBuilder) {
+    if (Jet.smartManagement != SmartManagement.onlyBuilder) {
       // Engine.instance.addPostFrameCallback((_) {
       // Future.microtask(() {
       _removeDependencyByRoute(disposed);
@@ -71,7 +71,7 @@ class RouterReportManager<T> {
 
     _routesKey[disposed]?.forEach(keysToRemove.add);
 
-    /// Removes `Get.create()` instances registered in `routeName`.
+    /// Removes `Jet.create()` instances registered in `routeName`.
     if (_routesByCreate.containsKey(disposed)) {
       for (final onClose in _routesByCreate[disposed]!) {
         // assure the [DisposableInterface] instance holding a reference
@@ -83,7 +83,7 @@ class RouterReportManager<T> {
     }
 
     for (final element in keysToRemove) {
-      Get.markAsDirty(key: element);
+      Jet.markAsDirty(key: element);
 
       //_routesKey.remove(element);
     }
@@ -92,7 +92,7 @@ class RouterReportManager<T> {
   }
 
   /// Clears from memory registered Instances associated with [routeName] when
-  /// using `Get.smartManagement` as [SmartManagement.full] or
+  /// using `Jet.smartManagement` as [SmartManagement.full] or
   /// [SmartManagement.keepFactory]
   /// Meant for internal usage of `JetPageRoute` and `JetDialogRoute`
   void _removeDependencyByRoute(T routeName) {
@@ -100,7 +100,7 @@ class RouterReportManager<T> {
 
     _routesKey[routeName]?.forEach(keysToRemove.add);
 
-    /// Removes `Get.create()` instances registered in `routeName`.
+    /// Removes `Jet.create()` instances registered in `routeName`.
     if (_routesByCreate.containsKey(routeName)) {
       for (final onClose in _routesByCreate[routeName]!) {
         // assure the [DisposableInterface] instance holding a reference
@@ -112,7 +112,7 @@ class RouterReportManager<T> {
     }
 
     for (final element in keysToRemove) {
-      final value = Get.delete(key: element);
+      final value = Jet.delete(key: element);
       if (value) {
         _routesKey[routeName]?.remove(element);
       }

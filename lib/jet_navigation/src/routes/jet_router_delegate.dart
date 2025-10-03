@@ -71,7 +71,7 @@ class JetDelegate extends RouterDelegate<RouteDecoder>
     return _routeTree.matchRoute(name, arguments: arguments);
   }
 
-  // GlobalKey<NavigatorState> get navigatorKey => Get.key;
+  // GlobalKey<NavigatorState> get navigatorKey => Jet.key;
 
   @override
   GlobalKey<NavigatorState> navigatorKey;
@@ -100,7 +100,7 @@ class JetDelegate extends RouterDelegate<RouteDecoder>
     if (!showHashOnUrl && JetPlatform.isWeb) setUrlStrategy();
     addPages(pages);
     addPage(notFoundRoute);
-    Get.log('JetDelegate is created !');
+    Jet.log('JetDelegate is created !');
   }
 
   Future<RouteDecoder?> runMiddleware(RouteDecoder config) async {
@@ -118,7 +118,7 @@ class JetDelegate extends RouterDelegate<RouteDecoder>
       }
       if (config != redirectRes) {
         config.route?.completer?.complete();
-        Get.log('Redirect to ${redirectRes.pageSettings?.name}');
+        Jet.log('Redirect to ${redirectRes.pageSettings?.name}');
       }
 
       iterator = redirectRes;
@@ -394,12 +394,12 @@ class JetDelegate extends RouterDelegate<RouteDecoder>
       page: page,
       gestureWidth: gestureWidth,
       showCupertinoParallax: showCupertinoParallax,
-      popGesture: popGesture ?? Get.defaultPopGesture,
-      transition: transition ?? Get.defaultTransition,
-      curve: curve ?? Get.defaultTransitionCurve,
+      popGesture: popGesture ?? Jet.defaultPopGesture,
+      transition: transition ?? Jet.defaultTransition,
+      curve: curve ?? Jet.defaultTransitionCurve,
       fullscreenDialog: fullscreenDialog,
       bindings: bindings,
-      transitionDuration: duration ?? Get.defaultTransitionDuration,
+      transitionDuration: duration ?? Jet.defaultTransitionDuration,
       preventDuplicateHandlingMode: preventDuplicateHandlingMode,
     );
 
@@ -438,12 +438,12 @@ class JetDelegate extends RouterDelegate<RouteDecoder>
       page: page,
       gestureWidth: gestureWidth,
       showCupertinoParallax: showCupertinoParallax,
-      popGesture: popGesture ?? Get.defaultPopGesture,
-      transition: transition ?? Get.defaultTransition,
-      curve: curve ?? Get.defaultTransitionCurve,
+      popGesture: popGesture ?? Jet.defaultPopGesture,
+      transition: transition ?? Jet.defaultTransition,
+      curve: curve ?? Jet.defaultTransitionCurve,
       fullscreenDialog: fullscreenDialog,
       bindings: bindings,
-      transitionDuration: duration ?? Get.defaultTransitionDuration,
+      transitionDuration: duration ?? Jet.defaultTransitionDuration,
     );
 
     final args = _buildPageSettings(routeName, arguments);
@@ -474,12 +474,12 @@ class JetDelegate extends RouterDelegate<RouteDecoder>
       page: page,
       gestureWidth: gestureWidth,
       showCupertinoParallax: showCupertinoParallax,
-      popGesture: popGesture ?? Get.defaultPopGesture,
-      transition: transition ?? Get.defaultTransition,
-      curve: curve ?? Get.defaultTransitionCurve,
+      popGesture: popGesture ?? Jet.defaultPopGesture,
+      transition: transition ?? Jet.defaultTransition,
+      curve: curve ?? Jet.defaultTransitionCurve,
       fullscreenDialog: fullscreenDialog,
       bindings: bindings,
-      transitionDuration: duration ?? Get.defaultTransitionDuration,
+      transitionDuration: duration ?? Jet.defaultTransitionDuration,
     );
 
     final args = _buildPageSettings(routeName, arguments);

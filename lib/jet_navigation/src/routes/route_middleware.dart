@@ -34,7 +34,7 @@ abstract class JetMiddleware {
   /// {@tool snippet}
   /// ```dart
   /// JetPage redirect(String route) {
-  ///   final authService = Get.find<AuthService>();
+  ///   final authService = Jet.find<AuthService>();
   ///   return authService.authed.value ? null : RouteSettings(name: '/login');
   /// }
   /// ```
@@ -53,7 +53,7 @@ abstract class JetMiddleware {
   /// {@tool snippet}
   /// ```dart
   /// GetNavConfig? redirect(GetNavConfig route) {
-  ///   final authService = Get.find<AuthService>();
+  ///   final authService = Jet.find<AuthService>();
   ///   return authService.authed.value ? null : RouteSettings(name: '/login');
   /// }
   /// ```
@@ -65,7 +65,7 @@ abstract class JetMiddleware {
   /// {@tool snippet}
   /// ```dart
   /// JetPage onPageCalled(JetPage page) {
-  ///   final authService = Get.find<AuthService>();
+  ///   final authService = Jet.find<AuthService>();
   ///   return page.copyWith(title: 'Welcome ${authService.UserName}');
   /// }
   /// ```
@@ -77,7 +77,7 @@ abstract class JetMiddleware {
   /// {@tool snippet}
   /// ```dart
   /// List<Bindings> onBindingsStart(List<Bindings> bindings) {
-  ///   final authService = Get.find<AuthService>();
+  ///   final authService = Jet.find<AuthService>();
   ///   if (authService.isAdmin) {
   ///     bindings.add(AdminBinding());
   ///   }
@@ -189,9 +189,9 @@ class PageRedirect {
       bindings: r.bindings,
       binding: r.binding,
       binds: r.binds,
-      transitionDuration: r.transitionDuration ?? Get.defaultTransitionDuration,
+      transitionDuration: r.transitionDuration ?? Jet.defaultTransitionDuration,
       reverseTransitionDuration:
-          r.reverseTransitionDuration ?? Get.defaultTransitionDuration,
+          r.reverseTransitionDuration ?? Jet.defaultTransitionDuration,
       // performIncomeAnimation: _r.performIncomeAnimation,
       // performOutGoingAnimation: _r.performOutGoingAnimation,
       transition: r.transition,
@@ -234,8 +234,8 @@ class PageRedirect {
   void addPageParameter(JetPage route) {
     if (route.parameters == null) return;
 
-    final parameters = Map<String, String?>.from(Get.parameters);
+    final parameters = Map<String, String?>.from(Jet.parameters);
     parameters.addEntries(route.parameters!.entries);
-    // Get.parameters = parameters;
+    // Jet.parameters = parameters;
   }
 }

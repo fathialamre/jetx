@@ -56,57 +56,57 @@ extension Trans on String {
   // Checks whether the language code and country code are present, and
   // whether the key is also present.
   bool get _fullLocaleAndKey {
-    return Get.translations.containsKey(
-            "${Get.locale!.languageCode}_${Get.locale!.countryCode}") &&
-        Get.translations[
-                "${Get.locale!.languageCode}_${Get.locale!.countryCode}"]!
+    return Jet.translations.containsKey(
+            "${Jet.locale!.languageCode}_${Jet.locale!.countryCode}") &&
+        Jet.translations[
+                "${Jet.locale!.languageCode}_${Jet.locale!.countryCode}"]!
             .containsKey(this);
   }
 
   // Checks if there is a callback language in the absence of the specific
   // country, and if it contains that key.
   Map<String, String>? get _getSimilarLanguageTranslation {
-    final translationsWithNoCountry = Get.translations
+    final translationsWithNoCountry = Jet.translations
         .map((key, value) => MapEntry(key.split("_").first, value));
     final containsKey = translationsWithNoCountry
-        .containsKey(Get.locale!.languageCode.split("_").first);
+        .containsKey(Jet.locale!.languageCode.split("_").first);
 
     if (!containsKey) {
       return null;
     }
 
-    return translationsWithNoCountry[Get.locale!.languageCode.split("_").first];
+    return translationsWithNoCountry[Jet.locale!.languageCode.split("_").first];
   }
 
   String get tr {
     // print('language');
-    // print(Get.locale!.languageCode);
+    // print(Jet.locale!.languageCode);
     // print('contains');
-    // print(Get.translations.containsKey(Get.locale!.languageCode));
-    // print(Get.translations.keys);
+    // print(Jet.translations.containsKey(Jet.locale!.languageCode));
+    // print(Jet.translations.keys);
     // Returns the key if locale is null.
-    if (Get.locale?.languageCode == null) return this;
+    if (Jet.locale?.languageCode == null) return this;
 
     if (_fullLocaleAndKey) {
-      return Get.translations[
-          "${Get.locale!.languageCode}_${Get.locale!.countryCode}"]![this]!;
+      return Jet.translations[
+          "${Jet.locale!.languageCode}_${Jet.locale!.countryCode}"]![this]!;
     }
     final similarTranslation = _getSimilarLanguageTranslation;
     if (similarTranslation != null && similarTranslation.containsKey(this)) {
       return similarTranslation[this]!;
       // If there is no corresponding language or corresponding key, return
       // the key.
-    } else if (Get.fallbackLocale != null) {
-      final fallback = Get.fallbackLocale!;
+    } else if (Jet.fallbackLocale != null) {
+      final fallback = Jet.fallbackLocale!;
       final key = "${fallback.languageCode}_${fallback.countryCode}";
 
-      if (Get.translations.containsKey(key) &&
-          Get.translations[key]!.containsKey(this)) {
-        return Get.translations[key]![this]!;
+      if (Jet.translations.containsKey(key) &&
+          Jet.translations[key]!.containsKey(this)) {
+        return Jet.translations[key]![this]!;
       }
-      if (Get.translations.containsKey(fallback.languageCode) &&
-          Get.translations[fallback.languageCode]!.containsKey(this)) {
-        return Get.translations[fallback.languageCode]![this]!;
+      if (Jet.translations.containsKey(fallback.languageCode) &&
+          Jet.translations[fallback.languageCode]!.containsKey(this)) {
+        return Jet.translations[fallback.languageCode]![this]!;
       }
       return this;
     } else {

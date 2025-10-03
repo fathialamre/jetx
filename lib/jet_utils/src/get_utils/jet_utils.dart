@@ -649,7 +649,7 @@ class JetUtils {
     String info, {
     bool isError = false,
   }) {
-    Get.log('$prefix $value $info'.trim(), isError: isError);
+    Jet.log('$prefix $value $info'.trim(), isError: isError);
   }
 }
 

@@ -5,14 +5,14 @@ import 'package:jet/jet.dart';
 import 'utils/wrapper.dart';
 
 void main() {
-  testWidgets("Get.defaultDialog smoke test", (tester) async {
+  testWidgets("Jet.defaultDialog smoke test", (tester) async {
     await tester.pumpWidget(
       Wrapper(child: Container()),
     );
 
     await tester.pump();
 
-    Get.defaultDialog(
+    Jet.defaultDialog(
         onConfirm: () {}, middleText: "Dialog made in 3 lines of code");
 
     await tester.pumpAndSettle();
@@ -20,14 +20,14 @@ void main() {
     expect(find.text("Ok"), findsOneWidget);
   });
 
-  testWidgets("Get.dialog smoke test", (tester) async {
+  testWidgets("Jet.dialog smoke test", (tester) async {
     await tester.pumpWidget(
       Wrapper(child: Container()),
     );
 
     await tester.pump();
 
-    Get.dialog(const YourDialogWidget());
+    Jet.dialog(const YourDialogWidget());
 
     await tester.pumpAndSettle();
 
@@ -43,11 +43,11 @@ void main() {
 
       await tester.pump();
 
-      Get.dialog(const YourDialogWidget());
+      Jet.dialog(const YourDialogWidget());
       await tester.pumpAndSettle();
 
       expect(find.byType(YourDialogWidget), findsOneWidget);
-      expect(Get.isDialogOpen, true);
+      expect(Jet.isDialogOpen, true);
     }
 
     /// Tear down the test by checking after closing the dialog
@@ -55,27 +55,27 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(YourDialogWidget), findsNothing);
-      expect(Get.isDialogOpen, false);
+      expect(Jet.isDialogOpen, false);
       await tester.pumpAndSettle();
     }
 
     testWidgets("Get dialog close - with backLegacy", (tester) async {
       await setUpCloseTest(tester);
       // Close using backLegacy
-      Get.backLegacy();
+      Jet.backLegacy();
       await tearDownCloseTest(tester);
     });
 
     testWidgets("Get dialog close - with closeDialog", (tester) async {
       await setUpCloseTest(tester);
       // Close using closeDialog
-      Get.closeDialog();
+      Jet.closeDialog();
       await tearDownCloseTest(tester);
     });
   });
 
-  group("Get.closeDialog", () {
-    testWidgets("Get.closeDialog - closes dialog and returns value",
+  group("Jet.closeDialog", () {
+    testWidgets("Jet.closeDialog - closes dialog and returns value",
         (tester) async {
       await tester.pumpWidget(
         Wrapper(child: Container()),
@@ -83,26 +83,26 @@ void main() {
 
       await tester.pump();
 
-      final result = Get.dialog(const YourDialogWidget());
+      final result = Jet.dialog(const YourDialogWidget());
       await tester.pumpAndSettle();
 
       expect(find.byType(YourDialogWidget), findsOneWidget);
-      expect(Get.isDialogOpen, true);
+      expect(Jet.isDialogOpen, true);
 
       const dialogResult = "My dialog result";
 
-      Get.closeDialog(result: dialogResult);
+      Jet.closeDialog(result: dialogResult);
       await tester.pumpAndSettle();
 
       final returnedResult = await result;
       expect(returnedResult, dialogResult);
 
       expect(find.byType(YourDialogWidget), findsNothing);
-      expect(Get.isDialogOpen, false);
+      expect(Jet.isDialogOpen, false);
       await tester.pumpAndSettle();
     });
 
-    testWidgets("Get.closeDialog - does not close bottomsheets",
+    testWidgets("Jet.closeDialog - does not close bottomsheets",
         (tester) async {
       await tester.pumpWidget(
         Wrapper(child: Container()),
@@ -110,13 +110,13 @@ void main() {
 
       await tester.pump();
 
-      Get.bottomSheet(const YourDialogWidget());
+      Jet.bottomSheet(const YourDialogWidget());
       await tester.pumpAndSettle();
 
       expect(find.byType(YourDialogWidget), findsOneWidget);
-      expect(Get.isDialogOpen, false);
+      expect(Jet.isDialogOpen, false);
 
-      Get.closeDialog();
+      Jet.closeDialog();
       await tester.pumpAndSettle();
 
       expect(find.byType(YourDialogWidget), findsOneWidget);

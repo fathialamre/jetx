@@ -6,7 +6,7 @@ import '../router_report.dart';
 class Dependencies {
   void lazyPut<S>(InstanceBuilderCallback<S> builder,
       {String? tag, bool fenix = false}) {
-    Get.lazyPut<S>(builder, tag: tag, fenix: fenix);
+    Jet.lazyPut<S>(builder, tag: tag, fenix: fenix);
   }
 
   S call<S>() {
@@ -15,33 +15,33 @@ class Dependencies {
 
   void spawn<S>(InstanceBuilderCallback<S> builder,
           {String? tag, bool permanent = true}) =>
-      Get.spawn<S>(builder, tag: tag, permanent: permanent);
+      Jet.spawn<S>(builder, tag: tag, permanent: permanent);
 
-  S find<S>({String? tag}) => Get.find<S>(tag: tag);
+  S find<S>({String? tag}) => Jet.find<S>(tag: tag);
 
   S put<S>(S dependency,
           {String? tag,
           bool permanent = false,
           InstanceBuilderCallback<S>? builder}) =>
-      Get.put<S>(dependency, tag: tag, permanent: permanent);
+      Jet.put<S>(dependency, tag: tag, permanent: permanent);
 
   Future<bool> delete<S>({String? tag, bool force = false}) async =>
-      Get.delete<S>(tag: tag, force: force);
+      Jet.delete<S>(tag: tag, force: force);
 
   Future<void> deleteAll({bool force = false}) async =>
-      Get.deleteAll(force: force);
+      Jet.deleteAll(force: force);
 
-  void reloadAll({bool force = false}) => Get.reloadAll(force: force);
+  void reloadAll({bool force = false}) => Jet.reloadAll(force: force);
 
   void reload<S>({String? tag, String? key, bool force = false}) =>
-      Get.reload<S>(tag: tag, key: key, force: force);
+      Jet.reload<S>(tag: tag, key: key, force: force);
 
-  bool isRegistered<S>({String? tag}) => Get.isRegistered<S>(tag: tag);
+  bool isRegistered<S>({String? tag}) => Jet.isRegistered<S>(tag: tag);
 
-  bool isPrepared<S>({String? tag}) => Get.isPrepared<S>(tag: tag);
+  bool isPrepared<S>({String? tag}) => Jet.isPrepared<S>(tag: tag);
 
   void replace<P>(P child, {String? tag}) {
-    final info = Get.getInstanceInfo<P>(tag: tag);
+    final info = Jet.getInstanceInfo<P>(tag: tag);
     final permanent = (info.isPermanent ?? false);
     delete<P>(tag: tag, force: permanent);
     put(child, tag: tag, permanent: permanent);
@@ -49,7 +49,7 @@ class Dependencies {
 
   void lazyReplace<P>(InstanceBuilderCallback<P> builder,
       {String? tag, bool? fenix}) {
-    final info = Get.getInstanceInfo<P>(tag: tag);
+    final info = Jet.getInstanceInfo<P>(tag: tag);
     final permanent = (info.isPermanent ?? false);
     delete<P>(tag: tag, force: permanent);
     lazyPut(builder, tag: tag, fenix: fenix ?? permanent);

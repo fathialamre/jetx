@@ -80,8 +80,8 @@ mixin JetServiceMixin {}
 
 /// Unlike JetController, which serves to control events on each of its pages,
 /// JetService is not automatically disposed (nor can be removed with
-/// Get.delete()).
+/// Jet.delete()).
 /// It is ideal for situations where, once started, that service will
 /// remain in memory, such as Auth control for example. Only way to remove
-/// it is Get.reset().
+/// it is Jet.reset().
 abstract class JetService with JetLifeCycleMixin, JetServiceMixin {}

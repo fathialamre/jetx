@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:jet/jet.dart';
 
 void main() {
-  testWidgets("test if Get.isSnackbarOpen works with Get.snackbar",
+  testWidgets("test if Jet.isSnackbarOpen works with Jet.snackbar",
       (tester) async {
     await tester.pumpWidget(
       JetMaterialApp(
@@ -11,7 +11,7 @@ void main() {
         home: ElevatedButton(
           child: const Text('Open Snackbar'),
           onPressed: () {
-            Get.snackbar(
+            Jet.snackbar(
               'title',
               "message",
               duration: const Duration(seconds: 1),
@@ -26,22 +26,22 @@ void main() {
 
     await tester.pump();
 
-    expect(Get.isSnackbarOpen, false);
+    expect(Jet.isSnackbarOpen, false);
     await tester.tap(find.text('Open Snackbar'));
 
-    expect(Get.isSnackbarOpen, true);
+    expect(Jet.isSnackbarOpen, true);
     await tester.pump(const Duration(seconds: 1));
-    expect(Get.isSnackbarOpen, false);
+    expect(Jet.isSnackbarOpen, false);
   });
 
-  testWidgets("Get.rawSnackbar test", (tester) async {
+  testWidgets("Jet.rawSnackbar test", (tester) async {
     await tester.pumpWidget(
       JetMaterialApp(
         popGesture: true,
         home: ElevatedButton(
           child: const Text('Open Snackbar'),
           onPressed: () {
-            Get.rawSnackbar(
+            Jet.rawSnackbar(
               title: 'title',
               message: "message",
               onTap: (_) {},
@@ -60,14 +60,14 @@ void main() {
 
     await tester.pump();
 
-    expect(Get.isSnackbarOpen, false);
+    expect(Jet.isSnackbarOpen, false);
     await tester.tap(
       find.text('Open Snackbar'),
     );
 
-    expect(Get.isSnackbarOpen, true);
+    expect(Jet.isSnackbarOpen, true);
     await tester.pump(const Duration(seconds: 1));
-    expect(Get.isSnackbarOpen, false);
+    expect(Jet.isSnackbarOpen, false);
   });
 
   testWidgets("test snackbar queue", (tester) async {
@@ -81,9 +81,9 @@ void main() {
         home: ElevatedButton(
           child: const Text('Open Snackbar'),
           onPressed: () {
-            Get.rawSnackbar(
+            Jet.rawSnackbar(
                 messageText: messageOne, duration: const Duration(seconds: 1));
-            Get.rawSnackbar(
+            Jet.rawSnackbar(
                 messageText: messageTwo, duration: const Duration(seconds: 1));
           },
         ),
@@ -92,9 +92,9 @@ void main() {
 
     await tester.pump();
 
-    expect(Get.isSnackbarOpen, false);
+    expect(Jet.isSnackbarOpen, false);
     await tester.tap(find.text('Open Snackbar'));
-    expect(Get.isSnackbarOpen, true);
+    expect(Jet.isSnackbarOpen, true);
 
     await tester.pump(const Duration(milliseconds: 500));
     expect(find.text('title'), findsOneWidget);
@@ -102,7 +102,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 500));
     expect(find.text('title'), findsNothing);
     expect(find.text('titleTwo'), findsOneWidget);
-    Get.closeAllSnackbars();
+    Jet.closeAllSnackbars();
     await tester.pumpAndSettle();
   });
 
@@ -128,7 +128,7 @@ void main() {
                 GestureDetector(
                   key: snackBarTapTarget,
                   onTap: () {
-                    Get.showSnackbar(getBar);
+                    Jet.showSnackbar(getBar);
                   },
                   behavior: HitTestBehavior.opaque,
                   child: const SizedBox(
@@ -145,20 +145,20 @@ void main() {
 
     await tester.pump();
 
-    expect(Get.isSnackbarOpen, false);
+    expect(Jet.isSnackbarOpen, false);
     expect(find.text('bar1'), findsNothing);
 
     await tester.tap(find.byKey(snackBarTapTarget));
     await tester.pumpAndSettle();
 
-    expect(Get.isSnackbarOpen, true);
+    expect(Jet.isSnackbarOpen, true);
     await tester.pump(const Duration(milliseconds: 500));
     expect(find.byWidget(getBar), findsOneWidget);
     await tester.ensureVisible(find.byWidget(getBar));
     await tester.drag(find.byType(Dismissible), const Offset(0.0, 50.0));
     await tester.pumpAndSettle();
     await tester.pump(const Duration(milliseconds: 500));
-    expect(Get.isSnackbarOpen, false);
+    expect(Jet.isSnackbarOpen, false);
   });
 
   testWidgets("test snackbar onTap", (tester) async {
@@ -188,7 +188,7 @@ void main() {
                       isDismissible: true,
                       dismissDirection: dismissDirection,
                     );
-                    getBarController = Get.showSnackbar(getBar);
+                    getBarController = Jet.showSnackbar(getBar);
                   },
                   behavior: HitTestBehavior.opaque,
                   child: const SizedBox(
@@ -205,13 +205,13 @@ void main() {
 
     await tester.pumpAndSettle();
 
-    expect(Get.isSnackbarOpen, false);
+    expect(Jet.isSnackbarOpen, false);
     expect(find.text('bar1'), findsNothing);
 
     await tester.tap(find.byKey(snackBarTapTarget));
     await tester.pumpAndSettle();
 
-    expect(Get.isSnackbarOpen, true);
+    expect(Jet.isSnackbarOpen, true);
     await tester.pump(const Duration(milliseconds: 500));
     expect(find.byWidget(getBar), findsOneWidget);
     await tester.ensureVisible(find.byWidget(getBar));
@@ -231,7 +231,7 @@ void main() {
 
     await tester.pump();
 
-    expect(Get.isSnackbarOpen, false);
+    expect(Jet.isSnackbarOpen, false);
     expect(find.text('bar1'), findsNothing);
 
     getBar = JetSnackBar(
@@ -245,15 +245,15 @@ void main() {
       duration: const Duration(seconds: 1),
       isDismissible: false,
     );
-    Get.showSnackbar(getBar);
+    Jet.showSnackbar(getBar);
 
-    expect(Get.isSnackbarOpen, true);
+    expect(Jet.isSnackbarOpen, true);
     await tester.pump(const Duration(milliseconds: 500));
     expect(find.byWidget(getBar), findsOneWidget);
     expect(find.byWidget(icon), findsOneWidget);
     expect(find.byWidget(action), findsOneWidget);
     await tester.pump(const Duration(milliseconds: 500));
 
-    expect(Get.isSnackbarOpen, false);
+    expect(Jet.isSnackbarOpen, false);
   });
 }

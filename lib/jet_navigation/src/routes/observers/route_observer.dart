@@ -42,9 +42,9 @@ class JetObserver extends NavigatorObserver {
     final newRoute = _RouteData.ofRoute(previousRoute);
 
     if (currentRoute.isBottomSheet || currentRoute.isDialog) {
-      Get.log("CLOSE ${currentRoute.name}");
+      Jet.log("CLOSE ${currentRoute.name}");
     } else if (currentRoute.isJetPageRoute) {
-      Get.log("CLOSE TO ROUTE ${currentRoute.name}");
+      Jet.log("CLOSE TO ROUTE ${currentRoute.name}");
     }
     if (previousRoute != null) {
       RouterReportManager.instance.reportCurrentRoute(previousRoute);
@@ -79,9 +79,9 @@ class JetObserver extends NavigatorObserver {
     final newRoute = _RouteData.ofRoute(route);
 
     if (newRoute.isBottomSheet || newRoute.isDialog) {
-      Get.log("OPEN ${newRoute.name}");
+      Jet.log("OPEN ${newRoute.name}");
     } else if (newRoute.isJetPageRoute) {
-      Get.log("GOING TO ROUTE ${newRoute.name}");
+      Jet.log("GOING TO ROUTE ${newRoute.name}");
     }
 
     RouterReportManager.instance.reportCurrentRoute(route);
@@ -115,8 +115,8 @@ class JetObserver extends NavigatorObserver {
     final currentRoute = _RouteData.ofRoute(route);
     final previousRouteName = _extractRouteName(previousRoute);
 
-    Get.log("REMOVING ROUTE $routeName");
-    Get.log("PREVIOUS ROUTE $previousRouteName");
+    Jet.log("REMOVING ROUTE $routeName");
+    Jet.log("PREVIOUS ROUTE $previousRouteName");
 
     _routeSend?.update((value) {
       value.route = previousRoute;
@@ -141,8 +141,8 @@ class JetObserver extends NavigatorObserver {
     final oldName = _extractRouteName(oldRoute);
     final currentRoute = _RouteData.ofRoute(oldRoute);
 
-    Get.log("REPLACE ROUTE $oldName");
-    Get.log("NEW ROUTE $newName");
+    Jet.log("REPLACE ROUTE $oldName");
+    Jet.log("NEW ROUTE $newName");
 
     if (newRoute != null) {
       RouterReportManager.instance.reportCurrentRoute(newRoute);

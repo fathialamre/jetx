@@ -342,11 +342,11 @@ class JetRootState extends State<JetRoot> with WidgetsBindingObserver {
 
   void onClose() {
     config.onDispose?.call();
-    Get.clearTranslations();
+    Jet.clearTranslations();
     config.snackBarQueue.disposeControllers();
     RouterReportManager.instance.clearRouteKeys();
     RouterReportManager.dispose();
-    Get.resetInstance(clearRouteBindings: true);
+    Jet.resetInstance(clearRouteBindings: true);
     _controller = null;
     Engine.instance.removeObserver(this);
   }
@@ -375,7 +375,7 @@ class JetRootState extends State<JetRoot> with WidgetsBindingObserver {
         navigatorKey: config.navigatorKey,
         navigatorObservers: (config.navigatorObservers == null
             ? <NavigatorObserver>[
-                JetObserver(config.routingCallback, Get.routing)
+                JetObserver(config.routingCallback, Jet.routing)
               ]
             : <NavigatorObserver>[
                 JetObserver(config.routingCallback, config.routing),
@@ -397,23 +397,23 @@ class JetRootState extends State<JetRoot> with WidgetsBindingObserver {
           config.copyWith(routeInformationParser: newRouteInformationParser);
     }
 
-    if (config.locale != null) Get.locale = config.locale;
+    if (config.locale != null) Jet.locale = config.locale;
 
     if (config.fallbackLocale != null) {
-      Get.fallbackLocale = config.fallbackLocale;
+      Jet.fallbackLocale = config.fallbackLocale;
     }
 
     if (config.translations != null) {
-      Get.addTranslations(config.translations!.keys);
+      Jet.addTranslations(config.translations!.keys);
     } else if (config.translationsKeys != null) {
-      Get.addTranslations(config.translationsKeys!);
+      Jet.addTranslations(config.translationsKeys!);
     }
 
-    Get.smartManagement = config.smartManagement;
+    Jet.smartManagement = config.smartManagement;
     config.onInit?.call();
 
-    Get.isLogEnable = config.enableLog ?? kDebugMode;
-    Get.log = config.logWriterCallback ?? defaultLogWriterCallback;
+    Jet.isLogEnable = config.enableLog ?? kDebugMode;
+    Jet.log = config.logWriterCallback ?? defaultLogWriterCallback;
 
     if (config.defaultTransition == null) {
       config = config.copyWith(defaultTransition: getThemeTransition());
@@ -444,7 +444,7 @@ class JetRootState extends State<JetRoot> with WidgetsBindingObserver {
   Transition? getThemeTransition() {
     final platform = context.theme.platform;
     final matchingTransition =
-        Get.theme.pageTransitionsTheme.builders[platform];
+        Jet.theme.pageTransitionsTheme.builders[platform];
     switch (matchingTransition) {
       case CupertinoPageTransitionsBuilder():
         return Transition.cupertino;
@@ -461,10 +461,10 @@ class JetRootState extends State<JetRoot> with WidgetsBindingObserver {
 
   @override
   void didChangeLocales(List<Locale>? locales) {
-    Get.asap(() {
-      final locale = Get.deviceLocale;
+    Jet.asap(() {
+      final locale = Jet.deviceLocale;
       if (locale != null) {
-        Get.updateLocale(locale);
+        Jet.updateLocale(locale);
       }
     });
   }

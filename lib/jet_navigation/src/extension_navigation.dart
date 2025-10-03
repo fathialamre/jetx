@@ -10,7 +10,7 @@ import 'root/jet_root.dart';
 /// It replaces the Flutter Navigator, but needs no context.
 /// You can to use navigator.push(YourRoute()) rather
 /// Navigator.push(context, YourRoute());
-NavigatorState? get navigator => GetNavigationExt(Get).key.currentState;
+NavigatorState? get navigator => GetNavigationExt(Jet).key.currentState;
 
 extension ExtensionBottomSheet on JetInterface {
   Future<T?> bottomSheet<T>(

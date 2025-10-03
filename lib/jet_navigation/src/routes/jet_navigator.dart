@@ -21,7 +21,7 @@ class JetNavigator extends Navigator {
                 return true;
               },
           observers: [
-            // JetObserver(null, Get.routing),
+            // JetObserver(null, Jet.routing),
             HeroController(),
             ...?observers,
           ],

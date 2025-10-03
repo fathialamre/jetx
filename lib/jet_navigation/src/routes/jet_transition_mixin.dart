@@ -197,7 +197,7 @@ class JetBackGestureController<T> {
           curve: animationCurve);
     } else {
       // This route is destined to pop at this point. Reuse navigator's pop.
-      Get.back();
+      Jet.back();
 
       // The popping may have finished inline if already at the
       // target destination.
@@ -341,7 +341,7 @@ Cannot read the previousTitle for a route that has not yet been installed''',
   }
 
   static bool canSwipe(JetPageRoute route) =>
-      route.popGesture ?? Get.defaultPopGesture ?? JetPlatform.isIOS;
+      route.popGesture ?? Jet.defaultPopGesture ?? JetPlatform.isIOS;
 
   /// Returns a [CupertinoFullscreenDialogTransition] if [route] is a full
   /// screen dialog, otherwise a [CupertinoPageTransition] is returned.
@@ -373,7 +373,7 @@ Cannot read the previousTitle for a route that has not yet been installed''',
     // match finger motions.
     final route = rawRoute as JetPageRoute<T>;
     final linearTransition = route.popGestureInProgress;
-    final finalCurve = route.curve ?? Get.defaultTransitionCurve;
+    final finalCurve = route.curve ?? Jet.defaultTransitionCurve;
     final hasCurve = route.curve != null;
     if (route.fullscreenDialog && route.transition == null) {
       return CupertinoFullscreenDialogTransition(
@@ -412,7 +412,7 @@ Cannot read the previousTitle for a route that has not yet been installed''',
       final iosAnimation = animation;
       animation = CurvedAnimation(parent: animation, curve: finalCurve);
 
-      switch (route.transition ?? Get.defaultTransition) {
+      switch (route.transition ?? Jet.defaultTransition) {
         case Transition.leftToRight:
           return SlideLeftTransition().buildTransitions(
               context,

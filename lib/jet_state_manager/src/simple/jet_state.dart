@@ -124,7 +124,7 @@ abstract class Bind<T> extends StatelessWidget {
     String? tag,
     bool permanent = false,
   }) {
-    Get.put<S>(dependency, tag: tag, permanent: permanent);
+    Jet.put<S>(dependency, tag: tag, permanent: permanent);
     return _FactoryBind<S>(
       autoRemove: permanent,
       assignId: true,
@@ -141,7 +141,7 @@ abstract class Bind<T> extends StatelessWidget {
     // VoidCallback? onInit,
     VoidCallback? onClose,
   }) {
-    Get.lazyPut<S>(builder, tag: tag, fenix: fenix ?? fenixMode);
+    Jet.lazyPut<S>(builder, tag: tag, fenix: fenix ?? fenixMode);
     return _FactoryBind<S>(
       tag: tag,
       // initState: (_) {
@@ -164,7 +164,7 @@ abstract class Bind<T> extends StatelessWidget {
 
   static Bind spawn<S>(InstanceBuilderCallback<S> builder,
       {String? tag, bool permanent = true}) {
-    Get.spawn<S>(builder, tag: tag, permanent: permanent);
+    Jet.spawn<S>(builder, tag: tag, permanent: permanent);
     return _FactoryBind<S>(
       tag: tag,
       global: false,
@@ -172,36 +172,36 @@ abstract class Bind<T> extends StatelessWidget {
     );
   }
 
-  static S find<S>({String? tag}) => Get.find<S>(tag: tag);
+  static S find<S>({String? tag}) => Jet.find<S>(tag: tag);
 
   static Future<bool> delete<S>({String? tag, bool force = false}) async =>
-      Get.delete<S>(tag: tag, force: force);
+      Jet.delete<S>(tag: tag, force: force);
 
   static Future<void> deleteAll({bool force = false}) async =>
-      Get.deleteAll(force: force);
+      Jet.deleteAll(force: force);
 
-  static void reloadAll({bool force = false}) => Get.reloadAll(force: force);
+  static void reloadAll({bool force = false}) => Jet.reloadAll(force: force);
 
   static void reload<S>({String? tag, String? key, bool force = false}) =>
-      Get.reload<S>(tag: tag, key: key, force: force);
+      Jet.reload<S>(tag: tag, key: key, force: force);
 
-  static bool isRegistered<S>({String? tag}) => Get.isRegistered<S>(tag: tag);
+  static bool isRegistered<S>({String? tag}) => Jet.isRegistered<S>(tag: tag);
 
-  static bool isPrepared<S>({String? tag}) => Get.isPrepared<S>(tag: tag);
+  static bool isPrepared<S>({String? tag}) => Jet.isPrepared<S>(tag: tag);
 
   static void replace<P>(P child, {String? tag}) {
-    final info = Get.getInstanceInfo<P>(tag: tag);
+    final info = Jet.getInstanceInfo<P>(tag: tag);
     final permanent = (info.isPermanent ?? false);
     delete<P>(tag: tag, force: permanent);
-    Get.put(child, tag: tag, permanent: permanent);
+    Jet.put(child, tag: tag, permanent: permanent);
   }
 
   static void lazyReplace<P>(InstanceBuilderCallback<P> builder,
       {String? tag, bool? fenix}) {
-    final info = Get.getInstanceInfo<P>(tag: tag);
+    final info = Jet.getInstanceInfo<P>(tag: tag);
     final permanent = (info.isPermanent ?? false);
     delete<P>(tag: tag, force: permanent);
-    Get.lazyPut(builder, tag: tag, fenix: fenix ?? permanent);
+    Jet.lazyPut(builder, tag: tag, fenix: fenix ?? permanent);
   }
 
   factory Bind.builder({
@@ -452,31 +452,31 @@ class BindElement<T> extends InheritedElement {
   void initState() {
     widget.initState?.call(this);
 
-    var isRegistered = Get.isRegistered<T>(tag: widget.tag);
+    var isRegistered = Jet.isRegistered<T>(tag: widget.tag);
 
     if (widget.global) {
       if (isRegistered) {
-        if (Get.isPrepared<T>(tag: widget.tag)) {
+        if (Jet.isPrepared<T>(tag: widget.tag)) {
           _isCreator = true;
         } else {
           _isCreator = false;
         }
 
-        _controllerBuilder = () => Get.find<T>(tag: widget.tag);
+        _controllerBuilder = () => Jet.find<T>(tag: widget.tag);
       } else {
         _controllerBuilder =
             () => (widget.create?.call(this) ?? widget.init?.call());
         _isCreator = true;
         if (widget.lazy) {
-          Get.lazyPut<T>(_controllerBuilder!, tag: widget.tag);
+          Jet.lazyPut<T>(_controllerBuilder!, tag: widget.tag);
         } else {
-          Get.put<T>(_controllerBuilder!(), tag: widget.tag);
+          Jet.put<T>(_controllerBuilder!(), tag: widget.tag);
         }
       }
     } else {
       if (widget.create != null) {
         _controllerBuilder = () => widget.create!.call(this);
-        Get.spawn<T>(_controllerBuilder!, tag: widget.tag, permanent: false);
+        Jet.spawn<T>(_controllerBuilder!, tag: widget.tag, permanent: false);
       } else {
         _controllerBuilder = widget.init;
       }
@@ -531,8 +531,8 @@ class BindElement<T> extends InheritedElement {
   void dispose() {
     widget.dispose?.call(this);
     if (_isCreator! || widget.assignId) {
-      if (widget.autoRemove && Get.isRegistered<T>(tag: widget.tag)) {
-        Get.delete<T>(tag: widget.tag);
+      if (widget.autoRemove && Jet.isRegistered<T>(tag: widget.tag)) {
+        Jet.delete<T>(tag: widget.tag);
       }
     }
 
@@ -625,8 +625,8 @@ class BindError<T> extends Error {
 
 /// [Binding] should be extended.
 /// When using `JetMaterialApp`, all `JetPage`s and navigation
-/// methods (like Get.to()) have a `binding` property that takes an
+/// methods (like Jet.to()) have a `binding` property that takes an
 /// instance of Bindings to manage the
-/// dependencies() (via Get.put()) for the Route you are opening.
+/// dependencies() (via Jet.put()) for the Route you are opening.
 // ignore: one_member_abstracts
 abstract class Binding extends BindingsInterface<List<Bind>> {}

@@ -7,9 +7,9 @@ abstract class BindingsInterface<T> {
 
 /// [Bindings] should be extended or implemented.
 /// When using `JetMaterialApp`, all `JetPage`s and navigation
-/// methods (like Get.to()) have a `binding` property that takes an
+/// methods (like Jet.to()) have a `binding` property that takes an
 /// instance of Bindings to manage the
-/// dependencies() (via Get.put()) for the Route you are opening.
+/// dependencies() (via Jet.put()) for the Route you are opening.
 // ignore: one_member_abstracts
 abstract class Bindings extends BindingsInterface<void> {
   @override
@@ -25,19 +25,19 @@ abstract class Bindings extends BindingsInterface<void> {
 // ///   name: '/',
 // ///   page: () => Home(),
 // ///   // This might cause you an error.
-// ///   // binding: BindingsBuilder(() => Get.put(HomeController())),
-// ///   binding: BindingsBuilder(() { Get.put(HomeController(); })),
+// ///   // binding: BindingsBuilder(() => Jet.put(HomeController())),
+// ///   binding: BindingsBuilder(() { Jet.put(HomeController(); })),
 // ///   // Using .lazyPut() works fine.
-// ///   // binding: BindingsBuilder(() => Get.lazyPut(() => HomeController())),
+// ///   // binding: BindingsBuilder(() => Jet.lazyPut(() => HomeController())),
 // /// ),
 // /// ```
 // class BindingsBuilder<T> extends Bindings {
 //   /// Register your dependencies in the [builder] callback.
 //   final BindingBuilderCallback builder;
 
-//   /// Shortcut to register 1 Controller with Get.put(),
+//   /// Shortcut to register 1 Controller with Jet.put(),
 //   /// Prevents the issue of the fat arrow function with the constructor.
-//   /// BindingsBuilder(() => Get.put(HomeController())),
+//   /// BindingsBuilder(() => Jet.put(HomeController())),
 //   ///
 //   /// Sample:
 //   /// ```
@@ -50,12 +50,12 @@ abstract class Bindings extends BindingsInterface<void> {
 //   factory BindingsBuilder.put(InstanceBuilderCallback<T> builder,
 //       {String? tag, bool permanent = false}) {
 //     return BindingsBuilder(
-//         () => Get.put<T>(builder(), tag: tag, permanent: permanent));
+//         () => Jet.put<T>(builder(), tag: tag, permanent: permanent));
 //   }
 
-//   /// WARNING: don't use `()=> Get.put(Controller())`,
+//   /// WARNING: don't use `()=> Jet.put(Controller())`,
 //   /// if only passing 1 callback use `BindingsBuilder.put(Controller())`
-//   /// or `BindingsBuilder(()=> Get.lazyPut(Controller()))`
+//   /// or `BindingsBuilder(()=> Jet.lazyPut(Controller()))`
 //   BindingsBuilder(this.builder);
 
 //   @override

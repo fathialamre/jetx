@@ -140,41 +140,41 @@ void main() {
         ],
       ));
 
-      expect(Get.parameters['name'], 'juan');
+      expect(Jet.parameters['name'], 'juan');
 
-      Get.toNamed('/second/1234');
-
-      await tester.pumpAndSettle();
-
-      expect(Get.parameters['id'], '1234');
-
-      Get.toNamed('/third?name=jonny&job=dev');
+      Jet.toNamed('/second/1234');
 
       await tester.pumpAndSettle();
 
-      expect(Get.parameters['name'], 'jonny');
-      expect(Get.parameters['job'], 'dev');
+      expect(Jet.parameters['id'], '1234');
 
-      Get.toNamed('/last/1234/ana/profile');
-
-      await tester.pumpAndSettle();
-
-      expect(Get.parameters['id'], '1234');
-      expect(Get.parameters['name'], 'ana');
-
-      Get.toNamed('/last/1234/ana/profile?job=dev');
+      Jet.toNamed('/third?name=jonny&job=dev');
 
       await tester.pumpAndSettle();
 
-      expect(Get.parameters['id'], '1234');
-      expect(Get.parameters['name'], 'ana');
-      expect(Get.parameters['job'], 'dev');
+      expect(Jet.parameters['name'], 'jonny');
+      expect(Jet.parameters['job'], 'dev');
 
-      Get.toNamed(
+      Jet.toNamed('/last/1234/ana/profile');
+
+      await tester.pumpAndSettle();
+
+      expect(Jet.parameters['id'], '1234');
+      expect(Jet.parameters['name'], 'ana');
+
+      Jet.toNamed('/last/1234/ana/profile?job=dev');
+
+      await tester.pumpAndSettle();
+
+      expect(Jet.parameters['id'], '1234');
+      expect(Jet.parameters['name'], 'ana');
+      expect(Jet.parameters['job'], 'dev');
+
+      Jet.toNamed(
         'https://www.example.com/first/second/fa9662f4-ec3f-11ee-a806-169a3915b383',
       );
       await tester.pumpAndSettle();
-      expect(Get.parameters['token'], 'fa9662f4-ec3f-11ee-a806-169a3915b383');
+      expect(Jet.parameters['token'], 'fa9662f4-ec3f-11ee-a806-169a3915b383');
     },
   );
 
@@ -189,20 +189,20 @@ void main() {
         ],
       ));
 
-      // Get.parameters = ({"varginias": "varginia", "vinis": "viniiss"});
+      // Jet.parameters = ({"varginias": "varginia", "vinis": "viniiss"});
       var parameters = <String, String>{
         "varginias": "varginia",
         "vinis": "viniiss"
       };
-      // print("Get.parameters: ${Get.parameters}");
+      // print("Jet.parameters: ${Jet.parameters}");
       parameters.addAll({"a": "b", "c": "d"});
-      Get.toNamed("/italy", parameters: parameters);
+      Jet.toNamed("/italy", parameters: parameters);
 
       await tester.pumpAndSettle();
-      expect(Get.parameters['varginias'], 'varginia');
-      expect(Get.parameters['vinis'], 'viniiss');
-      expect(Get.parameters['a'], 'b');
-      expect(Get.parameters['c'], 'd');
+      expect(Jet.parameters['varginias'], 'varginia');
+      expect(Jet.parameters['vinis'], 'viniiss');
+      expect(Jet.parameters['a'], 'b');
+      expect(Jet.parameters['c'], 'd');
     },
   );
 }

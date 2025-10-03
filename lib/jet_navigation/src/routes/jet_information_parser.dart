@@ -14,7 +14,7 @@ class JetInformationParser extends RouteInformationParser<RouteDecoder> {
   JetInformationParser({
     required this.initialRoute,
   }) {
-    Get.log('JetInformationParser is created !');
+    Jet.log('JetInformationParser is created !');
   }
   @override
   SynchronousFuture<RouteDecoder> parseRouteInformation(
@@ -25,7 +25,7 @@ class JetInformationParser extends RouteInformationParser<RouteDecoder> {
     if (location == '/') {
       //check if there is a corresponding page
       //if not, relocate to initialRoute
-      if (!(Get.rootController.rootDelegate)
+      if (!(Jet.rootController.rootDelegate)
           .registeredRoutes
           .any((element) => element.name == '/')) {
         location = initialRoute;
@@ -34,7 +34,7 @@ class JetInformationParser extends RouteInformationParser<RouteDecoder> {
       location = initialRoute;
     }
 
-    Get.log('JetInformationParser: route location: $location');
+    Jet.log('JetInformationParser: route location: $location');
 
     return SynchronousFuture(RouteDecoder.fromRoute(location));
   }

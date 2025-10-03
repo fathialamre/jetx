@@ -219,7 +219,7 @@ class JetSnackBar extends StatefulWidget {
   /// Show the snack. It's call [SnackbarStatus.OPENING] state
   /// followed by [SnackbarStatus.OPEN]
   SnackbarController show() {
-    return Get.showSnackbar(this);
+    return Jet.showSnackbar(this);
   }
 }
 

@@ -96,9 +96,9 @@ class JetPage<T> extends Page<T> {
         super(
           key: key ?? ValueKey(name),
           name: name,
-          // arguments: Get.arguments,
+          // arguments: Jet.arguments,
         );
-  // settings = RouteSettings(name: name, arguments: Get.arguments);
+  // settings = RouteSettings(name: name, arguments: Jet.arguments);
 
   JetPage<T> copyWith({
     LocalKey? key,

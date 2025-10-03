@@ -6,7 +6,7 @@ import 'jet_state.dart';
 import 'jet_widget_cache.dart';
 
 /// JetView is a great way of quickly access your Controller
-/// without having to call `Get.find<AwesomeController>()` yourself.
+/// without having to call `Jet.find<AwesomeController>()` yourself.
 ///
 /// Sample:
 /// ```
@@ -16,7 +16,7 @@ import 'jet_widget_cache.dart';
 ///
 /// class AwesomeView extends JetView<AwesomeController> {
 ///   /// if you need you can pass the tag for
-///   /// Get.find<AwesomeController>(tag:"myTag");
+///   /// Jet.find<AwesomeController>(tag:"myTag");
 ///   @override
 ///   final String tag = "myTag";
 ///
@@ -36,15 +36,15 @@ abstract class JetView<T> extends StatelessWidget {
 
   final String? tag = null;
 
-  T get controller => Get.find<T>(tag: tag)!;
+  T get controller => Jet.find<T>(tag: tag)!;
 
   @override
   Widget build(BuildContext context);
 }
 
 /// JetWidget is a great way of quickly access your individual Controller
-/// without having to call `Get.find<AwesomeController>()` yourself.
-/// Get save you controller on cache, so, you can to use Get.create() safely
+/// without having to call `Jet.find<AwesomeController>()` yourself.
+/// Get save you controller on cache, so, you can to use Jet.create() safely
 /// JetWidget is perfect to multiples instance of a same controller. Each
 /// JetWidget will have your own controller, and will be call events as `onInit`
 /// and `onClose` when the controller get in/get out on memory.
@@ -73,12 +73,12 @@ class _GetCache<S extends JetLifeCycleMixin> extends WidgetCache<JetWidget<S>> {
   InstanceInfo? info;
   @override
   void onInit() {
-    info = Get.getInstanceInfo<S>(tag: widget!.tag);
+    info = Jet.getInstanceInfo<S>(tag: widget!.tag);
 
     _isCreator = info!.isPrepared && info!.isCreate;
 
     if (info!.isRegistered) {
-      _controller = Get.find<S>(tag: widget!.tag);
+      _controller = Jet.find<S>(tag: widget!.tag);
     }
 
     JetWidget._cache[widget!] = _controller;
@@ -89,10 +89,10 @@ class _GetCache<S extends JetLifeCycleMixin> extends WidgetCache<JetWidget<S>> {
   @override
   void onClose() {
     if (_isCreator) {
-      Get.asap(() {
+      Jet.asap(() {
         widget!.controller.onDelete();
-        Get.log('"${widget!.controller.runtimeType}" onClose() called');
-        Get.log('"${widget!.controller.runtimeType}" deleted from memory');
+        Jet.log('"${widget!.controller.runtimeType}" onClose() called');
+        Jet.log('"${widget!.controller.runtimeType}" deleted from memory');
         // JetWidget._cache[widget!] = null;
       });
     }

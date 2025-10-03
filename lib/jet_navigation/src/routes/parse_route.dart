@@ -15,7 +15,7 @@ class RouteDecoder {
     var uri = Uri.parse(location);
     final args = PageSettings(uri);
     final decoder =
-        (Get.rootController.rootDelegate).matchRoute(location, arguments: args);
+        (Jet.rootController.rootDelegate).matchRoute(location, arguments: args);
     decoder.route = decoder.route?.copyWith(
       completer: null,
       arguments: args,

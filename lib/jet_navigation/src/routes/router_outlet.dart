@@ -11,7 +11,7 @@ class RouterOutlet<TDelegate extends RouterDelegate<T>, T extends Object>
     super.key,
     TDelegate? delegate,
     required this.builder,
-  }) : routerDelegate = delegate ?? Get.delegate<TDelegate, T>()!;
+  }) : routerDelegate = delegate ?? Jet.delegate<TDelegate, T>()!;
 
   RouterOutlet({
     Key? key,
@@ -107,7 +107,7 @@ class JetRouterOutlet extends RouterOutlet<JetDelegate, RouteDecoder> {
           key: key,
           emptyPage: (delegate) =>
               delegate.matchRoute(initialRoute).route ?? delegate.notFoundRoute,
-          navigatorKey: Get.nestedKey(anchorRoute)?.navigatorKey,
+          navigatorKey: Jet.nestedKey(anchorRoute)?.navigatorKey,
           delegate: delegate,
         );
   JetRouterOutlet.pickPages({
@@ -129,7 +129,7 @@ class JetRouterOutlet extends RouterOutlet<JetDelegate, RouteDecoder> {
             if (pageRes.isNotEmpty) {
               return InheritedNavigator(
                 navigatorKey: navigatorKey ??
-                    Get.rootController.rootDelegate.navigatorKey,
+                    Jet.rootController.rootDelegate.navigatorKey,
                 child: JetNavigator(
                   restorationScopeId: restorationScopeId,
                   onPopPage: onPopPage ??
@@ -147,7 +147,7 @@ class JetRouterOutlet extends RouterOutlet<JetDelegate, RouteDecoder> {
             }
             return (emptyWidget?.call(rDelegate) ?? const SizedBox.shrink());
           },
-          delegate: delegate ?? Get.rootController.rootDelegate,
+          delegate: delegate ?? Jet.rootController.rootDelegate,
         );
 
   JetRouterOutlet.builder({
@@ -158,8 +158,8 @@ class JetRouterOutlet extends RouterOutlet<JetDelegate, RouteDecoder> {
   }) : super.builder(
           delegate: routerDelegate ??
               (route != null
-                  ? Get.nestedKey(route)
-                  : Get.rootController.rootDelegate),
+                  ? Jet.nestedKey(route)
+                  : Jet.rootController.rootDelegate),
         );
 }
 

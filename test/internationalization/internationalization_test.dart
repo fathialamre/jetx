@@ -5,7 +5,7 @@ import 'package:jet/jet.dart';
 import '../navigation/utils/wrapper.dart';
 
 void main() {
-  testWidgets("Get.defaultDialog smoke test", (tester) async {
+  testWidgets("Jet.defaultDialog smoke test", (tester) async {
     await tester.pumpWidget(
       Wrapper(child: Container()),
     );
@@ -16,7 +16,7 @@ void main() {
     expect('total_confirmed'.tr, 'Total Confirmed');
     expect('total_deaths'.tr, 'Total Deaths');
 
-    Get.updateLocale(const Locale('pt', 'BR'));
+    Jet.updateLocale(const Locale('pt', 'BR'));
 
     await tester.pumpAndSettle();
 
@@ -24,7 +24,7 @@ void main() {
     expect('total_confirmed'.tr, 'Total confirmado');
     expect('total_deaths'.tr, 'Total de mortes');
 
-    Get.updateLocale(const Locale('en', 'EN'));
+    Jet.updateLocale(const Locale('en', 'EN'));
 
     await tester.pumpAndSettle();
 

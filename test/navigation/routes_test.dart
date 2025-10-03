@@ -11,7 +11,7 @@ void main() {
   //         child: Center(
   //           child: CupertinoButton(
   //             onPressed: () {
-  //               Get.to(
+  //               Jet.to(
   //                   () => CupertinoPageScaffold(
   //                         child: Center(child: Text('route')),
   //                       ),

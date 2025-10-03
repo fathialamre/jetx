@@ -33,7 +33,7 @@ class RedirectBypassMiddleware extends JetMiddleware {
 
 void main() {
   tearDown(() {
-    Get.reset();
+    Jet.reset();
   });
 
   testWidgets("Middleware should redirect to second screen", (tester) async {
@@ -55,13 +55,13 @@ void main() {
     );
 
     // Act
-    Get.toNamed('/first');
+    Jet.toNamed('/first');
     await tester.pumpAndSettle();
 
     // Assert
     expect(find.byType(SecondScreen), findsOneWidget);
     expect(find.byType(FirstScreen), findsNothing);
-    expect(Get.currentRoute, '/second');
+    expect(Jet.currentRoute, '/second');
   });
 
   testWidgets("Middleware should stop navigation", (tester) async {
@@ -84,13 +84,13 @@ void main() {
 
     // Act
     await tester.pumpAndSettle();
-    Get.toNamed('/first');
+    Jet.toNamed('/first');
     await tester.pumpAndSettle();
 
     // Assert
     expect(find.byType(Home), findsOneWidget);
     expect(find.byType(FirstScreen), findsNothing);
-    expect(Get.currentRoute, '/');
+    expect(Jet.currentRoute, '/');
   });
 
   testWidgets("Middleware should be bypassed", (tester) async {
@@ -113,14 +113,14 @@ void main() {
 
     // Act
     await tester.pumpAndSettle();
-    Get.toNamed('/first');
+    Jet.toNamed('/first');
     await tester.pumpAndSettle();
 
     // Assert
     expect(find.byType(FirstScreen), findsOneWidget);
     expect(find.byType(SecondScreen), findsNothing);
     expect(find.byType(Home), findsNothing);
-    expect(Get.currentRoute, '/first');
+    expect(Jet.currentRoute, '/first');
   });
 
   testWidgets("Middleware should redirect twice", (tester) async {
@@ -147,13 +147,13 @@ void main() {
     );
 
     // Act
-    Get.toNamed('/fourth');
+    Jet.toNamed('/fourth');
     await tester.pumpAndSettle();
 
     // Assert
     expect(find.byType(SecondScreen), findsOneWidget);
     expect(find.byType(FirstScreen), findsNothing);
-    expect(Get.currentRoute, '/second');
+    expect(Jet.currentRoute, '/second');
   });
 
   testWidgets("Navigation history should be correct after redirects",
@@ -175,19 +175,19 @@ void main() {
     );
 
     // Act
-    Get.toNamed('/first');
+    Jet.toNamed('/first');
     await tester.pumpAndSettle();
 
     // Assert
-    expect(Get.currentRoute, '/second');
-    expect(Get.previousRoute, '/');
+    expect(Jet.currentRoute, '/second');
+    expect(Jet.previousRoute, '/');
 
     // Act: go back
-    Get.back();
+    Jet.back();
     await tester.pumpAndSettle();
 
     // Assert
     expect(find.byType(Home), findsOneWidget);
-    expect(Get.currentRoute, '/');
+    expect(Jet.currentRoute, '/');
   });
 }
