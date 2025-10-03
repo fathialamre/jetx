@@ -14,11 +14,13 @@ Phase 1 cleanup has been **successfully completed**! All major cleanup tasks are
 - **Removed**: `_config.yml` (Jekyll config)
 - **Impact**: ~33,726 lines removed
 
-### 2. Example Scaffolding (180 files)
-- **Removed**: `example_nav2/` directory completely
-- **Included**: Android, iOS, Web, macOS, Linux, Windows platform files
-- **Size**: 1.0 MB
-- **Impact**: 5,352 lines removed
+### 2. Example Directories (213 files total)
+- **Removed**: `example_nav2/` directory (180 files, 1.0 MB)
+  - Android, iOS, Web, macOS, Linux, Windows platform files
+  - Impact: 5,352 lines removed
+- **Removed**: `example/` directory (33 files, 192 KB)
+  - Main example application
+  - Impact: 1,738 lines removed
 
 ### 3. Deprecated Code (2 items)
 - **Removed**: `SingleGetTickerProviderMixin` (deprecated mixin)
@@ -39,9 +41,11 @@ Phase 1 cleanup has been **successfully completed**! All major cleanup tasks are
 | Metric | Before | After | Change |
 |--------|--------|-------|--------|
 | **Documentation files** | 44 | 4 | -91% |
-| **Total files removed** | 258+ | - | - |
-| **Lines of code removed** | ~42,500 | - | - |
+| **Example files** | 213 | 0 | -100% |
+| **Total files removed** | 291+ | - | - |
+| **Lines of code removed** | ~44,200 | - | - |
 | **GetConnect module** | 27 files | 0 | -100% |
+| **Dart files in lib/** | 171 | 106 | -38% |
 | **Tests passing** | ✅ 220 | ✅ 220 | 100% |
 
 ---
@@ -60,6 +64,8 @@ Phase 1 cleanup has been **successfully completed**! All major cleanup tasks are
 ## 📦 Git Commits (Phase 1)
 
 ```
+5f54a076 - Phase 1: Remove example/ directory (33 files, 192KB)
+803cb7a5 - Phase 1: Complete - Summary and metrics documented
 6cfffffd - Phase 1: Remove GetConnect module (27 files, 156KB) - Breaking change
 51eb9be6 - Phase 1: Remove example_nav2 and deprecated code  
 32f83026 - Phase 1: Remove multi-language documentation (keep only English)
