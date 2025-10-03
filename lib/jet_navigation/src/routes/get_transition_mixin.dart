@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
-import '../../../get.dart';
+import '../../../jet.dart';
 import '../root/jet_root.dart';
 
 const double _kBackGestureWidth = 20.0;

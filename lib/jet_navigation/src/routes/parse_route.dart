@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-import '../../../get.dart';
+import '../../../jet.dart';
 
 @immutable
 class RouteDecoder {

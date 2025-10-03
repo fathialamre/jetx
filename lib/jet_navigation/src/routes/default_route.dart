@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 
-import '../../../get.dart';
+import '../../../jet.dart';
 import '../router_report.dart';
 
 @optionalTypeArgs

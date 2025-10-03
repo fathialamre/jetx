@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:jet/jet_navigation/src/routes/test_kit.dart';
 
-import '../../../get.dart';
+import '../../../jet.dart';
 import '../router_report.dart';
 
 class ConfigData {

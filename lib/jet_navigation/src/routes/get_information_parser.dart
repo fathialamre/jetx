@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
-import '../../../get.dart';
+import '../../../jet.dart';
 
 class JetInformationParser extends RouteInformationParser<RouteDecoder> {
   factory JetInformationParser.createInformationParser(

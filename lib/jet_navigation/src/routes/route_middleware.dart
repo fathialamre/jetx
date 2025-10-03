@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 
-import '../../../get.dart';
+import '../../../jet.dart';
 
 /// The Page Middlewares.
 /// The Functions will be called in this order

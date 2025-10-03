@@ -4,7 +4,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-import '../../../get.dart';
+import '../../../jet.dart';
 import '../root/jet_root.dart';
 
 class SnackbarController {
