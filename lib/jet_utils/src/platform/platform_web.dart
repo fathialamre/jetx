@@ -1,3 +1,4 @@
+import 'package:jet/jet_utils/src/get_utils/jet_utils.dart';
 import 'package:web/web.dart' as html;
 
 import '../../jet_utils.dart';
