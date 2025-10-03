@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:jet/get.dart';
+import 'package:jet/jet.dart';
 
 import 'get_main_test.dart';
 

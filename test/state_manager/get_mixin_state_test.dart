@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:jet/get.dart';
+import 'package:jet/jet.dart';
 import 'package:jet/get_state_manager/src/simple/mixin_builder.dart';
 
 void main() {
