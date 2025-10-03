@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import '../../../jet_core/src/get_interface.dart';
+import '../../../jet_core/src/jet_interface.dart';
 
 extension LoopEventsExt on JetInterface {
   Future<T> toEnd<T>(FutureOr<T> Function() computation) async {

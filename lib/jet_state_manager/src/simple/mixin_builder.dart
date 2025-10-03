@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../rx_flutter/rx_obx_widget.dart';
-import 'get_controllers.dart';
-import 'get_state.dart';
+import 'jet_controllers.dart';
+import 'jet_state.dart';
 
 class MixinBuilder<T extends JetController> extends StatelessWidget {
   @required

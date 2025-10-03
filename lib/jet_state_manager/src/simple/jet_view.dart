@@ -2,8 +2,8 @@ import 'package:flutter/widgets.dart';
 
 import '../../../instance_manager.dart';
 import '../../../utils.dart';
-import 'get_state.dart';
-import 'get_widget_cache.dart';
+import 'jet_state.dart';
+import 'jet_widget_cache.dart';
 
 /// JetView is a great way of quickly access your Controller
 /// without having to call `Get.find<AwesomeController>()` yourself.

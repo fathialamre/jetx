@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 
 import '../../../jet_instance/src/bindings_interface.dart';
-import '../routes/get_route.dart';
+import '../routes/jet_route.dart';
 import '../routes/transitions_type.dart';
 
 /// Enables the user to customize the intended pop behavior

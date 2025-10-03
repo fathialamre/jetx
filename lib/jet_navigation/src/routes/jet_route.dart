@@ -7,7 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../../jet_instance/src/bindings_interface.dart';
-import '../../../jet_state_manager/src/simple/get_state.dart';
+import '../../../jet_state_manager/src/simple/jet_state.dart';
 import '../../jet_navigation.dart';
 
 class JetPage<T> extends Page<T> {
