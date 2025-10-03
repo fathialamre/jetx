@@ -8,7 +8,7 @@ class RouteDecoder {
     this.currentTreeBranch,
     this.pageSettings,
   );
-  final List<GetPage> currentTreeBranch;
+  final List<JetPage> currentTreeBranch;
   final PageSettings? pageSettings;
 
   factory RouteDecoder.fromRoute(String location) {
@@ -24,13 +24,13 @@ class RouteDecoder {
     return decoder;
   }
 
-  GetPage? get route =>
+  JetPage? get route =>
       currentTreeBranch.isEmpty ? null : currentTreeBranch.last;
 
-  GetPage routeOrUnknown(GetPage onUnknow) =>
+  JetPage routeOrUnknown(JetPage onUnknow) =>
       currentTreeBranch.isEmpty ? onUnknow : currentTreeBranch.last;
 
-  set route(GetPage? getPage) {
+  set route(JetPage? getPage) {
     if (getPage == null) return;
     if (currentTreeBranch.isEmpty) {
       currentTreeBranch.add(getPage);
@@ -39,7 +39,7 @@ class RouteDecoder {
     }
   }
 
-  List<GetPage>? get currentChildren => route?.children;
+  List<JetPage>? get currentChildren => route?.children;
 
   Map<String, String> get parameters => pageSettings?.params ?? {};
 
@@ -86,7 +86,7 @@ class ParseRouteTree {
     required this.routes,
   });
 
-  final List<GetPage> routes;
+  final List<JetPage> routes;
 
   RouteDecoder matchRoute(String name, {PageSettings? arguments}) {
     final uri = Uri.parse(name);
@@ -150,26 +150,26 @@ class ParseRouteTree {
     );
   }
 
-  void addRoutes<T>(List<GetPage<T>> getPages) {
+  void addRoutes<T>(List<JetPage<T>> getPages) {
     for (final route in getPages) {
       addRoute(route);
     }
   }
 
-  void removeRoutes<T>(List<GetPage<T>> getPages) {
+  void removeRoutes<T>(List<JetPage<T>> getPages) {
     for (final route in getPages) {
       removeRoute(route);
     }
   }
 
-  void removeRoute<T>(GetPage<T> route) {
+  void removeRoute<T>(JetPage<T> route) {
     routes.remove(route);
     for (var page in _flattenPage(route)) {
       removeRoute(page);
     }
   }
 
-  void addRoute<T>(GetPage<T> route) {
+  void addRoute<T>(JetPage<T> route) {
     routes.add(route);
 
     // Add Page children.
@@ -178,8 +178,8 @@ class ParseRouteTree {
     }
   }
 
-  List<GetPage> _flattenPage(GetPage route) {
-    final result = <GetPage>[];
+  List<JetPage> _flattenPage(JetPage route) {
+    final result = <JetPage>[];
     if (route.children.isEmpty) {
       return result;
     }
@@ -237,11 +237,11 @@ class ParseRouteTree {
     return result;
   }
 
-  /// Change the Path for a [GetPage]
-  GetPage _addChild(
-    GetPage origin,
+  /// Change the Path for a [JetPage]
+  JetPage _addChild(
+    JetPage origin,
     String parentPath,
-    List<GetMiddleware> middlewares,
+    List<JetMiddleware> middlewares,
     List<BindingsInterface> bindings,
     List<Bind> binds,
   ) {
@@ -256,7 +256,7 @@ class ParseRouteTree {
     );
   }
 
-  GetPage? _findRoute(String name) {
+  JetPage? _findRoute(String name) {
     final value = routes.firstWhereOrNull(
       (route) => route.path.regex.hasMatch(name),
     );

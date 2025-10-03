@@ -6,7 +6,7 @@ void main() {
   testWidgets("test if Get.isSnackbarOpen works with Get.snackbar",
       (tester) async {
     await tester.pumpWidget(
-      GetMaterialApp(
+      JetMaterialApp(
         popGesture: true,
         home: ElevatedButton(
           child: const Text('Open Snackbar'),
@@ -36,7 +36,7 @@ void main() {
 
   testWidgets("Get.rawSnackbar test", (tester) async {
     await tester.pumpWidget(
-      GetMaterialApp(
+      JetMaterialApp(
         popGesture: true,
         home: ElevatedButton(
           child: const Text('Open Snackbar'),
@@ -76,7 +76,7 @@ void main() {
     const messageTwo = Text('titleTwo');
 
     await tester.pumpWidget(
-      GetMaterialApp(
+      JetMaterialApp(
         popGesture: true,
         home: ElevatedButton(
           child: const Text('Open Snackbar'),
@@ -110,7 +110,7 @@ void main() {
     const dismissDirection = DismissDirection.down;
     const snackBarTapTarget = Key('snackbar-tap-target');
 
-    const GetSnackBar getBar = GetSnackBar(
+    const JetSnackBar getBar = JetSnackBar(
       key: ValueKey('dismissible'),
       message: 'bar1',
       duration: Duration(seconds: 2),
@@ -119,7 +119,7 @@ void main() {
       dismissDirection: dismissDirection,
     );
 
-    await tester.pumpWidget(GetMaterialApp(
+    await tester.pumpWidget(JetMaterialApp(
       home: Scaffold(
         body: Builder(
           builder: (context) {
@@ -166,11 +166,11 @@ void main() {
     const snackBarTapTarget = Key('snackbar-tap-target');
     var counter = 0;
 
-    late final GetSnackBar getBar;
+    late final JetSnackBar getBar;
 
     late final SnackbarController getBarController;
 
-    await tester.pumpWidget(GetMaterialApp(
+    await tester.pumpWidget(JetMaterialApp(
       home: Scaffold(
         body: Builder(
           builder: (context) {
@@ -179,7 +179,7 @@ void main() {
                 GestureDetector(
                   key: snackBarTapTarget,
                   onTap: () {
-                    getBar = GetSnackBar(
+                    getBar = JetSnackBar(
                       message: 'bar1',
                       onTap: (_) {
                         counter++;
@@ -225,16 +225,16 @@ void main() {
     const icon = Icon(Icons.alarm);
     final action = TextButton(onPressed: () {}, child: const Text('button'));
 
-    late final GetSnackBar getBar;
+    late final JetSnackBar getBar;
 
-    await tester.pumpWidget(const GetMaterialApp(home: Scaffold()));
+    await tester.pumpWidget(const JetMaterialApp(home: Scaffold()));
 
     await tester.pump();
 
     expect(Get.isSnackbarOpen, false);
     expect(find.text('bar1'), findsNothing);
 
-    getBar = GetSnackBar(
+    getBar = JetSnackBar(
       message: 'bar1',
       icon: icon,
       mainButton: action,

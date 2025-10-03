@@ -4,10 +4,10 @@ import 'package:jet/jet.dart';
 
 void main() {
   Get.lazyPut<Controller2>(() => Controller2());
-  testWidgets("GetxController smoke test", (test) async {
+  testWidgets("JetController smoke test", (test) async {
     await test.pumpWidget(
       MaterialApp(
-        home: GetBuilder<Controller>(
+        home: JetBuilder<Controller>(
           init: Controller(),
           builder: (controller) => Column(
             children: [
@@ -22,7 +22,7 @@ void main() {
                 child: const Text("incrementWithId"),
                 onPressed: () => controller.incrementWithId(),
               ),
-              GetBuilder<Controller>(
+              JetBuilder<Controller>(
                   id: '1',
                   didChangeDependencies: (_) {
                     // print("didChangeDependencies called");
@@ -30,10 +30,10 @@ void main() {
                   builder: (controller) {
                     return Text('id ${controller.counter}');
                   }),
-              GetBuilder<Controller2>(builder: (controller) {
+              JetBuilder<Controller2>(builder: (controller) {
                 return Text('lazy ${controller.test}');
               }),
-              GetBuilder<ControllerNonGlobal>(
+              JetBuilder<ControllerNonGlobal>(
                   init: ControllerNonGlobal(),
                   global: false,
                   builder: (controller) {
@@ -72,7 +72,7 @@ void main() {
   //   "MixinBuilder with build null",
   //   (test) async {
   //     expect(
-  //       () => GetBuilder<Controller>(
+  //       () => JetBuilder<Controller>(
   //         init: Controller(),
   //         builder: null,
   //       ),
@@ -82,7 +82,7 @@ void main() {
   // );
 }
 
-class Controller extends GetxController {
+class Controller extends JetController {
   static Controller get to => Get.find();
 
   int counter = 0;
@@ -98,10 +98,10 @@ class Controller extends GetxController {
   }
 }
 
-class Controller2 extends GetxController {
+class Controller2 extends JetController {
   int test = 0;
 }
 
-class ControllerNonGlobal extends GetxController {
+class ControllerNonGlobal extends JetController {
   int nonGlobal = 0;
 }

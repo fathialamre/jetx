@@ -1,15 +1,16 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:jet/instance_manager.dart';
 
+import '../../../jet_core/jet_core.dart';
+import '../../../jet_instance/jet_instance.dart';
 import '../../../jet_state_manager/jet_state_manager.dart';
 import '../../../jet_utils/jet_utils.dart';
 import '../../jet_navigation.dart';
-import 'get_root.dart';
+import 'jet_root.dart';
 
-class GetMaterialApp extends StatelessWidget {
+class JetCupertinoApp extends StatelessWidget {
   final GlobalKey<NavigatorState>? navigatorKey;
-  final GlobalKey<ScaffoldMessengerState>? scaffoldMessengerKey;
   final Widget? home;
   final Map<String, WidgetBuilder>? routes;
   final String? initialRoute;
@@ -20,9 +21,6 @@ class GetMaterialApp extends StatelessWidget {
   final TransitionBuilder? builder;
   final String title;
   final GenerateAppTitle? onGenerateTitle;
-  final ThemeData? theme;
-  final ThemeData? darkTheme;
-  final ThemeMode themeMode;
   final CustomTransition? customTransition;
   final Color? color;
   final Map<String, Map<String, String>>? translationsKeys;
@@ -40,12 +38,10 @@ class GetMaterialApp extends StatelessWidget {
   final bool showSemanticsDebugger;
   final bool debugShowCheckedModeBanner;
   final Map<LogicalKeySet, Intent>? shortcuts;
-  final ScrollBehavior? scrollBehavior;
   final ThemeData? highContrastTheme;
   final ThemeData? highContrastDarkTheme;
   final Map<Type, Action<Intent>>? actions;
-  final bool debugShowMaterialGrid;
-  final ValueChanged<Routing?>? routingCallback;
+  final Function(Routing?)? routingCallback;
   final Transition? defaultTransition;
   final bool? opaqueRoute;
   final VoidCallback? onInit;
@@ -55,22 +51,25 @@ class GetMaterialApp extends StatelessWidget {
   final LogWriterCallback? logWriterCallback;
   final bool? popGesture;
   final SmartManagement smartManagement;
-  final List<Bind> binds;
+  final BindingsInterface? initialBinding;
   final Duration? transitionDuration;
   final bool? defaultGlobalState;
-  final List<GetPage>? getPages;
-  final GetPage? unknownRoute;
+  final List<JetPage>? getPages;
+  final JetPage? unknownRoute;
   final RouteInformationProvider? routeInformationProvider;
   final RouteInformationParser<Object>? routeInformationParser;
   final RouterDelegate<Object>? routerDelegate;
   final RouterConfig<Object>? routerConfig;
   final BackButtonDispatcher? backButtonDispatcher;
+  final CupertinoThemeData? theme;
   final bool useInheritedMediaQuery;
+  final List<Bind> binds;
+  final ScrollBehavior? scrollBehavior;
 
-  const GetMaterialApp({
+  const JetCupertinoApp({
     super.key,
+    this.theme,
     this.navigatorKey,
-    this.scaffoldMessengerKey,
     this.home,
     Map<String, Widget Function(BuildContext)> this.routes =
         const <String, WidgetBuilder>{},
@@ -78,39 +77,39 @@ class GetMaterialApp extends StatelessWidget {
     this.onGenerateRoute,
     this.onGenerateInitialRoutes,
     this.onUnknownRoute,
-    this.useInheritedMediaQuery = false,
     List<NavigatorObserver> this.navigatorObservers =
         const <NavigatorObserver>[],
     this.builder,
+    this.translationsKeys,
+    this.translations,
     this.textDirection,
     this.title = '',
     this.onGenerateTitle,
     this.color,
-    this.theme,
-    this.darkTheme,
-    this.themeMode = ThemeMode.system,
+    this.customTransition,
+    this.onInit,
+    this.onDispose,
     this.locale,
+    this.binds = const [],
+    this.scrollBehavior,
     this.fallbackLocale,
     this.localizationsDelegates,
     this.localeListResolutionCallback,
     this.localeResolutionCallback,
     this.supportedLocales = const <Locale>[Locale('en', 'US')],
-    this.debugShowMaterialGrid = false,
     this.showPerformanceOverlay = false,
     this.checkerboardRasterCacheImages = false,
     this.checkerboardOffscreenLayers = false,
     this.showSemanticsDebugger = false,
     this.debugShowCheckedModeBanner = true,
     this.shortcuts,
-    this.scrollBehavior,
-    this.customTransition,
-    this.translationsKeys,
-    this.translations,
-    this.onInit,
-    this.onReady,
-    this.onDispose,
+    this.smartManagement = SmartManagement.full,
+    this.initialBinding,
+    this.useInheritedMediaQuery = false,
+    this.unknownRoute,
     this.routingCallback,
     this.defaultTransition,
+    this.onReady,
     this.getPages,
     this.opaqueRoute,
     this.enableLog = kDebugMode,
@@ -118,9 +117,6 @@ class GetMaterialApp extends StatelessWidget {
     this.popGesture,
     this.transitionDuration,
     this.defaultGlobalState,
-    this.smartManagement = SmartManagement.full,
-    this.binds = const [],
-    this.unknownRoute,
     this.highContrastTheme,
     this.highContrastDarkTheme,
     this.actions,
@@ -130,10 +126,10 @@ class GetMaterialApp extends StatelessWidget {
         routerDelegate = null,
         routerConfig = null;
 
-  const GetMaterialApp.router({
+  const JetCupertinoApp.router({
     super.key,
+    this.theme,
     this.routeInformationProvider,
-    this.scaffoldMessengerKey,
     this.routeInformationParser,
     this.routerDelegate,
     this.routerConfig,
@@ -141,25 +137,22 @@ class GetMaterialApp extends StatelessWidget {
     this.builder,
     this.title = '',
     this.onGenerateTitle,
-    this.color,
-    this.theme,
-    this.darkTheme,
     this.useInheritedMediaQuery = false,
+    this.color,
     this.highContrastTheme,
     this.highContrastDarkTheme,
-    this.themeMode = ThemeMode.system,
     this.locale,
     this.localizationsDelegates,
     this.localeListResolutionCallback,
     this.localeResolutionCallback,
     this.supportedLocales = const <Locale>[Locale('en', 'US')],
-    this.debugShowMaterialGrid = false,
     this.showPerformanceOverlay = false,
     this.checkerboardRasterCacheImages = false,
     this.checkerboardOffscreenLayers = false,
     this.showSemanticsDebugger = false,
     this.debugShowCheckedModeBanner = true,
     this.shortcuts,
+    this.binds = const [],
     this.scrollBehavior,
     this.actions,
     this.customTransition,
@@ -177,7 +170,7 @@ class GetMaterialApp extends StatelessWidget {
     this.logWriterCallback,
     this.popGesture,
     this.smartManagement = SmartManagement.full,
-    this.binds = const [],
+    this.initialBinding,
     this.transitionDuration,
     this.defaultGlobalState,
     this.getPages,
@@ -193,7 +186,7 @@ class GetMaterialApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetRoot(
+    return JetRoot(
       config: ConfigData(
         backButtonDispatcher: backButtonDispatcher,
         binds: binds,
@@ -216,33 +209,17 @@ class GetMaterialApp extends StatelessWidget {
         routeInformationProvider: routeInformationProvider,
         routerDelegate: routerDelegate,
         routingCallback: routingCallback,
-        scaffoldMessengerKey: scaffoldMessengerKey,
+        scaffoldMessengerKey: GlobalKey<ScaffoldMessengerState>(),
         smartManagement: smartManagement,
         transitionDuration: transitionDuration,
         translations: translations,
         translationsKeys: translationsKeys,
         unknownRoute: unknownRoute,
-        theme: theme,
-        darkTheme: darkTheme,
-        themeMode: themeMode,
         defaultPopGesture: popGesture,
       ),
-      // binds: [
-      //   Bind.lazyPut<GetMaterialController>(
-      //     () => GetMaterialController(
-
-      //     ),
-      //     onClose: () {
-      //       Get.clearTranslations();
-      //       RouterReportManager.dispose();
-      //       Get.resetInstance(clearRouteBindings: true);
-      //     },
-      //   ),
-      //   ...binds,
-      // ],
       child: Builder(builder: (context) {
-        final controller = GetRoot.of(context);
-        return MaterialApp.router(
+        final controller = JetRoot.of(context);
+        return CupertinoApp.router(
           routerDelegate: controller.config.routerDelegate,
           routeInformationParser: controller.config.routeInformationParser,
           backButtonDispatcher: backButtonDispatcher,
@@ -261,18 +238,12 @@ class GetMaterialApp extends StatelessWidget {
           title: title,
           onGenerateTitle: onGenerateTitle,
           color: color,
-          theme: controller.config.theme ?? ThemeData.fallback(),
-          darkTheme: controller.config.darkTheme ??
-              controller.config.theme ??
-              ThemeData.fallback(),
-          themeMode: controller.config.themeMode,
+          theme: theme,
           locale: Get.locale ?? locale,
-          scaffoldMessengerKey: controller.config.scaffoldMessengerKey,
           localizationsDelegates: localizationsDelegates,
           localeListResolutionCallback: localeListResolutionCallback,
           localeResolutionCallback: localeResolutionCallback,
           supportedLocales: supportedLocales,
-          debugShowMaterialGrid: debugShowMaterialGrid,
           showPerformanceOverlay: showPerformanceOverlay,
           checkerboardRasterCacheImages: checkerboardRasterCacheImages,
           checkerboardOffscreenLayers: checkerboardOffscreenLayers,

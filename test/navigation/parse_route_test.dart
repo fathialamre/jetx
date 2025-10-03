@@ -5,51 +5,51 @@ import 'package:jet/jet.dart';
 void main() {
   test('Parse Page with children', () {
     final testParams = {'hi': 'value'};
-    final pageTree = GetPage(
+    final pageTree = JetPage(
       name: '/city',
       page: () => Container(),
       children: [
-        GetPage(
+        JetPage(
           name: '/home',
           page: () => Container(),
           transition: Transition.rightToLeftWithFade,
           children: [
-            GetPage(
+            JetPage(
               name: '/bed-room',
               transition: Transition.size,
               page: () => Container(),
             ),
-            GetPage(
+            JetPage(
               name: '/living-room',
               transition: Transition.topLevel,
               page: () => Container(),
             ),
           ],
         ),
-        GetPage(
+        JetPage(
           name: '/work',
           transition: Transition.upToDown,
           page: () => Container(),
           children: [
-            GetPage(
+            JetPage(
               name: '/office',
               transition: Transition.zoom,
               page: () => Container(),
               children: [
-                GetPage(
+                JetPage(
                   name: '/pen',
                   transition: Transition.cupertino,
                   page: () => Container(),
                   parameters: testParams,
                 ),
-                GetPage(
+                JetPage(
                   name: '/paper',
                   page: () => Container(),
                   transition: Transition.downToUp,
                 ),
               ],
             ),
-            GetPage(
+            JetPage(
               name: '/meeting-room',
               transition: Transition.fade,
               page: () => Container(),
@@ -59,7 +59,7 @@ void main() {
       ],
     );
 
-    final tree = ParseRouteTree(routes: <GetPage>[]);
+    final tree = ParseRouteTree(routes: <JetPage>[]);
 
     tree.addRoute(pageTree);
 
@@ -76,39 +76,39 @@ void main() {
 
   test('Parse Page without children', () {
     final pageTree = [
-      GetPage(
+      JetPage(
           name: '/city',
           page: () => Container(),
           transition: Transition.cupertino),
-      GetPage(
+      JetPage(
           name: '/city/home',
           page: () => Container(),
           transition: Transition.downToUp),
-      GetPage(
+      JetPage(
           name: '/city/home/bed-room',
           page: () => Container(),
           transition: Transition.fade),
-      GetPage(
+      JetPage(
           name: '/city/home/living-room',
           page: () => Container(),
           transition: Transition.fadeIn),
-      GetPage(
+      JetPage(
           name: '/city/work',
           page: () => Container(),
           transition: Transition.leftToRight),
-      GetPage(
+      JetPage(
           name: '/city/work/office',
           page: () => Container(),
           transition: Transition.leftToRightWithFade),
-      GetPage(
+      JetPage(
           name: '/city/work/office/pen',
           page: () => Container(),
           transition: Transition.native),
-      GetPage(
+      JetPage(
           name: '/city/work/office/paper',
           page: () => Container(),
           transition: Transition.noTransition),
-      GetPage(
+      JetPage(
           name: '/city/work/meeting-room',
           page: () => Container(),
           transition: Transition.rightToLeft),
@@ -129,14 +129,14 @@ void main() {
   testWidgets(
     'test params from dynamic route',
     (tester) async {
-      await tester.pumpWidget(GetMaterialApp(
+      await tester.pumpWidget(JetMaterialApp(
         initialRoute: '/first/juan',
         getPages: [
-          GetPage(page: () => Container(), name: '/first/:name'),
-          GetPage(page: () => Container(), name: '/second/:id'),
-          GetPage(page: () => Container(), name: '/third'),
-          GetPage(page: () => Container(), name: '/last/:id/:name/profile'),
-          GetPage(page: () => Container(), name: '/first/second/:token')
+          JetPage(page: () => Container(), name: '/first/:name'),
+          JetPage(page: () => Container(), name: '/second/:id'),
+          JetPage(page: () => Container(), name: '/third'),
+          JetPage(page: () => Container(), name: '/last/:id/:name/profile'),
+          JetPage(page: () => Container(), name: '/first/second/:token')
         ],
       ));
 
@@ -181,11 +181,11 @@ void main() {
   testWidgets(
     'params in url by parameters',
     (tester) async {
-      await tester.pumpWidget(GetMaterialApp(
+      await tester.pumpWidget(JetMaterialApp(
         initialRoute: '/first/juan',
         getPages: [
-          GetPage(page: () => Container(), name: '/first/:name'),
-          GetPage(page: () => Container(), name: '/italy'),
+          JetPage(page: () => Container(), name: '/first/:name'),
+          JetPage(page: () => Container(), name: '/italy'),
         ],
       ));
 

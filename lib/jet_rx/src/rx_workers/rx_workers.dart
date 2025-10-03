@@ -43,7 +43,7 @@ class Workers {
 /// ```
 /// // imagine some counter widget...
 ///
-/// class _CountController extends GetxController {
+/// class _CountController extends JetController {
 ///   final count = 0.obs;
 ///   Worker worker;
 ///
@@ -58,7 +58,7 @@ class Workers {
 /// }
 /// ```
 Worker ever<T>(
-  GetListenable<T> listener,
+  JetListenable<T> listener,
   WorkerCallback<T> callback, {
   dynamic condition = true,
   Function? onError,
@@ -117,7 +117,7 @@ Worker everAll(
 ///
 /// Sample:
 /// ```
-///  class _CountController extends GetxController {
+///  class _CountController extends JetController {
 ///   final count = 0.obs;
 ///   Worker worker;
 ///
@@ -132,7 +132,7 @@ Worker everAll(
 /// }
 ///```
 Worker once<T>(
-  GetListenable<T> listener,
+  JetListenable<T> listener,
   WorkerCallback<T> callback, {
   dynamic condition = true,
   Function? onError,
@@ -175,7 +175,7 @@ Worker once<T>(
 /// );
 /// ```
 Worker interval<T>(
-  GetListenable<T> listener,
+  JetListenable<T> listener,
   WorkerCallback<T> callback, {
   Duration time = const Duration(seconds: 1),
   dynamic condition = true,
@@ -219,7 +219,7 @@ Worker interval<T>(
 ///  }
 ///  ```
 Worker debounce<T>(
-  GetListenable<T> listener,
+  JetListenable<T> listener,
   WorkerCallback<T> callback, {
   Duration? time,
   Function? onError,

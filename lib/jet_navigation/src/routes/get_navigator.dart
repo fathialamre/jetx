@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 
-class GetNavigator extends Navigator {
-  GetNavigator({
+class JetNavigator extends Navigator {
+  JetNavigator({
     super.key,
     bool Function(Route<dynamic>, dynamic)? onPopPage,
     required super.pages,
@@ -21,7 +21,7 @@ class GetNavigator extends Navigator {
                 return true;
               },
           observers: [
-            // GetObserver(null, Get.routing),
+            // JetObserver(null, Get.routing),
             HeroController(),
             ...?observers,
           ],

@@ -6,7 +6,7 @@ abstract class BindingsInterface<T> {
 }
 
 /// [Bindings] should be extended or implemented.
-/// When using `GetMaterialApp`, all `GetPage`s and navigation
+/// When using `JetMaterialApp`, all `JetPage`s and navigation
 /// methods (like Get.to()) have a `binding` property that takes an
 /// instance of Bindings to manage the
 /// dependencies() (via Get.put()) for the Route you are opening.
@@ -21,7 +21,7 @@ abstract class Bindings extends BindingsInterface<void> {
 // ///
 // /// Example:
 // /// ```
-// /// GetPage(
+// /// JetPage(
 // ///   name: '/',
 // ///   page: () => Home(),
 // ///   // This might cause you an error.
@@ -41,7 +41,7 @@ abstract class Bindings extends BindingsInterface<void> {
 //   ///
 //   /// Sample:
 //   /// ```
-//   /// GetPage(
+//   /// JetPage(
 //   ///   name: '/',
 //   ///   page: () => Home(),
 //   ///   binding: BindingsBuilder.put(() => HomeController()),

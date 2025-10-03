@@ -10,8 +10,8 @@ import '../../../jet_instance/src/bindings_interface.dart';
 import '../../../jet_state_manager/src/simple/get_state.dart';
 import '../../jet_navigation.dart';
 
-class GetPage<T> extends Page<T> {
-  final GetPageBuilder page;
+class JetPage<T> extends Page<T> {
+  final JetPageBuilder page;
   final bool? popGesture;
   final Map<String, String>? parameters;
   final String? title;
@@ -45,17 +45,17 @@ class GetPage<T> extends Page<T> {
 
   final bool inheritParentPath;
 
-  final List<GetPage> children;
-  final List<GetMiddleware> middlewares;
+  final List<JetPage> children;
+  final List<JetMiddleware> middlewares;
   final PathDecoded path;
-  final GetPage? unknownRoute;
+  final JetPage? unknownRoute;
   final bool showCupertinoParallax;
 
   final PreventDuplicateHandlingMode preventDuplicateHandlingMode;
 
   static void _defaultPopInvokedHandler(bool didPop, Object? result) {}
 
-  GetPage({
+  JetPage({
     required this.name,
     required this.page,
     this.title,
@@ -76,7 +76,7 @@ class GetPage<T> extends Page<T> {
     this.transition,
     this.customTransition,
     this.fullscreenDialog = false,
-    this.children = const <GetPage>[],
+    this.children = const <JetPage>[],
     this.middlewares = const [],
     this.unknownRoute,
     this.arguments,
@@ -100,10 +100,10 @@ class GetPage<T> extends Page<T> {
         );
   // settings = RouteSettings(name: name, arguments: Get.arguments);
 
-  GetPage<T> copyWith({
+  JetPage<T> copyWith({
     LocalKey? key,
     String? name,
-    GetPageBuilder? page,
+    JetPageBuilder? page,
     bool? popGesture,
     Map<String, String>? parameters,
     String? title,
@@ -120,9 +120,9 @@ class GetPage<T> extends Page<T> {
     Duration? reverseTransitionDuration,
     bool? fullscreenDialog,
     RouteSettings? settings,
-    List<GetPage<T>>? children,
-    GetPage? unknownRoute,
-    List<GetMiddleware>? middlewares,
+    List<JetPage<T>>? children,
+    JetPage? unknownRoute,
+    List<JetMiddleware>? middlewares,
     bool? preventDuplicates,
     final double Function(BuildContext context)? gestureWidth,
     bool? participatesInRootNavigator,
@@ -134,7 +134,7 @@ class GetPage<T> extends Page<T> {
     PopInvokedWithResultCallback<T>? onPopInvoked,
     String? restorationId,
   }) {
-    return GetPage(
+    return JetPage(
       key: key ?? this.key,
       participatesInRootNavigator:
           participatesInRootNavigator ?? this.participatesInRootNavigator,
@@ -174,7 +174,7 @@ class GetPage<T> extends Page<T> {
 
   @override
   Route<T> createRoute(BuildContext context) {
-    // return GetPageRoute<T>(settings: this, page: page);
+    // return JetPageRoute<T>(settings: this, page: page);
     final page = PageRedirect(
       route: this,
       settings: this,
@@ -208,7 +208,7 @@ class GetPage<T> extends Page<T> {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-    return other is GetPage<T> && other.key == key;
+    return other is JetPage<T> && other.key == key;
   }
 
   @override

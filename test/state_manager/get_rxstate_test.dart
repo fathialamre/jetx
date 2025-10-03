@@ -4,7 +4,7 @@ import 'package:jet/jet.dart';
 
 void main() {
   Get.lazyPut<Controller2>(() => Controller2());
-  testWidgets("GetxController smoke test", (tester) async {
+  testWidgets("JetController smoke test", (tester) async {
     await tester.pumpWidget(
       MaterialApp(
         home: GetX<Controller>(
@@ -73,15 +73,15 @@ void main() {
   });
 }
 
-class Controller2 extends GetxController {
+class Controller2 extends JetController {
   RxInt lazy = 0.obs;
 }
 
-class ControllerNonGlobal extends GetxController {
+class ControllerNonGlobal extends JetController {
   RxInt nonGlobal = 0.obs;
 }
 
-class Controller extends GetxController {
+class Controller extends JetController {
   static Controller get to => Get.find();
 
   RxInt counter = 0.obs;

@@ -27,7 +27,7 @@ class InstanceInfo {
   }
 }
 
-extension ResetInstance on GetInterface {
+extension ResetInstance on JetInterface {
   /// Clears all registered instances (and/or tags).
   /// Even the persistent ones.
   /// This should be used at the end or tearDown of unit tests.
@@ -45,7 +45,7 @@ extension ResetInstance on GetInterface {
   }
 }
 
-extension Inst on GetInterface {
+extension Inst on JetInterface {
   T call<T>() => find<T>();
 
   /// Holds references to every registered Instance when using
@@ -95,12 +95,12 @@ extension Inst on GetInterface {
   /// the Instance if the Instance has been removed with `Get.delete()`.
   /// Therefore, future calls to `Get.find()` will return the same Instance.
   ///
-  /// If you need to make use of GetxController's life-cycle
+  /// If you need to make use of JetController's life-cycle
   /// (`onInit(), onStart(), onClose()`) [fenix] is a great choice to mix with
-  /// `GetBuilder()` and `GetX()` widgets, and/or `GetMaterialApp` Navigation.
+  /// `JetBuilder()` and `GetX()` widgets, and/or `JetMaterialApp` Navigation.
   ///
   /// You could use `Get.lazyPut(fenix:true)` in your app's `main()` instead
-  /// of `Bindings()` for each `GetPage`.
+  /// of `Bindings()` for each `JetPage`.
   /// And the memory management will be similar.
   ///
   /// Subsequent calls to `Get.lazyPut()` with the same parameters
@@ -246,7 +246,7 @@ extension Inst on GetInterface {
   S _startController<S>({String? tag}) {
     final key = _getKey(S, tag);
     final i = _singl[key]!.getDependency() as S;
-    if (i is GetLifeCycleMixin) {
+    if (i is JetLifeCycleMixin) {
       i.onStart();
       if (tag == null) {
         Get.log('Instance "$S" has been initialized');
@@ -383,11 +383,11 @@ extension Inst on GetInterface {
     }
     final i = builder.dependency;
 
-    if (i is GetxServiceMixin && !force) {
+    if (i is JetServiceMixin && !force) {
       return false;
     }
 
-    if (i is GetLifeCycleMixin) {
+    if (i is JetLifeCycleMixin) {
       i.onDelete();
       Get.log('"$newKey" onDelete() called');
     }
@@ -456,11 +456,11 @@ extension Inst on GetInterface {
 
     final i = builder.dependency;
 
-    if (i is GetxServiceMixin && !force) {
+    if (i is JetServiceMixin && !force) {
       return;
     }
 
-    if (i is GetLifeCycleMixin) {
+    if (i is JetLifeCycleMixin) {
       i.onDelete();
       Get.log('"$newKey" onDelete() called');
     }

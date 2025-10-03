@@ -12,7 +12,7 @@ class Mock {
   }
 }
 
-abstract class MyController with GetLifeCycleMixin {}
+abstract class MyController with JetLifeCycleMixin {}
 
 class DisposableController extends MyController {}
 
@@ -119,7 +119,7 @@ void main() {
     Get.reset();
   });
 
-  test('GetxService test', () async {
+  test('JetService test', () async {
     Get.lazyPut<PermanentService>(() => PermanentService());
     var sv1 = Get.find<PermanentService>();
     var sv2 = Get.find<PermanentService>();
@@ -268,7 +268,7 @@ void main() {
   });
 }
 
-class PermanentService extends GetxService {}
+class PermanentService extends JetService {}
 
 class Controller extends DisposableController {
   int init = 0;

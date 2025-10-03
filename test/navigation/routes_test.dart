@@ -4,7 +4,7 @@ void main() {
   //   // final scaffoldKey = GlobalKey();
 
   //   await tester.pumpWidget(
-  //     GetCupertinoApp(
+  //     JetCupertinoApp(
   //       popGesture: true,
   //       home: CupertinoPageScaffold(
   //         // key: scaffoldKey,

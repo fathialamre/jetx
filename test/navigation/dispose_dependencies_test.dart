@@ -48,9 +48,9 @@ void main() {
   });
 }
 
-class Controller extends GetxController {}
+class Controller extends JetController {}
 
-class Controller2 extends GetxController {}
+class Controller2 extends JetController {}
 
 class First extends StatelessWidget {
   const First({super.key});

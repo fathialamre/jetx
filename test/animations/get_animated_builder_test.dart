@@ -15,10 +15,10 @@ class _Wrapper extends StatelessWidget {
 }
 
 void main() {
-  testWidgets('GetAnimatedBuilder defaults', (WidgetTester tester) async {
+  testWidgets('JetAnimatedBuilder defaults', (WidgetTester tester) async {
     await tester.pumpWidget(
       _Wrapper(
-        child: GetAnimatedBuilder<int>(
+        child: JetAnimatedBuilder<int>(
           duration: const Duration(milliseconds: 500),
           tween: Tween(begin: 0, end: 10),
           idleValue: 0,
@@ -39,10 +39,10 @@ void main() {
     expect(find.text('10'), findsOneWidget);
   });
 
-  testWidgets('GetAnimatedBuilder changes value over time', (tester) async {
+  testWidgets('JetAnimatedBuilder changes value over time', (tester) async {
     await tester.pumpWidget(
       _Wrapper(
-        child: GetAnimatedBuilder<double>(
+        child: JetAnimatedBuilder<double>(
           duration: const Duration(milliseconds: 500),
           tween: Tween<double>(begin: 0.0, end: 1.0),
           idleValue: 0.0,
@@ -94,7 +94,7 @@ void main() {
 
     await tester.pumpWidget(
       _Wrapper(
-        child: GetAnimatedBuilder<int>(
+        child: JetAnimatedBuilder<int>(
           duration: const Duration(milliseconds: 500),
           tween: Tween(begin: 0, end: 10),
           idleValue: 0,
@@ -126,7 +126,7 @@ void main() {
 
     await tester.pumpWidget(
       _Wrapper(
-        child: GetAnimatedBuilder(
+        child: JetAnimatedBuilder(
           duration: const Duration(seconds: 1),
           delay: Duration.zero,
           tween: Tween<double>(begin: 0, end: 1),
@@ -146,10 +146,10 @@ void main() {
     expect(onStartCalled, isTrue);
   });
 
-  testWidgets('GetAnimatedBuilder delay', (WidgetTester tester) async {
+  testWidgets('JetAnimatedBuilder delay', (WidgetTester tester) async {
     await tester.pumpWidget(
       _Wrapper(
-        child: GetAnimatedBuilder<int>(
+        child: JetAnimatedBuilder<int>(
           duration: const Duration(milliseconds: 500),
           tween: Tween(begin: 0, end: 10),
           idleValue: 0,
@@ -243,7 +243,7 @@ void main() {
     // The variable starts as false
     expect(
         tester
-            .state<GetAnimatedBuilderState>(find.byType(FadeOutAnimation))
+            .state<JetAnimatedBuilderState>(find.byType(FadeOutAnimation))
             .willResetOnDispose,
         false);
 
@@ -253,7 +253,7 @@ void main() {
     // The value should be false
     expect(
         tester
-            .state<GetAnimatedBuilderState>(find.byType(FadeOutAnimation))
+            .state<JetAnimatedBuilderState>(find.byType(FadeOutAnimation))
             .willResetOnDispose,
         false);
 
@@ -280,7 +280,7 @@ void main() {
     // The variable starts as true
     expect(
         tester
-            .state<GetAnimatedBuilderState>(find.byType(FadeOutAnimation))
+            .state<JetAnimatedBuilderState>(find.byType(FadeOutAnimation))
             .willResetOnDispose,
         true);
 
@@ -290,7 +290,7 @@ void main() {
     // The value should be true
     expect(
         tester
-            .state<GetAnimatedBuilderState>(find.byType(FadeOutAnimation))
+            .state<JetAnimatedBuilderState>(find.byType(FadeOutAnimation))
             .willResetOnDispose,
         true);
 

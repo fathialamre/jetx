@@ -3,10 +3,10 @@
 
 void main() {
   // testWidgets(
-  //   "GetMaterialApp with routes null",
+  //   "JetMaterialApp with routes null",
   //   (tester) async {
   //     expect(
-  //         () => GetMaterialApp(
+  //         () => JetMaterialApp(
   //               routes: null,
   //             ),
   //         throwsAssertionError);
@@ -14,30 +14,30 @@ void main() {
   // );
 
   // testWidgets(
-  //   "GetMaterialApp with navigatorObservers null",
+  //   "JetMaterialApp with navigatorObservers null",
   //   (tester) async {
   //     expect(
-  //         () => GetMaterialApp(
+  //         () => JetMaterialApp(
   //               navigatorObservers: null,
   //             ),
   //         throwsAssertionError);
   //   },
   // );
   // testWidgets(
-  //   "GetMaterialApp with title null",
+  //   "JetMaterialApp with title null",
   //   (tester) async {
   //     expect(
-  //         () => GetMaterialApp(
+  //         () => JetMaterialApp(
   //               title: null,
   //             ),
   //         throwsAssertionError);
   //   },
   // );
   // testWidgets(
-  //   "GetMaterialApp with debugShowMaterialGrid null",
+  //   "JetMaterialApp with debugShowMaterialGrid null",
   //   (test) async {
   //     expect(
-  //       () => GetMaterialApp(
+  //       () => JetMaterialApp(
   //         debugShowMaterialGrid: null,
   //       ),
   //       throwsAssertionError,
@@ -45,10 +45,10 @@ void main() {
   //   },
   // );
   // testWidgets(
-  //   "GetMaterialApp with showPerformanceOverlay null",
+  //   "JetMaterialApp with showPerformanceOverlay null",
   //   (test) async {
   //     expect(
-  //       () => GetMaterialApp(
+  //       () => JetMaterialApp(
   //         showPerformanceOverlay: null,
   //       ),
   //       throwsAssertionError,
@@ -56,10 +56,10 @@ void main() {
   //   },
   // );
   // testWidgets(
-  //   "GetMaterialApp with showSemanticsDebugger null",
+  //   "JetMaterialApp with showSemanticsDebugger null",
   //   (test) async {
   //     expect(
-  //       () => GetMaterialApp(
+  //       () => JetMaterialApp(
   //         showSemanticsDebugger: null,
   //       ),
   //       throwsAssertionError,
@@ -67,10 +67,10 @@ void main() {
   //   },
   // );
   // testWidgets(
-  //   "GetMaterialApp with debugShowCheckedModeBanner null",
+  //   "JetMaterialApp with debugShowCheckedModeBanner null",
   //   (tester) async {
   //     expect(
-  //         () => GetMaterialApp(
+  //         () => JetMaterialApp(
   //               debugShowCheckedModeBanner: null,
   //             ),
   //         throwsAssertionError);
@@ -78,10 +78,10 @@ void main() {
   // );
 
   // testWidgets(
-  //   "GetMaterialApp with checkerboardRasterCacheImages null",
+  //   "JetMaterialApp with checkerboardRasterCacheImages null",
   //   (tester) async {
   //     expect(
-  //         () => GetMaterialApp(
+  //         () => JetMaterialApp(
   //               checkerboardRasterCacheImages: null,
   //             ),
   //         throwsAssertionError);
@@ -89,10 +89,10 @@ void main() {
   // );
 
   // testWidgets(
-  //   "GetMaterialApp with checkerboardOffscreenLayers null",
+  //   "JetMaterialApp with checkerboardOffscreenLayers null",
   //   (tester) async {
   //     expect(
-  //       () => GetMaterialApp(
+  //       () => JetMaterialApp(
   //         checkerboardOffscreenLayers: null,
   //       ),
   //       throwsAssertionError,

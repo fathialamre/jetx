@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:jet/jet.dart';
 
 void main() {
-  testWidgets("GetxController smoke test", (tester) async {
+  testWidgets("JetController smoke test", (tester) async {
     final controller = Get.put(Controller());
     await tester.pumpWidget(
       MaterialApp(
@@ -51,7 +51,7 @@ void main() {
   });
 }
 
-class Controller extends GetxController {
+class Controller extends JetController {
   static Controller get to => Get.find();
 
   RxInt counter = 0.obs;

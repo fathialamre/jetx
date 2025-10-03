@@ -94,7 +94,7 @@ class RouteMatcher {
 }
 
 class RouteTreeResult {
-  final GetPage? route;
+  final JetPage? route;
   final MatchResult matchResult;
 
   RouteTreeResult({
@@ -118,7 +118,7 @@ class RouteTreeResult {
   }
 
   RouteTreeResult copyWith({
-    GetPage? route,
+    JetPage? route,
     MatchResult? matchResult,
   }) {
     return RouteTreeResult(
@@ -130,22 +130,22 @@ class RouteTreeResult {
 
 class RouteTree {
   static final instance = RouteTree();
-  final Map<String, GetPage> tree = {};
+  final Map<String, JetPage> tree = {};
   final RouteMatcher matcher = RouteMatcher();
 
-  void addRoute(GetPage route) {
+  void addRoute(JetPage route) {
     matcher.addRoute(route.name);
     tree[route.name] = route;
     handleChild(route);
   }
 
-  void addRoutes(List<GetPage> routes) {
+  void addRoutes(List<JetPage> routes) {
     for (var route in routes) {
       addRoute(route);
     }
   }
 
-  void handleChild(GetPage route) {
+  void handleChild(JetPage route) {
     final children = route.children;
     for (var child in children) {
       final middlewares = List.of(route.middlewares);
@@ -161,12 +161,12 @@ class RouteTree {
     }
   }
 
-  void removeRoute(GetPage route) {
+  void removeRoute(JetPage route) {
     matcher.removeRoute(route.name);
     tree.remove(route.name);
   }
 
-  void removeRoutes(List<GetPage> routes) {
+  void removeRoutes(List<JetPage> routes) {
     for (var route in routes) {
       removeRoute(route);
     }

@@ -7,14 +7,14 @@ import '../../../jet_instance/src/bindings_interface.dart';
 import '../../../jet_utils/src/platform/platform.dart';
 import '../../../route_manager.dart';
 
-class GetDelegate extends RouterDelegate<RouteDecoder>
+class JetDelegate extends RouterDelegate<RouteDecoder>
     with
         ChangeNotifier,
         PopNavigatorRouterDelegateMixin<RouteDecoder>,
         IGetNavigation {
-  factory GetDelegate.createDelegate({
-    GetPage<dynamic>? notFoundRoute,
-    List<GetPage> pages = const [],
+  factory JetDelegate.createDelegate({
+    JetPage<dynamic>? notFoundRoute,
+    List<JetPage> pages = const [],
     List<NavigatorObserver>? navigatorObservers,
     TransitionDelegate<dynamic>? transitionDelegate,
     PopMode backButtonPopMode = PopMode.history,
@@ -22,7 +22,7 @@ class GetDelegate extends RouterDelegate<RouteDecoder>
         PreventDuplicateHandlingMode.reorderRoutes,
     GlobalKey<NavigatorState>? navigatorKey,
   }) {
-    return GetDelegate(
+    return JetDelegate(
       notFoundRoute: notFoundRoute,
       navigatorObservers: navigatorObservers,
       transitionDelegate: transitionDelegate,
@@ -37,21 +37,21 @@ class GetDelegate extends RouterDelegate<RouteDecoder>
   final PopMode backButtonPopMode;
   final PreventDuplicateHandlingMode preventDuplicateHandlingMode;
 
-  final GetPage notFoundRoute;
+  final JetPage notFoundRoute;
 
   final List<NavigatorObserver>? navigatorObservers;
   final TransitionDelegate<dynamic>? transitionDelegate;
 
-  final Iterable<GetPage> Function(RouteDecoder currentNavStack)?
+  final Iterable<JetPage> Function(RouteDecoder currentNavStack)?
       pickPagesForRootNavigator;
 
   List<RouteDecoder> get activePages => _activePages;
 
   final _routeTree = ParseRouteTree(routes: []);
 
-  List<GetPage> get registeredRoutes => _routeTree.routes;
+  List<JetPage> get registeredRoutes => _routeTree.routes;
 
-  void addPages(List<GetPage> getPages) {
+  void addPages(List<JetPage> getPages) {
     _routeTree.addRoutes(getPages);
   }
 
@@ -59,11 +59,11 @@ class GetDelegate extends RouterDelegate<RouteDecoder>
     _routeTree.routes.clear();
   }
 
-  void addPage(GetPage getPage) {
+  void addPage(JetPage getPage) {
     _routeTree.addRoute(getPage);
   }
 
-  void removePage(GetPage getPage) {
+  void removePage(JetPage getPage) {
     _routeTree.removeRoute(getPage);
   }
 
@@ -78,8 +78,8 @@ class GetDelegate extends RouterDelegate<RouteDecoder>
 
   final String? restorationScopeId;
 
-  GetDelegate({
-    GetPage? notFoundRoute,
+  JetDelegate({
+    JetPage? notFoundRoute,
     this.navigatorObservers,
     this.transitionDelegate,
     this.backButtonPopMode = PopMode.history,
@@ -89,18 +89,18 @@ class GetDelegate extends RouterDelegate<RouteDecoder>
     this.restorationScopeId,
     bool showHashOnUrl = false,
     GlobalKey<NavigatorState>? navigatorKey,
-    required List<GetPage> pages,
+    required List<JetPage> pages,
   })  : navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>(),
-        notFoundRoute = notFoundRoute ??= GetPage(
+        notFoundRoute = notFoundRoute ??= JetPage(
           name: '/404',
           page: () => const Scaffold(
             body: Center(child: Text('Route not found')),
           ),
         ) {
-    if (!showHashOnUrl && GetPlatform.isWeb) setUrlStrategy();
+    if (!showHashOnUrl && JetPlatform.isWeb) setUrlStrategy();
     addPages(pages);
     addPage(notFoundRoute);
-    Get.log('GetDelegate is created !');
+    Get.log('JetDelegate is created !');
   }
 
   Future<RouteDecoder?> runMiddleware(RouteDecoder config) async {
@@ -292,8 +292,8 @@ class GetDelegate extends RouterDelegate<RouteDecoder>
 
   /// gets the visual pages from the current _activePages entry
   ///
-  /// visual pages must have [GetPage.participatesInRootNavigator] set to true
-  Iterable<GetPage> getVisualPages(RouteDecoder? currentHistory) {
+  /// visual pages must have [JetPage.participatesInRootNavigator] set to true
+  Iterable<JetPage> getVisualPages(RouteDecoder? currentHistory) {
     final res = currentHistory!.currentTreeBranch
         .where((r) => r.participatesInRootNavigator != null);
     if (res.isEmpty) {
@@ -310,7 +310,7 @@ class GetDelegate extends RouterDelegate<RouteDecoder>
   Widget build(BuildContext context) {
     final currentHistory = currentConfiguration;
     final pages = currentHistory == null
-        ? <GetPage>[]
+        ? <JetPage>[]
         : pickPagesForRootNavigator?.call(currentHistory).toList() ??
             getVisualPages(currentHistory).toList();
     if (pages.isEmpty) {
@@ -318,7 +318,7 @@ class GetDelegate extends RouterDelegate<RouteDecoder>
         color: Theme.of(context).scaffoldBackgroundColor,
       );
     }
-    return GetNavigator(
+    return JetNavigator(
       key: navigatorKey,
       onPopPage: _onPopVisualRoute,
       pages: pages,
@@ -388,7 +388,7 @@ class GetDelegate extends RouterDelegate<RouteDecoder>
     //   routeName = routeName + page.hashCode.toString();
     // }
 
-    final getPage = GetPage<T>(
+    final getPage = JetPage<T>(
       name: routeName,
       opaque: opaque ?? true,
       page: page,
@@ -432,7 +432,7 @@ class GetDelegate extends RouterDelegate<RouteDecoder>
     double Function(BuildContext context)? gestureWidth,
   }) async {
     routeName ??= _cleanRouteName("/${page.runtimeType}");
-    final route = GetPage<T>(
+    final route = JetPage<T>(
       name: routeName,
       opaque: opaque ?? true,
       page: page,
@@ -453,7 +453,7 @@ class GetDelegate extends RouterDelegate<RouteDecoder>
   @override
   Future<T?>? offAll<T>(
     Widget Function() page, {
-    bool Function(GetPage route)? predicate,
+    bool Function(JetPage route)? predicate,
     bool opaque = true,
     bool? popGesture,
     String? id,
@@ -468,7 +468,7 @@ class GetDelegate extends RouterDelegate<RouteDecoder>
     double Function(BuildContext context)? gestureWidth,
   }) async {
     routeName ??= _cleanRouteName("/${page.runtimeType}");
-    final route = GetPage<T>(
+    final route = JetPage<T>(
       name: routeName,
       opaque: opaque,
       page: page,
@@ -496,7 +496,7 @@ class GetDelegate extends RouterDelegate<RouteDecoder>
   @override
   Future<T?>? offAllNamed<T>(
     String newRouteName, {
-    // bool Function(GetPage route)? predicate,
+    // bool Function(JetPage route)? predicate,
     dynamic arguments,
     String? id,
     Map<String, String>? parameters,
@@ -515,7 +515,7 @@ class GetDelegate extends RouterDelegate<RouteDecoder>
   @override
   Future<T?>? offNamedUntil<T>(
     String page, {
-    bool Function(GetPage route)? predicate,
+    bool Function(JetPage route)? predicate,
     dynamic arguments,
     String? id,
     Map<String, String>? parameters,
@@ -550,7 +550,7 @@ class GetDelegate extends RouterDelegate<RouteDecoder>
   @override
   Future<T?> toNamedAndOffUntil<T>(
     String page,
-    bool Function(GetPage) predicate, [
+    bool Function(JetPage) predicate, [
     Object? data,
   ]) async {
     final arguments = _buildPageSettings(page, data);
@@ -569,7 +569,7 @@ class GetDelegate extends RouterDelegate<RouteDecoder>
   @override
   Future<T?> offUntil<T>(
     Widget Function() page,
-    bool Function(GetPage) predicate, [
+    bool Function(JetPage) predicate, [
     Object? arguments,
   ]) async {
     while (_activePages.isNotEmpty && !predicate(_activePages.last.route!)) {
@@ -633,7 +633,7 @@ class GetDelegate extends RouterDelegate<RouteDecoder>
   }
 
   @override
-  void backUntil(bool Function(GetPage) predicate) {
+  void backUntil(bool Function(JetPage) predicate) {
     while (_activePages.length > 1 && !predicate(_activePages.last.route!)) {
       _popWithResult();
     }
@@ -641,7 +641,7 @@ class GetDelegate extends RouterDelegate<RouteDecoder>
     notifyListeners();
   }
 
-  Future<T?> _replace<T>(PageSettings arguments, GetPage<T> page) async {
+  Future<T?> _replace<T>(PageSettings arguments, JetPage<T> page) async {
     final index = _activePages.length > 1 ? _activePages.length - 1 : 0;
     _routeTree.addRoute(page);
 
@@ -831,7 +831,7 @@ class GetDelegate extends RouterDelegate<RouteDecoder>
     }
     _popWithResult(result);
     // final settings = route.settings;
-    // if (settings is GetPage) {
+    // if (settings is JetPage) {
     //   final config = _activePages.cast<RouteDecoder?>().firstWhere(
     //         (element) => element?.route == settings,
     //         orElse: () => null,

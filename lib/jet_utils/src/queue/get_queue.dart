@@ -1,6 +1,6 @@
 import 'dart:async';
 
-class GetMicrotask {
+class JetMicrotask {
   int _version = 0;
   int _microtask = 0;
 
@@ -19,7 +19,7 @@ class GetMicrotask {
   }
 }
 
-class GetQueue {
+class JetQueue {
   final List<_Item> _queue = [];
   bool _active = false;
 

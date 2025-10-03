@@ -27,22 +27,22 @@ extension _Empty on Object {
 
 mixin StateMixin<T> on ListNotifier {
   T? _value;
-  GetStatus<T>? _status;
+  JetStatus<T>? _status;
 
   void _fillInitialStatus() {
     _status = (_value == null || _value!._isEmpty())
-        ? GetStatus<T>.loading()
-        : GetStatus<T>.success(_value as T);
+        ? JetStatus<T>.loading()
+        : JetStatus<T>.success(_value as T);
   }
 
-  GetStatus<T> get status {
+  JetStatus<T> get status {
     reportRead();
-    return _status ??= _status = GetStatus.loading();
+    return _status ??= _status = JetStatus.loading();
   }
 
   T get state => value;
 
-  set status(GetStatus<T> newStatus) {
+  set status(JetStatus<T> newStatus) {
     if (newStatus == status) return;
     _status = newStatus;
     if (newStatus is SuccessStatus<T>) {
@@ -65,43 +65,43 @@ mixin StateMixin<T> on ListNotifier {
   }
 
   @protected
-  void change(GetStatus<T> status) {
+  void change(JetStatus<T> status) {
     if (status != this.status) {
       this.status = status;
     }
   }
 
   void setSuccess(T data) {
-    change(GetStatus<T>.success(data));
+    change(JetStatus<T>.success(data));
   }
 
   void setError(Object error) {
-    change(GetStatus<T>.error(error));
+    change(JetStatus<T>.error(error));
   }
 
   void setLoading() {
-    change(GetStatus<T>.loading());
+    change(JetStatus<T>.loading());
   }
 
   void setEmpty() {
-    change(GetStatus<T>.empty());
+    change(JetStatus<T>.empty());
   }
 
   void futurize(Future<T> Function() body,
       {T? initialData, String? errorMessage, bool useEmpty = true}) {
     final compute = body;
     _value ??= initialData;
-    status = GetStatus<T>.loading();
+    status = JetStatus<T>.loading();
     compute().then((newValue) {
       if ((newValue == null || newValue._isEmpty()) && useEmpty) {
-        status = GetStatus<T>.empty();
+        status = JetStatus<T>.empty();
       } else {
-        status = GetStatus<T>.success(newValue);
+        status = JetStatus<T>.success(newValue);
       }
 
       refresh();
     }, onError: (err) {
-      status = GetStatus.error(
+      status = JetStatus.error(
           err is Exception ? err : Exception(errorMessage ?? err.toString()));
       refresh();
     });
@@ -112,8 +112,8 @@ typedef FuturizeCallback<T> = Future<T> Function(VoidCallback fn);
 
 typedef VoidCallback = void Function();
 
-class GetListenable<T> extends ListNotifierSingle implements RxInterface<T> {
-  GetListenable(T val) : _value = val;
+class JetListenable<T> extends ListNotifierSingle implements RxInterface<T> {
+  JetListenable(T val) : _value = val;
 
   StreamController<T>? _controller;
 
@@ -226,10 +226,10 @@ class Value<T> extends ListNotifier
   dynamic toJson() => (value as dynamic)?.toJson();
 }
 
-/// GetNotifier has a native status and state implementation, with the
+/// JetNotifier has a native status and state implementation, with the
 /// Get Lifecycle
-abstract class GetNotifier<T> extends Value<T> with GetLifeCycleMixin {
-  GetNotifier(super.initial);
+abstract class JetNotifier<T> extends Value<T> with JetLifeCycleMixin {
+  JetNotifier(super.initial);
 }
 
 extension StateExt<T> on StateMixin<T> {
@@ -263,31 +263,31 @@ extension StateExt<T> on StateMixin<T> {
 
 typedef NotifierBuilder<T> = Widget Function(T state);
 
-abstract class GetStatus<T> with Equality {
-  const GetStatus();
+abstract class JetStatus<T> with Equality {
+  const JetStatus();
 
-  factory GetStatus.loading() => LoadingStatus<T>();
+  factory JetStatus.loading() => LoadingStatus<T>();
 
-  factory GetStatus.error(Object message) => ErrorStatus<T, Object>(message);
+  factory JetStatus.error(Object message) => ErrorStatus<T, Object>(message);
 
-  factory GetStatus.empty() => EmptyStatus<T>();
+  factory JetStatus.empty() => EmptyStatus<T>();
 
-  factory GetStatus.success(T data) => SuccessStatus<T>(data);
+  factory JetStatus.success(T data) => SuccessStatus<T>(data);
 
-  factory GetStatus.custom() => CustomStatus<T>();
+  factory JetStatus.custom() => CustomStatus<T>();
 }
 
-class CustomStatus<T> extends GetStatus<T> {
+class CustomStatus<T> extends JetStatus<T> {
   @override
   List get props => [];
 }
 
-class LoadingStatus<T> extends GetStatus<T> {
+class LoadingStatus<T> extends JetStatus<T> {
   @override
   List get props => [];
 }
 
-class SuccessStatus<T> extends GetStatus<T> {
+class SuccessStatus<T> extends JetStatus<T> {
   final T data;
 
   const SuccessStatus(this.data);
@@ -296,7 +296,7 @@ class SuccessStatus<T> extends GetStatus<T> {
   List get props => [data];
 }
 
-class ErrorStatus<T, S> extends GetStatus<T> {
+class ErrorStatus<T, S> extends JetStatus<T> {
   final S? error;
 
   const ErrorStatus([this.error]);
@@ -305,12 +305,12 @@ class ErrorStatus<T, S> extends GetStatus<T> {
   List get props => [error];
 }
 
-class EmptyStatus<T> extends GetStatus<T> {
+class EmptyStatus<T> extends JetStatus<T> {
   @override
   List get props => [];
 }
 
-extension StatusDataExt<T> on GetStatus<T> {
+extension StatusDataExt<T> on JetStatus<T> {
   bool get isLoading => this is LoadingStatus;
 
   bool get isSuccess => this is SuccessStatus;

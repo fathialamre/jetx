@@ -3,7 +3,7 @@ import 'platform_stub.dart'
     if (dart.library.io) 'platform_io.dart';
 
 // ignore: avoid_classes_with_only_static_members
-class GetPlatform {
+class JetPlatform {
   static bool get isWeb => GeneralPlatform.isWeb;
 
   static bool get isMacOS => GeneralPlatform.isMacOS;
@@ -18,8 +18,8 @@ class GetPlatform {
 
   static bool get isFuchsia => GeneralPlatform.isFuchsia;
 
-  static bool get isMobile => GetPlatform.isIOS || GetPlatform.isAndroid;
+  static bool get isMobile => JetPlatform.isIOS || JetPlatform.isAndroid;
 
   static bool get isDesktop =>
-      GetPlatform.isMacOS || GetPlatform.isWindows || GetPlatform.isLinux;
+      JetPlatform.isMacOS || JetPlatform.isWindows || JetPlatform.isLinux;
 }

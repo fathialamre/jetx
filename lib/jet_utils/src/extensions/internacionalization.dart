@@ -20,7 +20,7 @@ extension FirstWhereExt<T> on List<T> {
   }
 }
 
-extension LocalesIntl on GetInterface {
+extension LocalesIntl on JetInterface {
   static final _intlHost = _IntlHost();
 
   Locale? get locale => _intlHost.locale;

@@ -6,10 +6,10 @@ import '../../../jet_instance/src/extension_instance.dart';
 import '../../../jet_instance/src/lifecycle.dart';
 import '../simple/list_notifier.dart';
 
-typedef GetXControllerBuilder<T extends GetLifeCycleMixin> = Widget Function(
+typedef GetXControllerBuilder<T extends JetLifeCycleMixin> = Widget Function(
     T controller);
 
-class GetX<T extends GetLifeCycleMixin> extends StatefulWidget {
+class GetX<T extends JetLifeCycleMixin> extends StatefulWidget {
   final GetXControllerBuilder<T> builder;
   final bool global;
   final bool autoRemove;
@@ -56,7 +56,7 @@ class GetX<T extends GetLifeCycleMixin> extends StatefulWidget {
   GetXState<T> createState() => GetXState<T>();
 }
 
-class GetXState<T extends GetLifeCycleMixin> extends State<GetX<T>> {
+class GetXState<T extends JetLifeCycleMixin> extends State<GetX<T>> {
   T? controller;
   bool? _isCreator = false;
 

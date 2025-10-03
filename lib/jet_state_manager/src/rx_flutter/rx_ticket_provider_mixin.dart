@@ -8,12 +8,12 @@ import '../../../jet_instance/src/lifecycle.dart';
 import '../../jet_state_manager.dart';
 
 /// Used like `SingleTickerProviderMixin` but only with Get Controllers.
-/// Simplifies AnimationController creation inside GetxController.
+/// Simplifies AnimationController creation inside JetController.
 ///
 /// Example:
 ///```
-///class SplashController extends GetxController with
-///    GetSingleTickerProviderStateMixin {
+///class SplashController extends JetController with
+///    JetSingleTickerProviderStateMixin {
 ///  AnimationController controller;
 ///
 ///  @override
@@ -27,7 +27,7 @@ import '../../jet_state_manager.dart';
 ///  }
 ///  ...
 /// ```
-mixin GetSingleTickerProviderStateMixin on GetxController
+mixin JetSingleTickerProviderStateMixin on JetController
     implements TickerProvider {
   Ticker? _ticker;
 
@@ -37,13 +37,13 @@ mixin GetSingleTickerProviderStateMixin on GetxController
       if (_ticker == null) return true;
       throw FlutterError.fromParts(<DiagnosticsNode>[
         ErrorSummary(
-            '$runtimeType is a GetSingleTickerProviderStateMixin but multiple tickers were created.'),
+            '$runtimeType is a JetSingleTickerProviderStateMixin but multiple tickers were created.'),
         ErrorDescription(
-            'A GetSingleTickerProviderStateMixin can only be used as a TickerProvider once.'),
+            'A JetSingleTickerProviderStateMixin can only be used as a TickerProvider once.'),
         ErrorHint(
           'If a State is used for multiple AnimationController objects, or if it is passed to other '
           'objects and those objects might use it more than one time in total, then instead of '
-          'mixing in a GetSingleTickerProviderStateMixin, use a regular GetTickerProviderStateMixin.',
+          'mixing in a JetSingleTickerProviderStateMixin, use a regular JetTickerProviderStateMixin.',
         ),
       ]);
     }());
@@ -67,7 +67,7 @@ mixin GetSingleTickerProviderStateMixin on GetxController
       throw FlutterError.fromParts(<DiagnosticsNode>[
         ErrorSummary('$this was disposed with an active Ticker.'),
         ErrorDescription(
-          '$runtimeType created a Ticker via its GetSingleTickerProviderStateMixin, but at the time '
+          '$runtimeType created a Ticker via its JetSingleTickerProviderStateMixin, but at the time '
           'dispose() was called on the mixin, that Ticker was still active. The Ticker must '
           'be disposed before calling super.dispose().',
         ),
@@ -84,12 +84,12 @@ mixin GetSingleTickerProviderStateMixin on GetxController
 }
 
 /// Used like `TickerProviderMixin` but only with Get Controllers.
-/// Simplifies multiple AnimationController creation inside GetxController.
+/// Simplifies multiple AnimationController creation inside JetController.
 ///
 /// Example:
 ///```
-///class SplashController extends GetxController with
-///    GetTickerProviderStateMixin {
+///class SplashController extends JetController with
+///    JetTickerProviderStateMixin {
 ///  AnimationController first_controller;
 ///  AnimationController second_controller;
 ///
@@ -108,7 +108,7 @@ mixin GetSingleTickerProviderStateMixin on GetxController
 ///  }
 ///  ...
 /// ```
-mixin GetTickerProviderStateMixin on GetxController implements TickerProvider {
+mixin JetTickerProviderStateMixin on JetController implements TickerProvider {
   Set<Ticker>? _tickers;
 
   @override
@@ -144,7 +144,7 @@ mixin GetTickerProviderStateMixin on GetxController implements TickerProvider {
             throw FlutterError.fromParts(<DiagnosticsNode>[
               ErrorSummary('$this was disposed with an active Ticker.'),
               ErrorDescription(
-                '$runtimeType created a Ticker via its GetTickerProviderStateMixin, but at the time '
+                '$runtimeType created a Ticker via its JetTickerProviderStateMixin, but at the time '
                 'dispose() was called on the mixin, that Ticker was still active. All Tickers must '
                 'be disposed before calling super.dispose().',
               ),
@@ -167,7 +167,7 @@ mixin GetTickerProviderStateMixin on GetxController implements TickerProvider {
 class _WidgetTicker extends Ticker {
   _WidgetTicker(super.onTick, this._creator, {super.debugLabel});
 
-  final GetTickerProviderStateMixin _creator;
+  final JetTickerProviderStateMixin _creator;
 
   @override
   void dispose() {

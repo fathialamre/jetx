@@ -3,18 +3,18 @@ import 'package:flutter/widgets.dart';
 
 import '../../../get.dart';
 
-class GetInformationParser extends RouteInformationParser<RouteDecoder> {
-  factory GetInformationParser.createInformationParser(
+class JetInformationParser extends RouteInformationParser<RouteDecoder> {
+  factory JetInformationParser.createInformationParser(
       {String initialRoute = '/'}) {
-    return GetInformationParser(initialRoute: initialRoute);
+    return JetInformationParser(initialRoute: initialRoute);
   }
 
   final String initialRoute;
 
-  GetInformationParser({
+  JetInformationParser({
     required this.initialRoute,
   }) {
-    Get.log('GetInformationParser is created !');
+    Get.log('JetInformationParser is created !');
   }
   @override
   SynchronousFuture<RouteDecoder> parseRouteInformation(
@@ -34,7 +34,7 @@ class GetInformationParser extends RouteInformationParser<RouteDecoder> {
       location = initialRoute;
     }
 
-    Get.log('GetInformationParser: route location: $location');
+    Get.log('JetInformationParser: route location: $location');
 
     return SynchronousFuture(RouteDecoder.fromRoute(location));
   }

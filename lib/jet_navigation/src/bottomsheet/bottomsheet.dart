@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import '../../../get.dart';
 import '../router_report.dart';
 
-class GetModalBottomSheetRoute<T> extends PopupRoute<T> {
-  GetModalBottomSheetRoute({
+class JetModalBottomSheetRoute<T> extends PopupRoute<T> {
+  JetModalBottomSheetRoute({
     this.builder,
     this.theme,
     this.barrierLabel,
@@ -126,7 +126,7 @@ class _GetModalBottomSheet<T> extends StatefulWidget {
     this.isPersistent = false,
   });
   final bool isPersistent;
-  final GetModalBottomSheetRoute<T>? route;
+  final JetModalBottomSheetRoute<T>? route;
   final bool isScrollControlled;
   final Color? backgroundColor;
   final double? elevation;
@@ -225,7 +225,7 @@ class _GetPerModalBottomSheet<T> extends StatefulWidget {
     this.enableDrag = true,
   });
   final bool? isPersistent;
-  final GetModalBottomSheetRoute<T>? route;
+  final JetModalBottomSheetRoute<T>? route;
   final bool isScrollControlled;
   final Color? backgroundColor;
   final double? elevation;

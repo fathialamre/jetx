@@ -43,8 +43,8 @@ extension PageArgExt on BuildContext {
     return parser?.restoreRouteInformation(config)?.uri.toString() ?? '/';
   }
 
-  GetDelegate get delegate {
-    return router.routerDelegate as GetDelegate;
+  JetDelegate get delegate {
+    return router.routerDelegate as JetDelegate;
   }
 }
 

@@ -1,7 +1,7 @@
 part of '../rx_types.dart';
 
 /// Create a list similar to `List<T>`
-class RxList<E> extends GetListenable<List<E>>
+class RxList<E> extends JetListenable<List<E>>
     with ListMixin<E>, RxObjectMixin<List<E>> {
   RxList([super.initial = const []]);
 

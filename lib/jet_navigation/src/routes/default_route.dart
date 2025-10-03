@@ -32,13 +32,13 @@ mixin PageRouteReportMixin<T> on Route<T> {
   }
 }
 
-class GetPageRoute<T> extends PageRoute<T>
-    with GetPageRouteTransitionMixin<T>, PageRouteReportMixin {
+class JetPageRoute<T> extends PageRoute<T>
+    with JetPageRouteTransitionMixin<T>, PageRouteReportMixin {
   /// Creates a page route for use in an iOS designed app.
   ///
   /// The [builder], [maintainState], and [fullscreenDialog] arguments must not
   /// be null.
-  GetPageRoute({
+  JetPageRoute({
     super.settings,
     this.transitionDuration = const Duration(milliseconds: 300),
     this.reverseTransitionDuration = const Duration(milliseconds: 300),
@@ -71,7 +71,7 @@ class GetPageRoute<T> extends PageRoute<T>
   @override
   final Duration reverseTransitionDuration;
 
-  final GetPageBuilder? page;
+  final JetPageBuilder? page;
   final String? routeName;
   //final String reference;
   final CustomTransition? customTransition;
@@ -91,7 +91,7 @@ class GetPageRoute<T> extends PageRoute<T>
   final Transition? transition;
   final Curve? curve;
   final Alignment? alignment;
-  final List<GetMiddleware>? middlewares;
+  final List<JetMiddleware>? middlewares;
 
   @override
   final Color? barrierColor;

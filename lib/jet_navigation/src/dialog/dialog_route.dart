@@ -2,8 +2,8 @@ import 'package:flutter/widgets.dart';
 
 import '../router_report.dart';
 
-class GetDialogRoute<T> extends PopupRoute<T> {
-  GetDialogRoute({
+class JetDialogRoute<T> extends PopupRoute<T> {
+  JetDialogRoute({
     required RoutePageBuilder pageBuilder,
     bool barrierDismissible = true,
     String? barrierLabel,

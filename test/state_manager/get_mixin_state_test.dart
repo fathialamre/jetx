@@ -89,7 +89,7 @@ void main() {
   // );
 }
 
-class Controller extends GetxController {
+class Controller extends JetController {
   static Controller get to => Get.find();
   int count = 0;
   RxInt counter = 0.obs;

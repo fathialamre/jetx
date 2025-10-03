@@ -6,13 +6,13 @@ import 'package:flutter/material.dart';
 import '../../../jet_core/jet_core.dart';
 import '../../jet_navigation.dart';
 
-typedef OnTap = void Function(GetSnackBar snack);
+typedef OnTap = void Function(JetSnackBar snack);
 typedef OnHover = void Function(
-    GetSnackBar snack, SnackHoverState snackHoverState);
+    JetSnackBar snack, SnackHoverState snackHoverState);
 
 typedef SnackbarStatusCallback = void Function(SnackbarStatus? status);
 
-class GetSnackBar extends StatefulWidget {
+class JetSnackBar extends StatefulWidget {
   /// A callback for you to listen to the different Snack status
   final SnackbarStatusCallback? snackbarStatus;
 
@@ -172,7 +172,7 @@ class GetSnackBar extends StatefulWidget {
   /// Every other widget is ignored if this is not null.
   final Form? userInputForm;
 
-  const GetSnackBar({
+  const JetSnackBar({
     super.key,
     this.title,
     this.message,
@@ -214,7 +214,7 @@ class GetSnackBar extends StatefulWidget {
   });
 
   @override
-  State createState() => GetSnackBarState();
+  State createState() => JetSnackBarState();
 
   /// Show the snack. It's call [SnackbarStatus.OPENING] state
   /// followed by [SnackbarStatus.OPEN]
@@ -223,7 +223,7 @@ class GetSnackBar extends StatefulWidget {
   }
 }
 
-class GetSnackBarState extends State<GetSnackBar>
+class JetSnackBarState extends State<JetSnackBar>
     with TickerProviderStateMixin {
   AnimationController? _fadeController;
   late Animation<double> _fadeAnimation;

@@ -66,10 +66,10 @@ void main() {
   });
 
   // testWidgets(
-  //   "GetMaterialApp with debugShowMaterialGrid null",
+  //   "JetMaterialApp with debugShowMaterialGrid null",
   //   (tester) async {
   //     expect(
-  //       () => GetMaterialApp(
+  //       () => JetMaterialApp(
   //         debugShowMaterialGrid: null,
   //       ),
   //       throwsAssertionError,

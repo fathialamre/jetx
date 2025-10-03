@@ -1,6 +1,6 @@
 part of '../rx_types.dart';
 
-class RxSet<E> extends GetListenable<Set<E>>
+class RxSet<E> extends JetListenable<Set<E>>
     with SetMixin<E>, RxObjectMixin<Set<E>> {
   RxSet([super.initial = const {}]);
 

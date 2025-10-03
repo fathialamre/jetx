@@ -1,6 +1,6 @@
 import '../jet.dart';
 
-extension GetResetExt on GetInterface {
+extension GetResetExt on JetInterface {
   void reset({bool clearRouteBindings = true}) {
     Get.resetInstance(clearRouteBindings: clearRouteBindings);
     // Get.clearRouteTree();

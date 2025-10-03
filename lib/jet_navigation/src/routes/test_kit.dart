@@ -1,4 +1,4 @@
-class GetTestMode {
+class JetTestMode {
   static bool active = false;
   static Object? _arguments;
 

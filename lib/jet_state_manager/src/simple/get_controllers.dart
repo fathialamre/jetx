@@ -13,7 +13,7 @@ import 'list_notifier.dart';
 ///
 /// Example:
 /// ```dart
-/// class CounterController extends GetxController {
+/// class CounterController extends JetController {
 ///   var count = 0;
 ///
 ///   void increment() {
@@ -23,7 +23,7 @@ import 'list_notifier.dart';
 /// }
 /// ```
 // ignore: prefer_mixin
-abstract class GetxController extends ListNotifier with GetLifeCycleMixin {
+abstract class JetController extends ListNotifier with JetLifeCycleMixin {
   /// Notifies listeners to update the UI.
   ///
   /// When called without parameters, it will update all widgets that depend on
@@ -55,7 +55,7 @@ abstract class GetxController extends ListNotifier with GetLifeCycleMixin {
 ///
 /// Example:
 /// ```dart
-/// class MyController extends GetxController with ScrollMixin {
+/// class MyController extends JetController with ScrollMixin {
 ///   @override
 ///   Future<void> onEndScroll() async {
 ///     // Load more data when scrolled to bottom
@@ -67,7 +67,7 @@ abstract class GetxController extends ListNotifier with GetLifeCycleMixin {
 ///   }
 /// }
 /// ```
-mixin ScrollMixin on GetLifeCycleMixin {
+mixin ScrollMixin on JetLifeCycleMixin {
   /// The scroll controller used to detect scroll position
   final ScrollController scroll = ScrollController();
 
@@ -119,7 +119,7 @@ mixin ScrollMixin on GetLifeCycleMixin {
 
 /// A base controller class for reactive state management using Rx variables.
 ///
-/// This class is a lightweight alternative to [GetxController] when you only
+/// This class is a lightweight alternative to [JetController] when you only
 /// need reactive variables without the need for manual UI updates.
 ///
 /// Example:
@@ -129,7 +129,7 @@ mixin ScrollMixin on GetLifeCycleMixin {
 ///   final age = 30.obs;
 /// }
 /// ```
-abstract class RxController with GetLifeCycleMixin {}
+abstract class RxController with JetLifeCycleMixin {}
 
 /// A controller that manages state for asynchronous operations.
 ///
@@ -154,7 +154,7 @@ abstract class RxController with GetLifeCycleMixin {}
 ///   }
 /// }
 /// ```
-abstract class StateController<T> extends GetxController with StateMixin<T> {}
+abstract class StateController<T> extends JetController with StateMixin<T> {}
 
 /// A controller that combines full lifecycle management with state management.
 ///
@@ -190,7 +190,7 @@ abstract class SuperController<T> extends FullLifeCycleController
 
 /// A controller that can observe the full app lifecycle.
 ///
-/// This controller extends [GetxController] and implements [WidgetsBindingObserver]
+/// This controller extends [JetController] and implements [WidgetsBindingObserver]
 /// to provide full lifecycle awareness. It can respond to:
 /// - App lifecycle changes (resumed, paused, etc.)
 /// - Memory pressure events
@@ -219,7 +219,7 @@ abstract class SuperController<T> extends FullLifeCycleController
 ///   }
 /// }
 /// ```
-abstract class FullLifeCycleController extends GetxController
+abstract class FullLifeCycleController extends JetController
     with
         // ignore: prefer_mixin
         WidgetsBindingObserver {}

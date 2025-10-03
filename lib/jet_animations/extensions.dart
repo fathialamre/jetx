@@ -7,10 +7,10 @@ const _defaultDuration = Duration(seconds: 2);
 const _defaultDelay = Duration.zero;
 
 extension AnimationExtension on Widget {
-  GetAnimatedBuilder? get _currentAnimation =>
-      (this is GetAnimatedBuilder) ? this as GetAnimatedBuilder : null;
+  JetAnimatedBuilder? get _currentAnimation =>
+      (this is JetAnimatedBuilder) ? this as JetAnimatedBuilder : null;
 
-  GetAnimatedBuilder fadeIn({
+  JetAnimatedBuilder fadeIn({
     Duration duration = _defaultDuration,
     Duration delay = _defaultDelay,
     ValueSetter<AnimationController>? onComplete,
@@ -27,7 +27,7 @@ extension AnimationExtension on Widget {
     );
   }
 
-  GetAnimatedBuilder fadeOut({
+  JetAnimatedBuilder fadeOut({
     Duration duration = _defaultDuration,
     Duration delay = _defaultDelay,
     ValueSetter<AnimationController>? onComplete,
@@ -44,7 +44,7 @@ extension AnimationExtension on Widget {
     );
   }
 
-  GetAnimatedBuilder rotate({
+  JetAnimatedBuilder rotate({
     required double begin,
     required double end,
     Duration duration = _defaultDuration,
@@ -62,7 +62,7 @@ extension AnimationExtension on Widget {
     );
   }
 
-  GetAnimatedBuilder scale({
+  JetAnimatedBuilder scale({
     required double begin,
     required double end,
     Duration duration = _defaultDuration,
@@ -80,7 +80,7 @@ extension AnimationExtension on Widget {
     );
   }
 
-  GetAnimatedBuilder slide({
+  JetAnimatedBuilder slide({
     required OffsetBuilder offset,
     double begin = 0,
     double end = 1,
@@ -100,7 +100,7 @@ extension AnimationExtension on Widget {
     );
   }
 
-  GetAnimatedBuilder bounce({
+  JetAnimatedBuilder bounce({
     required double begin,
     required double end,
     Duration duration = _defaultDuration,
@@ -118,7 +118,7 @@ extension AnimationExtension on Widget {
     );
   }
 
-  GetAnimatedBuilder spin({
+  JetAnimatedBuilder spin({
     Duration duration = _defaultDuration,
     Duration delay = _defaultDelay,
     ValueSetter<AnimationController>? onComplete,
@@ -132,7 +132,7 @@ extension AnimationExtension on Widget {
     );
   }
 
-  GetAnimatedBuilder size({
+  JetAnimatedBuilder size({
     required double begin,
     required double end,
     Duration duration = _defaultDuration,
@@ -150,7 +150,7 @@ extension AnimationExtension on Widget {
     );
   }
 
-  GetAnimatedBuilder blur({
+  JetAnimatedBuilder blur({
     double begin = 0,
     double end = 15,
     Duration duration = _defaultDuration,
@@ -168,7 +168,7 @@ extension AnimationExtension on Widget {
     );
   }
 
-  GetAnimatedBuilder flip({
+  JetAnimatedBuilder flip({
     double begin = 0,
     double end = 1,
     Duration duration = _defaultDuration,
@@ -186,7 +186,7 @@ extension AnimationExtension on Widget {
     );
   }
 
-  GetAnimatedBuilder wave({
+  JetAnimatedBuilder wave({
     double begin = 0,
     double end = 1,
     Duration duration = _defaultDuration,

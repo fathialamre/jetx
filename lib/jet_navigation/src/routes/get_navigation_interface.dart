@@ -89,7 +89,7 @@ mixin IGetNavigation {
 
   Future<T?>? offAll<T>(
     Widget Function() page, {
-    bool Function(GetPage route)? predicate,
+    bool Function(JetPage route)? predicate,
     bool opaque = true,
     bool? popGesture,
     String? id,
@@ -121,7 +121,7 @@ mixin IGetNavigation {
 
   Future<T?>? offAllNamed<T>(
     String newRouteName, {
-    // bool Function(GetPage route)? predicate,
+    // bool Function(JetPage route)? predicate,
     dynamic arguments,
     String? id,
     Map<String, String>? parameters,
@@ -129,7 +129,7 @@ mixin IGetNavigation {
 
   Future<T?>? offNamedUntil<T>(
     String page, {
-    bool Function(GetPage route)? predicate,
+    bool Function(JetPage route)? predicate,
     dynamic arguments,
     String? id,
     Map<String, String>? parameters,
@@ -137,13 +137,13 @@ mixin IGetNavigation {
 
   Future<T?> toNamedAndOffUntil<T>(
     String page,
-    bool Function(GetPage) predicate, [
+    bool Function(JetPage) predicate, [
     Object? data,
   ]);
 
   Future<T?> offUntil<T>(
     Widget Function() page,
-    bool Function(GetPage) predicate, [
+    bool Function(JetPage) predicate, [
     Object? arguments,
   ]);
 
@@ -153,7 +153,7 @@ mixin IGetNavigation {
 
   Future<R?> backAndtoNamed<T, R>(String page, {T? result, Object? arguments});
 
-  void backUntil(bool Function(GetPage) predicate);
+  void backUntil(bool Function(JetPage) predicate);
 
   void goToUnknownPage([bool clearPages = true]);
 }

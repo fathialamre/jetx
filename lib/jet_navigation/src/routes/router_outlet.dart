@@ -16,11 +16,11 @@ class RouterOutlet<TDelegate extends RouterDelegate<T>, T extends Object>
   RouterOutlet({
     Key? key,
     TDelegate? delegate,
-    required Iterable<GetPage> Function(T currentNavStack) pickPages,
+    required Iterable<JetPage> Function(T currentNavStack) pickPages,
     required Widget Function(
       BuildContext context,
       TDelegate,
-      Iterable<GetPage>? page,
+      Iterable<JetPage>? page,
     ) pageBuilder,
   }) : this.builder(
             builder: (context) {
@@ -77,18 +77,18 @@ class RouterOutletState<TDelegate extends RouterDelegate<T>, T extends Object>
   }
 }
 
-class GetRouterOutlet extends RouterOutlet<GetDelegate, RouteDecoder> {
-  GetRouterOutlet({
+class JetRouterOutlet extends RouterOutlet<JetDelegate, RouteDecoder> {
+  JetRouterOutlet({
     Key? key,
     String? anchorRoute,
     required String initialRoute,
-    Iterable<GetPage> Function(Iterable<GetPage> afterAnchor)? filterPages,
-    GetDelegate? delegate,
+    Iterable<JetPage> Function(Iterable<JetPage> afterAnchor)? filterPages,
+    JetDelegate? delegate,
     String? restorationScopeId,
   }) : this.pickPages(
           restorationScopeId: restorationScopeId,
           pickPages: (config) {
-            Iterable<GetPage<dynamic>> ret;
+            Iterable<JetPage<dynamic>> ret;
             if (anchorRoute == null) {
               // jump the ancestor path
               final length = Uri.parse(initialRoute).pathSegments.length;
@@ -110,27 +110,27 @@ class GetRouterOutlet extends RouterOutlet<GetDelegate, RouteDecoder> {
           navigatorKey: Get.nestedKey(anchorRoute)?.navigatorKey,
           delegate: delegate,
         );
-  GetRouterOutlet.pickPages({
+  JetRouterOutlet.pickPages({
     super.key,
-    Widget Function(GetDelegate delegate)? emptyWidget,
-    GetPage Function(GetDelegate delegate)? emptyPage,
+    Widget Function(JetDelegate delegate)? emptyWidget,
+    JetPage Function(JetDelegate delegate)? emptyPage,
     required super.pickPages,
     bool Function(Route<dynamic>, dynamic)? onPopPage,
     String? restorationScopeId,
     GlobalKey<NavigatorState>? navigatorKey,
-    GetDelegate? delegate,
+    JetDelegate? delegate,
   }) : super(
           pageBuilder: (context, rDelegate, pages) {
-            final pageRes = <GetPage?>[
+            final pageRes = <JetPage?>[
               ...?pages,
               if (pages == null || pages.isEmpty) emptyPage?.call(rDelegate),
-            ].whereType<GetPage>();
+            ].whereType<JetPage>();
 
             if (pageRes.isNotEmpty) {
               return InheritedNavigator(
                 navigatorKey: navigatorKey ??
                     Get.rootController.rootDelegate.navigatorKey,
-                child: GetNavigator(
+                child: JetNavigator(
                   restorationScopeId: restorationScopeId,
                   onPopPage: onPopPage ??
                       (route, result) {
@@ -150,11 +150,11 @@ class GetRouterOutlet extends RouterOutlet<GetDelegate, RouteDecoder> {
           delegate: delegate ?? Get.rootController.rootDelegate,
         );
 
-  GetRouterOutlet.builder({
+  JetRouterOutlet.builder({
     super.key,
     required super.builder,
     String? route,
-    GetDelegate? routerDelegate,
+    JetDelegate? routerDelegate,
   }) : super.builder(
           delegate: routerDelegate ??
               (route != null
@@ -187,14 +187,14 @@ extension NavKeyExt on BuildContext {
   }
 }
 
-extension PagesListExt on List<GetPage> {
+extension PagesListExt on List<JetPage> {
   /// Returns the route and all following routes after the given route.
-  Iterable<GetPage> pickFromRoute(String route) {
+  Iterable<JetPage> pickFromRoute(String route) {
     return skipWhile((value) => value.name != route);
   }
 
   /// Returns the routes after the given route.
-  Iterable<GetPage> pickAfterRoute(String route) {
+  Iterable<JetPage> pickAfterRoute(String route) {
     // If the provided route is root, we take the first route after root.
     if (route == '/') {
       return pickFromRoute(route).skip(1).take(1);
@@ -249,7 +249,7 @@ mixin RouterListenerMixin<T extends StatefulWidget> on State<T> {
     super.didChangeDependencies();
     disposer?.call();
     final router = Router.of(context);
-    delegate ??= router.routerDelegate as GetDelegate;
+    delegate ??= router.routerDelegate as JetDelegate;
 
     delegate?.addListener(_listener);
     disposer = () => delegate?.removeListener(_listener);

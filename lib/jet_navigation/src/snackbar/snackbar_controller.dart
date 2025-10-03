@@ -5,18 +5,18 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 import '../../../get.dart';
-import '../root/get_root.dart';
+import '../root/jet_root.dart';
 
 class SnackbarController {
-  final key = GlobalKey<GetSnackBarState>();
+  final key = GlobalKey<JetSnackBarState>();
 
   static bool get isSnackbarBeingShown =>
-      GetRootState.controller.config.snackBarQueue.isJobInProgress;
+      JetRootState.controller.config.snackBarQueue.isJobInProgress;
 
   late Animation<double> _filterBlurAnimation;
   late Animation<Color?> _filterColorAnimation;
 
-  final GetSnackBar snackbar;
+  final JetSnackBar snackbar;
   final _transitionCompleter = Completer();
 
   late SnackbarStatusCallback? _snackbarStatus;
@@ -62,7 +62,7 @@ class SnackbarController {
   /// Only one GetSnackbar will be displayed at a time, and this method returns
   /// a future to when the snackbar disappears.
   Future<void> show() {
-    return GetRootState.controller.config.snackBarQueue.addJob(this);
+    return JetRootState.controller.config.snackBarQueue.addJob(this);
   }
 
   void _cancelTimer() {
@@ -352,16 +352,16 @@ class SnackbarController {
   }
 
   static Future<void> cancelAllSnackbars() async {
-    await GetRootState.controller.config.snackBarQueue.cancelAllJobs();
+    await JetRootState.controller.config.snackBarQueue.cancelAllJobs();
   }
 
   static Future<void> closeCurrentSnackbar() async {
-    await GetRootState.controller.config.snackBarQueue.closeCurrentJob();
+    await JetRootState.controller.config.snackBarQueue.closeCurrentJob();
   }
 }
 
 class SnackBarQueue {
-  final _queue = GetQueue();
+  final _queue = JetQueue();
   final _snackbarList = <SnackbarController>[];
 
   SnackbarController? get _currentSnackbar {

@@ -4,7 +4,7 @@ import '../rx_flutter/rx_obx_widget.dart';
 import 'get_controllers.dart';
 import 'get_state.dart';
 
-class MixinBuilder<T extends GetxController> extends StatelessWidget {
+class MixinBuilder<T extends JetController> extends StatelessWidget {
   @required
   final Widget Function(T) builder;
   final bool global;
@@ -32,7 +32,7 @@ class MixinBuilder<T extends GetxController> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<T>(
+    return JetBuilder<T>(
         init: init,
         global: global,
         autoRemove: autoRemove,

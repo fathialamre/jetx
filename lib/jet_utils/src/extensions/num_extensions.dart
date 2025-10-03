@@ -3,11 +3,11 @@ import 'dart:async';
 import '../jet_utils/jet_utils.dart';
 
 extension GetNumUtils on num {
-  bool isLowerThan(num b) => GetUtils.isLowerThan(this, b);
+  bool isLowerThan(num b) => JetUtils.isLowerThan(this, b);
 
-  bool isGreaterThan(num b) => GetUtils.isGreaterThan(this, b);
+  bool isGreaterThan(num b) => JetUtils.isGreaterThan(this, b);
 
-  bool isEqual(num b) => GetUtils.isEqual(this, b);
+  bool isEqual(num b) => JetUtils.isEqual(this, b);
 
   /// Utility to delay some callback (or code execution).
   /// TODO: Add a separated implementation of delay() with the ability

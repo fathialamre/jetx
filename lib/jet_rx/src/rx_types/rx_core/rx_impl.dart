@@ -4,7 +4,7 @@ part of '../rx_types.dart';
 /// reactivity
 /// of those `Widgets` and Rx values.
 
-mixin RxObjectMixin<T> on GetListenable<T> {
+mixin RxObjectMixin<T> on JetListenable<T> {
   //late T _value;
 
   /// Makes a direct update of [value] adding it to the Stream
@@ -138,7 +138,7 @@ mixin RxObjectMixin<T> on GetListenable<T> {
 }
 
 /// Base Rx class that manages all the stream logic for any Type.
-abstract class _RxImpl<T> extends GetListenable<T> with RxObjectMixin<T> {
+abstract class _RxImpl<T> extends JetListenable<T> with RxObjectMixin<T> {
   _RxImpl(super.initial);
 
   void addError(Object error, [StackTrace? stackTrace]) {

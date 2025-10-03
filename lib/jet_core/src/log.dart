@@ -1,5 +1,5 @@
 import 'dart:developer' as developer;
-import 'get_main.dart';
+import 'jet_main.dart';
 
 ///VoidCallback from logs
 typedef LogWriterCallback = void Function(String text, {bool isError});

@@ -5,16 +5,16 @@ import '../../../utils.dart';
 import 'get_state.dart';
 import 'get_widget_cache.dart';
 
-/// GetView is a great way of quickly access your Controller
+/// JetView is a great way of quickly access your Controller
 /// without having to call `Get.find<AwesomeController>()` yourself.
 ///
 /// Sample:
 /// ```
-/// class AwesomeController extends GetxController {
+/// class AwesomeController extends JetController {
 ///   final String title = 'My Awesome View';
 /// }
 ///
-/// class AwesomeView extends GetView<AwesomeController> {
+/// class AwesomeView extends JetView<AwesomeController> {
 ///   /// if you need you can pass the tag for
 ///   /// Get.find<AwesomeController>(tag:"myTag");
 ///   @override
@@ -31,8 +31,8 @@ import 'get_widget_cache.dart';
 ///   }
 /// }
 ///``
-abstract class GetView<T> extends StatelessWidget {
-  const GetView({super.key});
+abstract class JetView<T> extends StatelessWidget {
+  const JetView({super.key});
 
   final String? tag = null;
 
@@ -42,23 +42,23 @@ abstract class GetView<T> extends StatelessWidget {
   Widget build(BuildContext context);
 }
 
-/// GetWidget is a great way of quickly access your individual Controller
+/// JetWidget is a great way of quickly access your individual Controller
 /// without having to call `Get.find<AwesomeController>()` yourself.
 /// Get save you controller on cache, so, you can to use Get.create() safely
-/// GetWidget is perfect to multiples instance of a same controller. Each
-/// GetWidget will have your own controller, and will be call events as `onInit`
+/// JetWidget is perfect to multiples instance of a same controller. Each
+/// JetWidget will have your own controller, and will be call events as `onInit`
 /// and `onClose` when the controller get in/get out on memory.
-abstract class GetWidget<S extends GetLifeCycleMixin> extends GetWidgetCache {
-  const GetWidget({super.key});
+abstract class JetWidget<S extends JetLifeCycleMixin> extends JetWidgetCache {
+  const JetWidget({super.key});
 
   @protected
   final String? tag = null;
 
-  S get controller => GetWidget._cache[this] as S;
+  S get controller => JetWidget._cache[this] as S;
 
-  // static final _cache = <GetWidget, GetLifeCycleBase>{};
+  // static final _cache = <JetWidget, GetLifeCycleBase>{};
 
-  static final _cache = Expando<GetLifeCycleMixin>();
+  static final _cache = Expando<JetLifeCycleMixin>();
 
   @protected
   Widget build(BuildContext context);
@@ -67,7 +67,7 @@ abstract class GetWidget<S extends GetLifeCycleMixin> extends GetWidgetCache {
   WidgetCache createWidgetCache() => _GetCache<S>();
 }
 
-class _GetCache<S extends GetLifeCycleMixin> extends WidgetCache<GetWidget<S>> {
+class _GetCache<S extends JetLifeCycleMixin> extends WidgetCache<JetWidget<S>> {
   S? _controller;
   bool _isCreator = false;
   InstanceInfo? info;
@@ -81,7 +81,7 @@ class _GetCache<S extends GetLifeCycleMixin> extends WidgetCache<GetWidget<S>> {
       _controller = Get.find<S>(tag: widget!.tag);
     }
 
-    GetWidget._cache[widget!] = _controller;
+    JetWidget._cache[widget!] = _controller;
 
     super.onInit();
   }
@@ -93,7 +93,7 @@ class _GetCache<S extends GetLifeCycleMixin> extends WidgetCache<GetWidget<S>> {
         widget!.controller.onDelete();
         Get.log('"${widget!.controller.runtimeType}" onClose() called');
         Get.log('"${widget!.controller.runtimeType}" deleted from memory');
-        // GetWidget._cache[widget!] = null;
+        // JetWidget._cache[widget!] = null;
       });
     }
     info = null;

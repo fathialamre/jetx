@@ -2,7 +2,7 @@ import 'package:flutter/widgets.dart';
 
 import '../../../get.dart';
 
-mixin GetResponsiveMixin on Widget {
+mixin JetResponsiveMixin on Widget {
   ResponsiveScreen get screen;
   bool get alwaysUseBuilder;
 
@@ -52,29 +52,29 @@ mixin GetResponsiveMixin on Widget {
 /// Note if you use this method please set the
 /// property `alwaysUseBuilder` to false
 /// With `settings` property you can set the width limit for the screen types.
-class GetResponsiveView<T> extends GetView<T> with GetResponsiveMixin {
+class JetResponsiveView<T> extends JetView<T> with JetResponsiveMixin {
   @override
   final bool alwaysUseBuilder;
 
   @override
   final ResponsiveScreen screen;
 
-  GetResponsiveView({
+  JetResponsiveView({
     this.alwaysUseBuilder = false,
     ResponsiveScreenSettings settings = const ResponsiveScreenSettings(),
     super.key,
   }) : screen = ResponsiveScreen(settings);
 }
 
-class GetResponsiveWidget<T extends GetLifeCycleMixin> extends GetWidget<T>
-    with GetResponsiveMixin {
+class JetResponsiveWidget<T extends JetLifeCycleMixin> extends JetWidget<T>
+    with JetResponsiveMixin {
   @override
   final bool alwaysUseBuilder;
 
   @override
   final ResponsiveScreen screen;
 
-  GetResponsiveWidget({
+  JetResponsiveWidget({
     this.alwaysUseBuilder = false,
     ResponsiveScreenSettings settings = const ResponsiveScreenSettings(),
     super.key,
@@ -110,7 +110,7 @@ class ResponsiveScreen {
 
   late bool _isPlatformDesktop;
   ResponsiveScreen(this.settings) {
-    _isPlatformDesktop = GetPlatform.isDesktop;
+    _isPlatformDesktop = JetPlatform.isDesktop;
   }
 
   double get height => context.height;

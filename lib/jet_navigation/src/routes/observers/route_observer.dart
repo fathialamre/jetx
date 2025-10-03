@@ -13,27 +13,27 @@ String? _extractRouteName(Route? route) {
     return route!.settings.name;
   }
 
-  if (route is GetPageRoute) {
+  if (route is JetPageRoute) {
     return route.routeName;
   }
 
-  if (route is GetDialogRoute) {
+  if (route is JetDialogRoute) {
     return 'DIALOG ${route.hashCode}';
   }
 
-  if (route is GetModalBottomSheetRoute) {
+  if (route is JetModalBottomSheetRoute) {
     return 'BOTTOMSHEET ${route.hashCode}';
   }
 
   return null;
 }
 
-class GetObserver extends NavigatorObserver {
+class JetObserver extends NavigatorObserver {
   final Function(Routing?)? routing;
 
   final Routing? _routeSend;
 
-  GetObserver([this.routing, this._routeSend]);
+  JetObserver([this.routing, this._routeSend]);
 
   @override
   void didPop(Route route, Route? previousRoute) {
@@ -43,7 +43,7 @@ class GetObserver extends NavigatorObserver {
 
     if (currentRoute.isBottomSheet || currentRoute.isDialog) {
       Get.log("CLOSE ${currentRoute.name}");
-    } else if (currentRoute.isGetPageRoute) {
+    } else if (currentRoute.isJetPageRoute) {
       Get.log("CLOSE TO ROUTE ${currentRoute.name}");
     }
     if (previousRoute != null) {
@@ -80,7 +80,7 @@ class GetObserver extends NavigatorObserver {
 
     if (newRoute.isBottomSheet || newRoute.isDialog) {
       Get.log("OPEN ${newRoute.name}");
-    } else if (newRoute.isGetPageRoute) {
+    } else if (newRoute.isJetPageRoute) {
       Get.log("GOING TO ROUTE ${newRoute.name}");
     }
 
@@ -128,7 +128,7 @@ class GetObserver extends NavigatorObserver {
       value.isDialog = currentRoute.isDialog ? false : value.isDialog;
     });
 
-    if (route is GetPageRoute) {
+    if (route is JetPageRoute) {
       RouterReportManager.instance.reportRouteWillDispose(route);
     }
     routing?.call(_routeSend);
@@ -163,7 +163,7 @@ class GetObserver extends NavigatorObserver {
           currentRoute.isBottomSheet ? false : value.isBottomSheet;
       value.isDialog = currentRoute.isDialog ? false : value.isDialog;
     });
-    if (oldRoute is GetPageRoute) {
+    if (oldRoute is JetPageRoute) {
       RouterReportManager.instance.reportRouteWillDispose(oldRoute);
     }
 
@@ -200,14 +200,14 @@ class Routing {
 
 /// This is basically a util for rules about 'what a route is'
 class _RouteData {
-  final bool isGetPageRoute;
+  final bool isJetPageRoute;
   final bool isBottomSheet;
   final bool isDialog;
   final String? name;
 
   const _RouteData({
     required this.name,
-    required this.isGetPageRoute,
+    required this.isJetPageRoute,
     required this.isBottomSheet,
     required this.isDialog,
   });
@@ -215,9 +215,9 @@ class _RouteData {
   factory _RouteData.ofRoute(Route? route) {
     return _RouteData(
       name: _extractRouteName(route),
-      isGetPageRoute: route is GetPageRoute,
-      isDialog: route is GetDialogRoute,
-      isBottomSheet: route is GetModalBottomSheetRoute,
+      isJetPageRoute: route is JetPageRoute,
+      isDialog: route is JetDialogRoute,
+      isBottomSheet: route is JetModalBottomSheetRoute,
     );
   }
 }

@@ -17,8 +17,8 @@ class ConfigData {
   final List<Bind> binds;
   final Duration? transitionDuration;
   final bool? defaultGlobalState;
-  final List<GetPage>? getPages;
-  final GetPage? unknownRoute;
+  final List<JetPage>? getPages;
+  final JetPage? unknownRoute;
   final RouteInformationProvider? routeInformationProvider;
   final RouteInformationParser<Object>? routeInformationParser;
   final RouterDelegate<Object>? routerDelegate;
@@ -103,8 +103,8 @@ class ConfigData {
     List<Bind>? binds,
     Duration? transitionDuration,
     bool? defaultGlobalState,
-    List<GetPage>? getPages,
-    GetPage? unknownRoute,
+    List<JetPage>? getPages,
+    JetPage? unknownRoute,
     RouteInformationProvider? routeInformationProvider,
     RouteInformationParser<Object>? routeInformationParser,
     RouterDelegate<Object>? routerDelegate,
@@ -276,8 +276,8 @@ class ConfigData {
   }
 }
 
-class GetRoot extends StatefulWidget {
-  const GetRoot({
+class JetRoot extends StatefulWidget {
+  const JetRoot({
     super.key,
     required this.config,
     required this.child,
@@ -285,23 +285,23 @@ class GetRoot extends StatefulWidget {
   final ConfigData config;
   final Widget child;
   @override
-  State<GetRoot> createState() => GetRootState();
+  State<JetRoot> createState() => JetRootState();
 
-  static bool get treeInitialized => GetRootState._controller != null;
+  static bool get treeInitialized => JetRootState._controller != null;
 
-  static GetRootState of(BuildContext context) {
+  static JetRootState of(BuildContext context) {
     // Handles the case where the input context is a navigator element.
-    GetRootState? root;
-    if (context is StatefulElement && context.state is GetRootState) {
-      root = context.state as GetRootState;
+    JetRootState? root;
+    if (context is StatefulElement && context.state is JetRootState) {
+      root = context.state as JetRootState;
     }
-    root = context.findRootAncestorStateOfType<GetRootState>() ?? root;
+    root = context.findRootAncestorStateOfType<JetRootState>() ?? root;
     assert(() {
       if (root == null) {
         throw FlutterError(
-          'GetRoot operation requested with a context that does not include a GetRoot.\n'
+          'JetRoot operation requested with a context that does not include a JetRoot.\n'
           'The context used must be that of a '
-          'widget that is a descendant of a GetRoot widget.',
+          'widget that is a descendant of a JetRoot widget.',
         );
       }
       return true;
@@ -310,11 +310,11 @@ class GetRoot extends StatefulWidget {
   }
 }
 
-class GetRootState extends State<GetRoot> with WidgetsBindingObserver {
-  static GetRootState? _controller;
-  static GetRootState get controller {
+class JetRootState extends State<JetRoot> with WidgetsBindingObserver {
+  static JetRootState? _controller;
+  static JetRootState get controller {
     if (_controller == null) {
-      throw Exception('GetRoot is not part of the three');
+      throw Exception('JetRoot is not part of the three');
     } else {
       return _controller!;
     }
@@ -325,14 +325,14 @@ class GetRootState extends State<GetRoot> with WidgetsBindingObserver {
   @override
   void initState() {
     config = widget.config;
-    GetRootState._controller = this;
+    JetRootState._controller = this;
     Engine.instance.addObserver(this);
     onInit();
     super.initState();
   }
 
   // @override
-  // void didUpdateWidget(covariant GetRoot oldWidget) {
+  // void didUpdateWidget(covariant JetRoot oldWidget) {
   //   if (oldWidget.config != widget.config) {
   //     config = widget.config;
   //   }
@@ -363,10 +363,10 @@ class GetRootState extends State<GetRoot> with WidgetsBindingObserver {
     }
 
     if (config.routerDelegate == null) {
-      final newDelegate = GetDelegate.createDelegate(
+      final newDelegate = JetDelegate.createDelegate(
         pages: config.getPages ??
             [
-              GetPage(
+              JetPage(
                 name: cleanRouteName("/${config.home.runtimeType}"),
                 page: () => config.home!,
               ),
@@ -375,10 +375,10 @@ class GetRootState extends State<GetRoot> with WidgetsBindingObserver {
         navigatorKey: config.navigatorKey,
         navigatorObservers: (config.navigatorObservers == null
             ? <NavigatorObserver>[
-                GetObserver(config.routingCallback, Get.routing)
+                JetObserver(config.routingCallback, Get.routing)
               ]
             : <NavigatorObserver>[
-                GetObserver(config.routingCallback, config.routing),
+                JetObserver(config.routingCallback, config.routing),
                 ...config.navigatorObservers!
               ]),
       );
@@ -387,7 +387,7 @@ class GetRootState extends State<GetRoot> with WidgetsBindingObserver {
 
     if (config.routeInformationParser == null) {
       final newRouteInformationParser =
-          GetInformationParser.createInformationParser(
+          JetInformationParser.createInformationParser(
         initialRoute: config.initialRoute ??
             config.getPages?.first.name ??
             cleanRouteName("/${config.home.runtimeType}"),
@@ -420,7 +420,7 @@ class GetRootState extends State<GetRoot> with WidgetsBindingObserver {
     }
 
     // defaultOpaqueRoute = config.opaqueRoute ?? true;
-    // defaultPopGesture = config.popGesture ?? GetPlatform.isIOS;
+    // defaultPopGesture = config.popGesture ?? JetPlatform.isIOS;
     // defaultTransitionDuration =
     //     config.transitionDuration ?? Duration(milliseconds: 300);
 
@@ -434,7 +434,7 @@ class GetRootState extends State<GetRoot> with WidgetsBindingObserver {
 
   set testMode(bool isTest) {
     config = config.copyWith(testMode: isTest);
-    GetTestMode.active = isTest;
+    JetTestMode.active = isTest;
   }
 
   void onReady() {
@@ -501,7 +501,7 @@ class GetRootState extends State<GetRoot> with WidgetsBindingObserver {
 
   GlobalKey<NavigatorState> get key => rootDelegate.navigatorKey;
 
-  GetDelegate get rootDelegate => config.routerDelegate as GetDelegate;
+  JetDelegate get rootDelegate => config.routerDelegate as JetDelegate;
 
   RouteInformationParser<Object> get informationParser =>
       config.routeInformationParser!;
@@ -511,15 +511,15 @@ class GetRootState extends State<GetRoot> with WidgetsBindingObserver {
     return key;
   }
 
-  Map<String, GetDelegate> keys = {};
+  Map<String, JetDelegate> keys = {};
 
-  GetDelegate? nestedKey(String? key) {
+  JetDelegate? nestedKey(String? key) {
     if (key == null) {
       return rootDelegate;
     }
     keys.putIfAbsent(
       key,
-      () => GetDelegate(
+      () => JetDelegate(
         showHashOnUrl: true,
         //debugLabel: 'Getx nested key: ${key.toString()}',
         pages: RouteDecoder.fromRoute(key).currentChildren ?? [],

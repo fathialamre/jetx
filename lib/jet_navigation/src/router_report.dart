@@ -36,7 +36,7 @@ class RouterReportManager<T> {
   }
 
   /// Links a Class instance [S] (or [tag]) to the current route.
-  /// Requires usage of `GetMaterialApp`.
+  /// Requires usage of `JetMaterialApp`.
   void reportDependencyLinkedToRoute(String dependencyKey) {
     if (_current == null) return;
     if (_routesKey.containsKey(_current)) {
@@ -51,7 +51,7 @@ class RouterReportManager<T> {
     _routesByCreate.clear();
   }
 
-  void appendRouteByCreate(GetLifeCycleMixin i) {
+  void appendRouteByCreate(JetLifeCycleMixin i) {
     _routesByCreate[_current] ??= HashSet<Function>();
     // _routesByCreate[Get.reference]!.add(i.onDelete as Function);
     _routesByCreate[_current]!.add(i.onDelete);
@@ -94,7 +94,7 @@ class RouterReportManager<T> {
   /// Clears from memory registered Instances associated with [routeName] when
   /// using `Get.smartManagement` as [SmartManagement.full] or
   /// [SmartManagement.keepFactory]
-  /// Meant for internal usage of `GetPageRoute` and `GetDialogRoute`
+  /// Meant for internal usage of `JetPageRoute` and `JetDialogRoute`
   void _removeDependencyByRoute(T routeName) {
     final keysToRemove = <String>[];
 

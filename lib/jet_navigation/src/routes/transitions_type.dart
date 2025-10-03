@@ -21,5 +21,5 @@ enum Transition {
   native,
 }
 
-typedef GetPageBuilder = Widget Function();
-typedef GetRouteAwarePageBuilder<T> = Widget Function([GetPageRoute<T>? route]);
+typedef JetPageBuilder = Widget Function();
+typedef GetRouteAwarePageBuilder<T> = Widget Function([JetPageRoute<T>? route]);

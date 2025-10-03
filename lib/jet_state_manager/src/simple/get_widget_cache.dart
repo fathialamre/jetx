@@ -1,18 +1,18 @@
 import 'package:flutter/widgets.dart';
 
-abstract class GetWidgetCache extends Widget {
-  const GetWidgetCache({super.key});
+abstract class JetWidgetCache extends Widget {
+  const JetWidgetCache({super.key});
 
   @override
-  GetWidgetCacheElement createElement() => GetWidgetCacheElement(this);
+  JetWidgetCacheElement createElement() => JetWidgetCacheElement(this);
 
   @protected
   @factory
   WidgetCache createWidgetCache();
 }
 
-class GetWidgetCacheElement extends ComponentElement {
-  GetWidgetCacheElement(GetWidgetCache widget)
+class JetWidgetCacheElement extends ComponentElement {
+  JetWidgetCacheElement(JetWidgetCache widget)
       : cache = widget.createWidgetCache(),
         super(widget) {
     cache._element = this;
@@ -28,7 +28,7 @@ class GetWidgetCacheElement extends ComponentElement {
   @override
   Widget build() => cache.build(this);
 
-  final WidgetCache<GetWidgetCache> cache;
+  final WidgetCache<JetWidgetCache> cache;
 
   @override
   void activate() {
@@ -45,13 +45,13 @@ class GetWidgetCacheElement extends ComponentElement {
 }
 
 @optionalTypeArgs
-abstract class WidgetCache<T extends GetWidgetCache> {
+abstract class WidgetCache<T extends JetWidgetCache> {
   T? get widget => _widget;
   T? _widget;
 
   BuildContext? get context => _element;
 
-  GetWidgetCacheElement? _element;
+  JetWidgetCacheElement? _element;
 
   @protected
   @mustCallSuper

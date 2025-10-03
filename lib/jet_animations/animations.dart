@@ -33,7 +33,7 @@ class FadeOutAnimation extends OpacityAnimation {
   });
 }
 
-class OpacityAnimation extends GetAnimatedBuilder<double> {
+class OpacityAnimation extends JetAnimatedBuilder<double> {
   OpacityAnimation({
     super.key,
     required super.duration,
@@ -54,7 +54,7 @@ class OpacityAnimation extends GetAnimatedBuilder<double> {
         );
 }
 
-class RotateAnimation extends GetAnimatedBuilder<double> {
+class RotateAnimation extends JetAnimatedBuilder<double> {
   RotateAnimation({
     super.key,
     required super.duration,
@@ -73,7 +73,7 @@ class RotateAnimation extends GetAnimatedBuilder<double> {
         );
 }
 
-class ScaleAnimation extends GetAnimatedBuilder<double> {
+class ScaleAnimation extends JetAnimatedBuilder<double> {
   ScaleAnimation({
     super.key,
     required super.duration,
@@ -92,7 +92,7 @@ class ScaleAnimation extends GetAnimatedBuilder<double> {
         );
 }
 
-// class SlideAnimation extends GetAnimatedBuilder<Offset> {
+// class SlideAnimation extends JetAnimatedBuilder<Offset> {
 //   SlideAnimation({
 //     super.key,
 //     required super.duration,
@@ -111,7 +111,7 @@ class ScaleAnimation extends GetAnimatedBuilder<double> {
 //         );
 // }
 
-class BounceAnimation extends GetAnimatedBuilder<double> {
+class BounceAnimation extends JetAnimatedBuilder<double> {
   BounceAnimation({
     super.key,
     required super.duration,
@@ -131,7 +131,7 @@ class BounceAnimation extends GetAnimatedBuilder<double> {
         );
 }
 
-class SpinAnimation extends GetAnimatedBuilder<double> {
+class SpinAnimation extends JetAnimatedBuilder<double> {
   SpinAnimation({
     super.key,
     required super.duration,
@@ -148,7 +148,7 @@ class SpinAnimation extends GetAnimatedBuilder<double> {
         );
 }
 
-class SizeAnimation extends GetAnimatedBuilder<double> {
+class SizeAnimation extends JetAnimatedBuilder<double> {
   SizeAnimation({
     super.key,
     required super.duration,
@@ -167,7 +167,7 @@ class SizeAnimation extends GetAnimatedBuilder<double> {
         );
 }
 
-class BlurAnimation extends GetAnimatedBuilder<double> {
+class BlurAnimation extends JetAnimatedBuilder<double> {
   BlurAnimation({
     super.key,
     required super.duration,
@@ -189,7 +189,7 @@ class BlurAnimation extends GetAnimatedBuilder<double> {
         );
 }
 
-class FlipAnimation extends GetAnimatedBuilder<double> {
+class FlipAnimation extends JetAnimatedBuilder<double> {
   FlipAnimation({
     super.key,
     required super.duration,
@@ -212,7 +212,7 @@ class FlipAnimation extends GetAnimatedBuilder<double> {
         );
 }
 
-class WaveAnimation extends GetAnimatedBuilder<double> {
+class WaveAnimation extends JetAnimatedBuilder<double> {
   WaveAnimation({
     super.key,
     required super.duration,
@@ -235,7 +235,7 @@ class WaveAnimation extends GetAnimatedBuilder<double> {
         );
 }
 
-class WobbleAnimation extends GetAnimatedBuilder<double> {
+class WobbleAnimation extends JetAnimatedBuilder<double> {
   WobbleAnimation({
     super.key,
     required super.duration,
@@ -321,7 +321,7 @@ class SlideInDownAnimation extends SlideAnimation {
         );
 }
 
-class SlideAnimation extends GetAnimatedBuilder<double> {
+class SlideAnimation extends JetAnimatedBuilder<double> {
   SlideAnimation({
     super.key,
     required super.duration,
@@ -341,7 +341,7 @@ class SlideAnimation extends GetAnimatedBuilder<double> {
         );
 }
 
-// class ZoomAnimation extends GetAnimatedBuilder<double> {
+// class ZoomAnimation extends JetAnimatedBuilder<double> {
 //   ZoomAnimation({
 //     super.key,
 //     required super.duration,
@@ -360,7 +360,7 @@ class SlideAnimation extends GetAnimatedBuilder<double> {
 //         );
 // }
 
-class ColorAnimation extends GetAnimatedBuilder<Color?> {
+class ColorAnimation extends JetAnimatedBuilder<Color?> {
   ColorAnimation({
     super.key,
     required super.duration,

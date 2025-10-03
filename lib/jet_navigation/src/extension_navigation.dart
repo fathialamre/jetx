@@ -5,14 +5,14 @@ import 'package:jet/jet_navigation/src/routes/test_kit.dart';
 
 import '../../jet.dart';
 import 'dialog/dialog_route.dart';
-import 'root/get_root.dart';
+import 'root/jet_root.dart';
 
 /// It replaces the Flutter Navigator, but needs no context.
 /// You can to use navigator.push(YourRoute()) rather
 /// Navigator.push(context, YourRoute());
 NavigatorState? get navigator => GetNavigationExt(Get).key.currentState;
 
-extension ExtensionBottomSheet on GetInterface {
+extension ExtensionBottomSheet on JetInterface {
   Future<T?> bottomSheet<T>(
     Widget bottomsheet, {
     Color? backgroundColor,
@@ -32,7 +32,7 @@ extension ExtensionBottomSheet on GetInterface {
     Curve? curve,
   }) {
     return Navigator.of(overlayContext!, rootNavigator: useRootNavigator)
-        .push(GetModalBottomSheetRoute<T>(
+        .push(JetModalBottomSheetRoute<T>(
       builder: (_) => bottomsheet,
       isPersistent: persistent,
       // theme: Theme.of(key.currentContext, shadowThemeOnly: true),
@@ -60,7 +60,7 @@ extension ExtensionBottomSheet on GetInterface {
   }
 }
 
-extension ExtensionDialog on GetInterface {
+extension ExtensionDialog on JetInterface {
   /// Show a dialog.
   /// You can pass a [transitionDuration] and/or [transitionCurve],
   /// overriding the defaults when the dialog shows up and closes.
@@ -131,7 +131,7 @@ extension ExtensionDialog on GetInterface {
             rootNavigator:
                 true); //overlay context will always return the root navigator
     return nav.push<T>(
-      GetDialogRoute<T>(
+      JetDialogRoute<T>(
         pageBuilder: pageBuilder,
         barrierDismissible: barrierDismissible,
         barrierLabel: barrierLabel,
@@ -285,7 +285,7 @@ extension ExtensionDialog on GetInterface {
   }
 }
 
-extension ExtensionSnackbar on GetInterface {
+extension ExtensionSnackbar on JetInterface {
   SnackbarController rawSnackbar({
     String? title,
     String? message,
@@ -324,7 +324,7 @@ extension ExtensionSnackbar on GetInterface {
     Color? overlayColor,
     Form? userInputForm,
   }) {
-    final getSnackBar = GetSnackBar(
+    final getSnackBar = JetSnackBar(
       snackbarStatus: snackbarStatus,
       title: title,
       message: message,
@@ -374,7 +374,7 @@ extension ExtensionSnackbar on GetInterface {
     return controller;
   }
 
-  SnackbarController showSnackbar(GetSnackBar snackbar) {
+  SnackbarController showSnackbar(JetSnackBar snackbar) {
     final controller = SnackbarController(snackbar);
     controller.show();
     return controller;
@@ -422,7 +422,7 @@ extension ExtensionSnackbar on GetInterface {
     Color? overlayColor,
     Form? userInputForm,
   }) {
-    final getSnackBar = GetSnackBar(
+    final getSnackBar = JetSnackBar(
         snackbarStatus: snackbarStatus,
         titleText: titleText ??
             Text(
@@ -488,7 +488,7 @@ extension ExtensionSnackbar on GetInterface {
   }
 }
 
-extension GetNavigationExt on GetInterface {
+extension GetNavigationExt on JetInterface {
   /// **Navigation.push()** shortcut.<br><br>
   ///
   /// Pushes a new `page` to the stack
@@ -550,8 +550,8 @@ extension GetNavigationExt on GetInterface {
     );
   }
 
-//   GetPageBuilder _resolvePage(dynamic page, String method) {
-//     if (page is GetPageBuilder) {
+//   JetPageBuilder _resolvePage(dynamic page, String method) {
+//     if (page is JetPageBuilder) {
 //       return page;
 //     } else if (page is Widget) {
 //       Get.log(
@@ -663,7 +663,7 @@ extension GetNavigationExt on GetInterface {
   /// or also like this:
   /// `Get.until((route) => !Get.isDialogOpen())`, to make sure the
   /// dialog is closed
-  void until(bool Function(GetPage<dynamic>) predicate, {String? id}) {
+  void until(bool Function(JetPage<dynamic>) predicate, {String? id}) {
     // if (key.currentState.mounted) // add this if appear problems on future with route navigate
     // when widget don't mounted
     return searchDelegate(id).backUntil(predicate);
@@ -689,7 +689,7 @@ extension GetNavigationExt on GetInterface {
   /// Note: Always put a slash on the route name ('/page1'), to avoid unexpected errors
   Future<T?>? offNamedUntil<T>(
     String page,
-    bool Function(GetPage<dynamic>)? predicate, {
+    bool Function(JetPage<dynamic>)? predicate, {
     String? id,
     dynamic arguments,
     Map<String, String>? parameters,
@@ -769,7 +769,7 @@ extension GetNavigationExt on GetInterface {
   /// Note: Always put a slash on the route ('/page1'), to avoid unexpected errors
   Future<T?>? offAllNamed<T>(
     String newRouteName, {
-    // bool Function(GetPage<dynamic>)? predicate,
+    // bool Function(JetPage<dynamic>)? predicate,
     dynamic arguments,
     String? id,
     Map<String, String>? parameters,
@@ -1022,7 +1022,7 @@ extension GetNavigationExt on GetInterface {
 
   Future<T?> offUntil<T>(
     Widget Function() page,
-    bool Function(GetPage) predicate, [
+    bool Function(JetPage) predicate, [
     Object? arguments,
     String? id,
   ]) {
@@ -1065,7 +1065,7 @@ extension GetNavigationExt on GetInterface {
   /// if you want to push anyway, set [preventDuplicates] to false
   Future<T?>? offAll<T>(
     Widget Function() page, {
-    bool Function(GetPage<dynamic>)? predicate,
+    bool Function(JetPage<dynamic>)? predicate,
     bool? opaque,
     bool? popGesture,
     String? id,
@@ -1179,12 +1179,12 @@ extension GetNavigationExt on GetInterface {
     return rootController.addKey(newKey);
   }
 
-  GetDelegate? nestedKey(String? key) {
+  JetDelegate? nestedKey(String? key) {
     return rootController.nestedKey(key);
   }
 
-  GetDelegate searchDelegate(String? k) {
-    GetDelegate key;
+  JetDelegate searchDelegate(String? k) {
+    JetDelegate key;
     if (k == null) {
       key = Get.rootController.rootDelegate;
     } else {
@@ -1196,11 +1196,11 @@ extension GetNavigationExt on GetInterface {
 
     // if (_key.listenersLength == 0 && !testMode) {
     //   throw """You are trying to use contextless navigation without
-    //   a GetMaterialApp or Get.key.
+    //   a JetMaterialApp or Get.key.
     //   If you are testing your app, you can use:
     //   [Get.testMode = true], or if you are running your app on
     //   a physical device or emulator, you must exchange your [MaterialApp]
-    //   for a [GetMaterialApp].
+    //   for a [JetMaterialApp].
     //   """;
     // }
 
@@ -1317,11 +1317,11 @@ extension GetNavigationExt on GetInterface {
 
   GlobalKey<NavigatorState> get key => rootController.key;
 
-  Map<String, GetDelegate> get keys => rootController.keys;
+  Map<String, JetDelegate> get keys => rootController.keys;
 
-  GetRootState get rootController => GetRootState.controller;
+  JetRootState get rootController => JetRootState.controller;
 
-  ConfigData get _getxController => GetRootState.controller.config;
+  ConfigData get _getxController => JetRootState.controller.config;
 
   bool? get defaultPopGesture => _getxController.defaultPopGesture;
   bool get defaultOpaqueRoute => _getxController.defaultOpaqueRoute;
@@ -1344,7 +1344,7 @@ extension GetNavigationExt on GetInterface {
 
   Routing get routing => _getxController.routing;
 
-  bool get _shouldUseMock => GetTestMode.active && !GetRoot.treeInitialized;
+  bool get _shouldUseMock => JetTestMode.active && !JetRoot.treeInitialized;
 
   /// give current arguments
   dynamic get arguments {
@@ -1353,7 +1353,7 @@ extension GetNavigationExt on GetInterface {
 
   T args<T>() {
     if (_shouldUseMock) {
-      return GetTestMode.arguments as T;
+      return JetTestMode.arguments as T;
     }
     return rootController.rootDelegate.arguments<T>();
   }
@@ -1362,15 +1362,15 @@ extension GetNavigationExt on GetInterface {
   //   rootController.parameters = newParameters;
   // }
 
-  // @Deprecated('Use GetTestMode.active=true instead')
-  set testMode(bool isTest) => GetTestMode.active = isTest;
+  // @Deprecated('Use JetTestMode.active=true instead')
+  set testMode(bool isTest) => JetTestMode.active = isTest;
 
-  // @Deprecated('Use GetTestMode.active instead')
-  bool get testMode => GetTestMode.active;
+  // @Deprecated('Use JetTestMode.active instead')
+  bool get testMode => JetTestMode.active;
 
   Map<String, String?> get parameters {
     if (_shouldUseMock) {
-      return GetTestMode.parameters;
+      return JetTestMode.parameters;
     }
 
     return rootController.rootDelegate.parameters;
@@ -1381,7 +1381,7 @@ extension GetNavigationExt on GetInterface {
       _getxController.routerDelegate as TDelegate?;
 }
 
-extension OverlayExt on GetInterface {
+extension OverlayExt on JetInterface {
   Future<T> showOverlay<T>({
     required Future<T> Function() asyncFunction,
     Color opacityColor = Colors.black,

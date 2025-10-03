@@ -56,8 +56,8 @@ int? _obtainDynamicLength(dynamic value) {
   return null;
 }
 
-class GetUtils {
-  GetUtils._();
+class JetUtils {
+  JetUtils._();
 
   /// Checks if data is null.
   static bool isNull(dynamic value) => value == null;

@@ -3,28 +3,28 @@ import 'package:jet/jet.dart';
 
 import 'get_main_test.dart';
 
-class RedirectMiddleware extends GetMiddleware {
+class RedirectMiddleware extends JetMiddleware {
   @override
   Future<RouteDecoder?> redirectDelegate(RouteDecoder route) async {
     return RouteDecoder.fromRoute('/second');
   }
 }
 
-class Redirect2Middleware extends GetMiddleware {
+class Redirect2Middleware extends JetMiddleware {
   @override
   Future<RouteDecoder?> redirectDelegate(RouteDecoder route) async {
     return RouteDecoder.fromRoute('/first');
   }
 }
 
-class RedirectMiddlewareNull extends GetMiddleware {
+class RedirectMiddlewareNull extends JetMiddleware {
   @override
   Future<RouteDecoder?> redirectDelegate(RouteDecoder route) async {
     return null;
   }
 }
 
-class RedirectBypassMiddleware extends GetMiddleware {
+class RedirectBypassMiddleware extends JetMiddleware {
   @override
   Future<RouteDecoder?> redirectDelegate(RouteDecoder route) async {
     return route;
@@ -39,17 +39,17 @@ void main() {
   testWidgets("Middleware should redirect to second screen", (tester) async {
     // Test setup
     await tester.pumpWidget(
-      GetMaterialApp(
+      JetMaterialApp(
         initialRoute: '/',
         getPages: [
-          GetPage(name: '/', page: () => const Home()),
-          GetPage(
+          JetPage(name: '/', page: () => const Home()),
+          JetPage(
             name: '/first',
             page: () => const FirstScreen(),
             middlewares: [RedirectMiddleware()],
           ),
-          GetPage(name: '/second', page: () => const SecondScreen()),
-          GetPage(name: '/third', page: () => const ThirdScreen()),
+          JetPage(name: '/second', page: () => const SecondScreen()),
+          JetPage(name: '/third', page: () => const ThirdScreen()),
         ],
       ),
     );
@@ -67,17 +67,17 @@ void main() {
   testWidgets("Middleware should stop navigation", (tester) async {
     // Test setup
     await tester.pumpWidget(
-      GetMaterialApp(
+      JetMaterialApp(
         initialRoute: '/',
         getPages: [
-          GetPage(name: '/', page: () => const Home()),
-          GetPage(
+          JetPage(name: '/', page: () => const Home()),
+          JetPage(
             name: '/first',
             page: () => const FirstScreen(),
             middlewares: [RedirectMiddlewareNull()],
           ),
-          GetPage(name: '/second', page: () => const SecondScreen()),
-          GetPage(name: '/third', page: () => const ThirdScreen()),
+          JetPage(name: '/second', page: () => const SecondScreen()),
+          JetPage(name: '/third', page: () => const ThirdScreen()),
         ],
       ),
     );
@@ -96,17 +96,17 @@ void main() {
   testWidgets("Middleware should be bypassed", (tester) async {
     // Test setup
     await tester.pumpWidget(
-      GetMaterialApp(
+      JetMaterialApp(
         initialRoute: '/',
         getPages: [
-          GetPage(name: '/', page: () => const Home()),
-          GetPage(
+          JetPage(name: '/', page: () => const Home()),
+          JetPage(
             name: '/first',
             page: () => const FirstScreen(),
             middlewares: [RedirectBypassMiddleware()],
           ),
-          GetPage(name: '/second', page: () => const SecondScreen()),
-          GetPage(name: '/third', page: () => const ThirdScreen()),
+          JetPage(name: '/second', page: () => const SecondScreen()),
+          JetPage(name: '/third', page: () => const ThirdScreen()),
         ],
       ),
     );
@@ -126,18 +126,18 @@ void main() {
   testWidgets("Middleware should redirect twice", (tester) async {
     // Test setup
     await tester.pumpWidget(
-      GetMaterialApp(
+      JetMaterialApp(
         initialRoute: '/',
         getPages: [
-          GetPage(name: '/', page: () => const Home()),
-          GetPage(
+          JetPage(name: '/', page: () => const Home()),
+          JetPage(
             name: '/first',
             page: () => const FirstScreen(),
             middlewares: [RedirectMiddleware()],
           ),
-          GetPage(name: '/second', page: () => const SecondScreen()),
-          GetPage(name: '/third', page: () => const ThirdScreen()),
-          GetPage(
+          JetPage(name: '/second', page: () => const SecondScreen()),
+          JetPage(name: '/third', page: () => const ThirdScreen()),
+          JetPage(
             name: '/fourth',
             page: () => const FourthScreen(),
             middlewares: [Redirect2Middleware()],
@@ -160,16 +160,16 @@ void main() {
       (tester) async {
     // Test setup
     await tester.pumpWidget(
-      GetMaterialApp(
+      JetMaterialApp(
         initialRoute: '/',
         getPages: [
-          GetPage(name: '/', page: () => const Home()),
-          GetPage(
+          JetPage(name: '/', page: () => const Home()),
+          JetPage(
             name: '/first',
             page: () => const FirstScreen(),
             middlewares: [RedirectMiddleware()],
           ),
-          GetPage(name: '/second', page: () => const SecondScreen()),
+          JetPage(name: '/second', page: () => const SecondScreen()),
         ],
       ),
     );

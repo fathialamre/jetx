@@ -10,7 +10,7 @@ import 'list_notifier.dart';
 
 typedef InitBuilder<T> = T Function();
 
-typedef GetControllerBuilder<T extends GetLifeCycleMixin> = Widget Function(
+typedef GetControllerBuilder<T extends JetLifeCycleMixin> = Widget Function(
     T controller);
 
 extension WatchExt on BuildContext {
@@ -26,12 +26,12 @@ extension ReadExt on BuildContext {
 }
 
 // extension FilterExt on BuildContext {
-//   T filter<T extends GetxController>(Object Function(T value)? filter) {
+//   T filter<T extends JetController>(Object Function(T value)? filter) {
 //     return Bind.of(this, filter: filter, rebuild: true);
 //   }
 // }
 
-class GetBuilder<T extends GetxController> extends StatelessWidget {
+class JetBuilder<T extends JetController> extends StatelessWidget {
   final GetControllerBuilder<T> builder;
   final bool global;
   final Object? id;
@@ -46,7 +46,7 @@ class GetBuilder<T extends GetxController> extends StatelessWidget {
       didUpdateWidget;
   final T? init;
 
-  const GetBuilder({
+  const JetBuilder({
     super.key,
     this.init,
     this.global = true,
@@ -498,13 +498,13 @@ class BindElement<T> extends InheritedElement {
     final filter = _filter != null ? _filterUpdate : getUpdate;
     final localController = _controller;
 
-    if (_needStart == true && localController is GetLifeCycleMixin) {
+    if (_needStart == true && localController is JetLifeCycleMixin) {
       localController.onStart();
       _needStart = false;
       _wasStarted = true;
     }
 
-    if (localController is GetxController) {
+    if (localController is JetController) {
       _remove?.call();
       _remove = (widget.id == null)
           ? localController.addListener(filter)
@@ -624,7 +624,7 @@ class BindError<T> extends Error {
 }
 
 /// [Binding] should be extended.
-/// When using `GetMaterialApp`, all `GetPage`s and navigation
+/// When using `JetMaterialApp`, all `JetPage`s and navigation
 /// methods (like Get.to()) have a `binding` property that takes an
 /// instance of Bindings to manage the
 /// dependencies() (via Get.put()) for the Route you are opening.

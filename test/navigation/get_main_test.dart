@@ -16,12 +16,12 @@ void main() {
   });
 
   testWidgets("Get.toNamed navigates to provided named route", (tester) async {
-    await tester.pumpWidget(GetMaterialApp(
+    await tester.pumpWidget(JetMaterialApp(
       initialRoute: '/first',
       getPages: [
-        GetPage(page: () => const FirstScreen(), name: '/first'),
-        GetPage(page: () => const SecondScreen(), name: '/second'),
-        GetPage(page: () => const ThirdScreen(), name: '/third')
+        JetPage(page: () => const FirstScreen(), name: '/first'),
+        JetPage(page: () => const SecondScreen(), name: '/second'),
+        JetPage(page: () => const ThirdScreen(), name: '/third')
       ],
     ));
 
@@ -33,13 +33,13 @@ void main() {
   });
 
   testWidgets("unknowroute", (tester) async {
-    await tester.pumpWidget(GetMaterialApp(
+    await tester.pumpWidget(JetMaterialApp(
       initialRoute: '/first',
-      unknownRoute: GetPage(name: '/404', page: () => const Scaffold()),
+      unknownRoute: JetPage(name: '/404', page: () => const Scaffold()),
       getPages: [
-        GetPage(page: () => const FirstScreen(), name: '/first'),
-        GetPage(page: () => const SecondScreen(), name: '/second'),
-        GetPage(page: () => const ThirdScreen(), name: '/third')
+        JetPage(page: () => const FirstScreen(), name: '/first'),
+        JetPage(page: () => const SecondScreen(), name: '/second'),
+        JetPage(page: () => const ThirdScreen(), name: '/third')
       ],
     ));
 
@@ -75,12 +75,12 @@ void main() {
   });
 
   testWidgets("Get.offNamed navigates to provided named route", (tester) async {
-    await tester.pumpWidget(GetMaterialApp(
+    await tester.pumpWidget(JetMaterialApp(
       initialRoute: '/first',
       getPages: [
-        GetPage(name: '/first', page: () => const FirstScreen()),
-        GetPage(name: '/second', page: () => const SecondScreen()),
-        GetPage(name: '/third', page: () => const ThirdScreen()),
+        JetPage(name: '/first', page: () => const FirstScreen()),
+        JetPage(name: '/second', page: () => const SecondScreen()),
+        JetPage(name: '/third', page: () => const ThirdScreen()),
       ],
     ));
 
@@ -94,12 +94,12 @@ void main() {
   });
 
   testWidgets("Get.offNamed removes current route", (tester) async {
-    await tester.pumpWidget(GetMaterialApp(
+    await tester.pumpWidget(JetMaterialApp(
       initialRoute: '/first',
       getPages: [
-        GetPage(name: '/first', page: () => const FirstScreen()),
-        GetPage(name: '/second', page: () => const SecondScreen()),
-        GetPage(name: '/third', page: () => const ThirdScreen()),
+        JetPage(name: '/first', page: () => const FirstScreen()),
+        JetPage(name: '/second', page: () => const SecondScreen()),
+        JetPage(name: '/third', page: () => const ThirdScreen()),
       ],
     ));
 
@@ -115,12 +115,12 @@ void main() {
   });
 
   testWidgets("Get.offNamed removes only current route", (tester) async {
-    await tester.pumpWidget(GetMaterialApp(
+    await tester.pumpWidget(JetMaterialApp(
       initialRoute: '/first',
       getPages: [
-        GetPage(name: '/first', page: () => const FirstScreen()),
-        GetPage(name: '/second', page: () => const SecondScreen()),
-        GetPage(name: '/third', page: () => const ThirdScreen()),
+        JetPage(name: '/first', page: () => const FirstScreen()),
+        JetPage(name: '/second', page: () => const SecondScreen()),
+        JetPage(name: '/third', page: () => const ThirdScreen()),
       ],
     ));
 
@@ -173,9 +173,9 @@ void main() {
     await tester.pumpWidget(WrapperNamed(
       initialRoute: '/first',
       namedRoutes: [
-        GetPage(page: () => const FirstScreen(), name: '/first'),
-        GetPage(page: () => const SecondScreen(), name: '/second'),
-        GetPage(page: () => const ThirdScreen(), name: '/third')
+        JetPage(page: () => const FirstScreen(), name: '/first'),
+        JetPage(page: () => const SecondScreen(), name: '/second'),
+        JetPage(page: () => const ThirdScreen(), name: '/third')
       ],
     ));
 
@@ -192,9 +192,9 @@ void main() {
     await tester.pumpWidget(WrapperNamed(
       initialRoute: '/first',
       namedRoutes: [
-        GetPage(page: () => const FirstScreen(), name: '/first'),
-        GetPage(page: () => const SecondScreen(), name: '/second'),
-        GetPage(page: () => const ThirdScreen(), name: '/third')
+        JetPage(page: () => const FirstScreen(), name: '/first'),
+        JetPage(page: () => const SecondScreen(), name: '/second'),
+        JetPage(page: () => const ThirdScreen(), name: '/third')
       ],
     ));
 
@@ -220,9 +220,9 @@ void main() {
     await tester.pumpWidget(WrapperNamed(
       initialRoute: '/first',
       namedRoutes: [
-        GetPage(page: () => const FirstScreen(), name: '/first'),
-        GetPage(page: () => const SecondScreen(), name: '/second'),
-        GetPage(page: () => const ThirdScreen(), name: '/third')
+        JetPage(page: () => const FirstScreen(), name: '/first'),
+        JetPage(page: () => const SecondScreen(), name: '/second'),
+        JetPage(page: () => const ThirdScreen(), name: '/third')
       ],
     ));
 
@@ -237,9 +237,9 @@ void main() {
     await tester.pumpWidget(WrapperNamed(
       initialRoute: '/first',
       namedRoutes: [
-        GetPage(page: () => const FirstScreen(), name: '/first'),
-        GetPage(page: () => const SecondScreen(), name: '/second'),
-        GetPage(page: () => const ThirdScreen(), name: '/third')
+        JetPage(page: () => const FirstScreen(), name: '/first'),
+        JetPage(page: () => const SecondScreen(), name: '/second'),
+        JetPage(page: () => const ThirdScreen(), name: '/third')
       ],
     ));
 
@@ -273,9 +273,9 @@ void main() {
     await tester.pumpWidget(WrapperNamed(
       initialRoute: '/first',
       namedRoutes: [
-        GetPage(page: () => const FirstScreen(), name: '/first'),
-        GetPage(page: () => const SecondScreen(), name: '/second'),
-        GetPage(page: () => const ThirdScreen(), name: '/third')
+        JetPage(page: () => const FirstScreen(), name: '/first'),
+        JetPage(page: () => const SecondScreen(), name: '/second'),
+        JetPage(page: () => const ThirdScreen(), name: '/third')
       ],
     ));
 
@@ -337,9 +337,9 @@ void main() {
       await tester.pumpWidget(WrapperNamed(
         initialRoute: '/first',
         namedRoutes: [
-          GetPage(page: () => const FirstScreen(), name: '/first'),
-          GetPage(page: () => const SecondScreen(), name: '/second'),
-          GetPage(page: () => const ThirdScreen(), name: '/third')
+          JetPage(page: () => const FirstScreen(), name: '/first'),
+          JetPage(page: () => const SecondScreen(), name: '/second'),
+          JetPage(page: () => const ThirdScreen(), name: '/third')
         ],
       ));
 
@@ -354,9 +354,9 @@ void main() {
       await tester.pumpWidget(WrapperNamed(
         initialRoute: '/first',
         namedRoutes: [
-          GetPage(page: () => const FirstScreen(), name: '/first'),
-          GetPage(page: () => const SecondScreen(), name: '/second'),
-          GetPage(page: () => const ThirdScreen(), name: '/third')
+          JetPage(page: () => const FirstScreen(), name: '/first'),
+          JetPage(page: () => const SecondScreen(), name: '/second'),
+          JetPage(page: () => const ThirdScreen(), name: '/third')
         ],
       ));
 
@@ -374,9 +374,9 @@ void main() {
       await tester.pumpWidget(WrapperNamed(
         initialRoute: '/first',
         namedRoutes: [
-          GetPage(page: () => const FirstScreen(), name: '/first'),
-          GetPage(page: () => const SecondScreen(), name: '/second'),
-          GetPage(page: () => const ThirdScreen(), name: '/third'),
+          JetPage(page: () => const FirstScreen(), name: '/first'),
+          JetPage(page: () => const SecondScreen(), name: '/second'),
+          JetPage(page: () => const ThirdScreen(), name: '/third'),
         ],
       ));
 
@@ -395,10 +395,10 @@ void main() {
       await tester.pumpWidget(WrapperNamed(
         initialRoute: '/first',
         namedRoutes: [
-          GetPage(page: () => const FirstScreen(), name: '/first'),
-          GetPage(page: () => const SecondScreen(), name: '/second'),
-          GetPage(page: () => const ThirdScreen(), name: '/third'),
-          GetPage(page: () => const FourthScreen(), name: '/fourth'),
+          JetPage(page: () => const FirstScreen(), name: '/first'),
+          JetPage(page: () => const SecondScreen(), name: '/second'),
+          JetPage(page: () => const ThirdScreen(), name: '/third'),
+          JetPage(page: () => const FourthScreen(), name: '/fourth'),
         ],
       ));
 
@@ -420,10 +420,10 @@ void main() {
       await tester.pumpWidget(WrapperNamed(
         initialRoute: '/first',
         namedRoutes: [
-          GetPage(page: () => const FirstScreen(), name: '/first'),
-          GetPage(page: () => const SecondScreen(), name: '/second'),
-          GetPage(page: () => const ThirdScreen(), name: '/third'),
-          GetPage(page: () => const FourthScreen(), name: '/fourth'),
+          JetPage(page: () => const FirstScreen(), name: '/first'),
+          JetPage(page: () => const SecondScreen(), name: '/second'),
+          JetPage(page: () => const ThirdScreen(), name: '/third'),
+          JetPage(page: () => const FourthScreen(), name: '/fourth'),
         ],
       ));
 
@@ -450,9 +450,9 @@ void main() {
     await tester.pumpWidget(WrapperNamed(
       initialRoute: '/first',
       namedRoutes: [
-        GetPage(page: () => const FirstScreen(), name: '/first'),
-        GetPage(page: () => const SecondScreen(), name: '/second'),
-        GetPage(page: () => const ThirdScreen(), name: '/third')
+        JetPage(page: () => const FirstScreen(), name: '/first'),
+        JetPage(page: () => const SecondScreen(), name: '/second'),
+        JetPage(page: () => const ThirdScreen(), name: '/third')
       ],
     ));
 
@@ -469,9 +469,9 @@ void main() {
     await tester.pumpWidget(WrapperNamed(
       initialRoute: '/first',
       namedRoutes: [
-        GetPage(page: () => const FirstScreen(), name: '/first'),
-        GetPage(page: () => const SecondScreen(), name: '/second'),
-        GetPage(page: () => const ThirdScreen(), name: '/third')
+        JetPage(page: () => const FirstScreen(), name: '/first'),
+        JetPage(page: () => const SecondScreen(), name: '/second'),
+        JetPage(page: () => const ThirdScreen(), name: '/third')
       ],
     ));
 
@@ -490,9 +490,9 @@ void main() {
     await tester.pumpWidget(WrapperNamed(
       initialRoute: '/first',
       namedRoutes: [
-        GetPage(page: () => const FirstScreen(), name: '/first'),
-        GetPage(page: () => const SecondScreen(), name: '/second'),
-        GetPage(page: () => const ThirdScreen(), name: '/third'),
+        JetPage(page: () => const FirstScreen(), name: '/first'),
+        JetPage(page: () => const SecondScreen(), name: '/second'),
+        JetPage(page: () => const ThirdScreen(), name: '/third'),
       ],
     ));
 
@@ -560,9 +560,9 @@ void main() {
     await tester.pumpWidget(WrapperNamed(
       initialRoute: '/first',
       namedRoutes: [
-        GetPage(page: () => const FirstScreen(), name: '/first'),
-        GetPage(page: () => const SecondScreen(), name: '/second'),
-        GetPage(page: () => const ThirdScreen(), name: '/third')
+        JetPage(page: () => const FirstScreen(), name: '/first'),
+        JetPage(page: () => const SecondScreen(), name: '/second'),
+        JetPage(page: () => const ThirdScreen(), name: '/third')
       ],
     ));
 
