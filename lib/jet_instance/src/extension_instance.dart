@@ -49,11 +49,11 @@ extension Inst on JetInterface {
   T call<T>() => find<T>();
 
   /// Holds references to every registered Instance when using
-  /// `Get.put()`
+  /// `Jet.put()`
   static final Map<String, _InstanceBuilderFactory> _singl = {};
 
   /// Holds a reference to every registered callback when using
-  /// `Get.lazyPut()`
+  /// `Jet.lazyPut()`
   // static final Map<String, _Lazy> _factory = {};
 
   // void injector<S>(
@@ -85,25 +85,25 @@ extension Inst on JetInterface {
 
   /// Creates a new Instance<S> lazily from the `<S>builder()` callback.
   ///
-  /// The first time you call `Get.find()`, the `builder()` callback will create
+  /// The first time you call `Jet.find()`, the `builder()` callback will create
   /// the Instance and persisted as a Singleton (like you would
-  /// use `Get.put()`).
+  /// use `Jet.put()`).
   ///
-  /// Using `Get.smartManagement` as [SmartManagement.keepFactory] has
+  /// Using `Jet.smartManagement` as [SmartManagement.keepFactory] has
   /// the same outcome as using `fenix:true` :
   /// The internal register of `builder()` will remain in memory to recreate
-  /// the Instance if the Instance has been removed with `Get.delete()`.
-  /// Therefore, future calls to `Get.find()` will return the same Instance.
+  /// the Instance if the Instance has been removed with `Jet.delete()`.
+  /// Therefore, future calls to `Jet.find()` will return the same Instance.
   ///
   /// If you need to make use of JetController's life-cycle
   /// (`onInit(), onStart(), onClose()`) [fenix] is a great choice to mix with
   /// `JetBuilder()` and `GetX()` widgets, and/or `JetMaterialApp` Navigation.
   ///
-  /// You could use `Get.lazyPut(fenix:true)` in your app's `main()` instead
+  /// You could use `Jet.lazyPut(fenix:true)` in your app's `main()` instead
   /// of `Bindings()` for each `JetPage`.
   /// And the memory management will be similar.
   ///
-  /// Subsequent calls to `Get.lazyPut()` with the same parameters
+  /// Subsequent calls to `Jet.lazyPut()` with the same parameters
   /// (<[S]> and optionally [tag] will **not** override the original).
   void lazyPut<S>(
     InstanceBuilderCallback<S> builder, {
@@ -116,7 +116,7 @@ extension Inst on JetInterface {
       name: tag,
       permanent: permanent,
       builder: builder,
-      fenix: fenix ?? Get.smartManagement == SmartManagement.keepFactory,
+      fenix: fenix ?? Jet.smartManagement == SmartManagement.keepFactory,
     );
   }
 
@@ -124,15 +124,15 @@ extension Inst on JetInterface {
   /// Every time [find]<[S]>() is used, it calls the builder method to generate
   /// a new Instance [S].
   /// It also registers each `instance.onClose()` with the current
-  /// Route `Get.reference` to keep the lifecycle active.
+  /// Route `Jet.reference` to keep the lifecycle active.
   /// Is important to know that the instances created are only stored per Route.
-  /// So, if you call `Get.delete<T>()` the "instance factory" used in this
-  /// method (`Get.spawn<T>()`) will be removed, but NOT the instances
+  /// So, if you call `Jet.delete<T>()` the "instance factory" used in this
+  /// method (`Jet.spawn<T>()`) will be removed, but NOT the instances
   /// already created by it.
   ///
   /// Example:
   ///
-  /// ```Get.spawn(() => Repl());
+  /// ```Jet.spawn(() => Repl());
   /// Repl a = find();
   /// Repl b = find();
   /// print(a==b); (false)```
@@ -182,11 +182,11 @@ extension Inst on JetInterface {
   /// Initializes the dependencies for a Class Instance [S] (or tag),
   /// If its a Controller, it starts the lifecycle process.
   /// Optionally associating the current Route to the lifetime of the instance,
-  /// if `Get.smartManagement` is marked as [SmartManagement.full] or
+  /// if `Jet.smartManagement` is marked as [SmartManagement.full] or
   /// [SmartManagement.keepFactory]
-  /// Only flags `isInit` if it's using `Get.create()`
+  /// Only flags `isInit` if it's using `Jet.create()`
   /// (not for Singletons access).
-  /// Returns the instance if not initialized, required for Get.create() to
+  /// Returns the instance if not initialized, required for Jet.create() to
   /// work properly.
   S? _initDependencies<S>({String? name}) {
     final key = _getKey(S, name);
@@ -200,7 +200,7 @@ extension Inst on JetInterface {
       i = _startController<S>(tag: name);
 
       if (isSingleton) {
-        if (Get.smartManagement != SmartManagement.onlyBuilder) {
+        if (Jet.smartManagement != SmartManagement.onlyBuilder) {
           RouterReportManager.instance
               .reportDependencyLinkedToRoute(_getKey(S, name));
         }
@@ -225,7 +225,7 @@ extension Inst on JetInterface {
     final newKey = key ?? _getKey(S, tag);
 
     if (!_singl.containsKey(newKey)) {
-      Get.log('Instance "$newKey" is not registered.', isError: true);
+      Jet.log('Instance "$newKey" is not registered.', isError: true);
       return null;
     } else {
       return _singl[newKey];
@@ -249,9 +249,9 @@ extension Inst on JetInterface {
     if (i is JetLifeCycleMixin) {
       i.onStart();
       if (tag == null) {
-        Get.log('Instance "$S" has been initialized');
+        Jet.log('Instance "$S" has been initialized');
       } else {
-        Get.log('Instance "$S" with tag "$tag" has been initialized');
+        Jet.log('Instance "$S" with tag "$tag" has been initialized');
       }
       if (!_singl[key]!.isSingleton!) {
         RouterReportManager.instance.appendRouteByCreate(i);
@@ -271,7 +271,7 @@ extension Inst on JetInterface {
   }
 
   /// Finds the registered type <[S]> (or [tag])
-  /// In case of using Get.[create] to register a type <[S]> or [tag],
+  /// In case of using Jet.[create] to register a type <[S]> or [tag],
   /// it will create an instance each time you call [find].
   /// If the registered type <[S]> (or [tag]) is a Controller,
   /// it will initialize it's lifecycle.
@@ -289,12 +289,12 @@ extension Inst on JetInterface {
 
       /// although dirty solution, the lifecycle starts inside
       /// `initDependencies`, so we have to return the instance from there
-      /// to make it compatible with `Get.create()`.
+      /// to make it compatible with `Jet.create()`.
       final i = _initDependencies<S>(name: tag);
       return i ?? dep.getDependency() as S;
     } else {
       // ignore: lines_longer_than_80_chars
-      throw '"$S" not found. You need to call "Get.put($S())" or "Get.lazyPut(()=>$S())"';
+      throw '"$S" not found. You need to call "Jet.put($S())" or "Jet.lazyPut(()=>$S())"';
     }
   }
 
@@ -358,7 +358,7 @@ extension Inst on JetInterface {
     final newKey = key ?? _getKey(S, tag);
 
     if (!_singl.containsKey(newKey)) {
-      Get.log('Instance "$newKey" already removed.', isError: true);
+      Jet.log('Instance "$newKey" already removed.', isError: true);
       return false;
     }
 
@@ -374,7 +374,7 @@ extension Inst on JetInterface {
     }
 
     if (builder.permanent && !force) {
-      Get.log(
+      Jet.log(
         // ignore: lines_longer_than_80_chars
         '"$newKey" has been marked as permanent, SmartManagement is not authorized to delete it.',
         isError: true,
@@ -389,7 +389,7 @@ extension Inst on JetInterface {
 
     if (i is JetLifeCycleMixin) {
       i.onDelete();
-      Get.log('"$newKey" onDelete() called');
+      Jet.log('"$newKey" onDelete() called');
     }
 
     if (builder.fenix) {
@@ -399,14 +399,14 @@ extension Inst on JetInterface {
     } else {
       if (dep.lateRemove != null) {
         dep.lateRemove = null;
-        Get.log('"$newKey" deleted from memory');
+        Jet.log('"$newKey" deleted from memory');
         return false;
       } else {
         _singl.remove(newKey);
         if (_singl.containsKey(newKey)) {
-          Get.log('Error removing object "$newKey"', isError: true);
+          Jet.log('Error removing object "$newKey"', isError: true);
         } else {
-          Get.log('"$newKey" deleted from memory');
+          Jet.log('"$newKey" deleted from memory');
         }
         return true;
       }
@@ -427,11 +427,11 @@ extension Inst on JetInterface {
   void reloadAll({bool force = false}) {
     _singl.forEach((key, value) {
       if (value.permanent && !force) {
-        Get.log('Instance "$key" is permanent. Skipping reload');
+        Jet.log('Instance "$key" is permanent. Skipping reload');
       } else {
         value.dependency = null;
         value.isInit = false;
-        Get.log('Instance "$key" was reloaded.');
+        Jet.log('Instance "$key" was reloaded.');
       }
     });
   }
@@ -447,7 +447,7 @@ extension Inst on JetInterface {
     if (builder == null) return;
 
     if (builder.permanent && !force) {
-      Get.log(
+      Jet.log(
         '''Instance "$newKey" is permanent. Use [force = true] to force the restart.''',
         isError: true,
       );
@@ -462,19 +462,19 @@ extension Inst on JetInterface {
 
     if (i is JetLifeCycleMixin) {
       i.onDelete();
-      Get.log('"$newKey" onDelete() called');
+      Jet.log('"$newKey" onDelete() called');
     }
 
     builder.dependency = null;
     builder.isInit = false;
-    Get.log('Instance "$newKey" was restarted.');
+    Jet.log('Instance "$newKey" was restarted.');
   }
 
   /// Check if a Class Instance<[S]> (or [tag]) is registered in memory.
   /// - [tag] is optional, if you used a [tag] to register the Instance.
   bool isRegistered<S>({String? tag}) => _singl.containsKey(_getKey(S, tag));
 
-  /// Checks if a lazy factory callback `Get.lazyPut()` that returns an
+  /// Checks if a lazy factory callback `Jet.lazyPut()` that returns an
   /// Instance<[S]> is registered in memory.
   /// - [tag] is optional, if you used a [tag] to register the lazy Instance.
   bool isPrepared<S>({String? tag}) {
@@ -502,7 +502,7 @@ typedef InstanceCreateBuilderCallback<S> = S Function(BuildContext _);
 
 typedef AsyncInstanceBuilderCallback<S> = Future<S> Function();
 
-/// Internal class to register instances with `Get.put<S>()`.
+/// Internal class to register instances with `Jet.put<S>()`.
 class _InstanceBuilderFactory<S> {
   /// Marks the Builder as a single instance.
   /// For reusing [dependency] instead of [builderFunc]
@@ -520,7 +520,7 @@ class _InstanceBuilderFactory<S> {
   InstanceBuilderCallback<S> builderFunc;
 
   /// Flag to persist the instance in memory,
-  /// without considering `Get.smartManagement`
+  /// without considering `Jet.smartManagement`
   bool permanent = false;
 
   bool isInit = false;
@@ -543,9 +543,9 @@ class _InstanceBuilderFactory<S> {
 
   void _showInitLog() {
     if (tag == null) {
-      Get.log('Instance "$S" has been created');
+      Jet.log('Instance "$S" has been created');
     } else {
-      Get.log('Instance "$S" has been created with tag "$tag"');
+      Jet.log('Instance "$S" has been created with tag "$tag"');
     }
   }
 

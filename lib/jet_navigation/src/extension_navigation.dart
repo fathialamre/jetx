@@ -125,7 +125,7 @@ extension ExtensionDialog on JetInterface {
       RouteSettings? routeSettings,
       String? id}) {
     assert(!barrierDismissible || barrierLabel != null);
-    final key = navigatorKey ?? Get.nestedKey(id)?.navigatorKey;
+    final key = navigatorKey ?? Jet.nestedKey(id)?.navigatorKey;
     final nav = key?.currentState ??
         Navigator.of(overlayContext!,
             rootNavigator:
@@ -554,9 +554,9 @@ extension GetNavigationExt on JetInterface {
 //     if (page is JetPageBuilder) {
 //       return page;
 //     } else if (page is Widget) {
-//       Get.log(
-//           '''WARNING, consider using: "Get.$method(() => Page())"
-//instead of "Get.$method(Page())".
+//       Jet.log(
+//           '''WARNING, consider using: "Jet.$method(() => Page())"
+//instead of "Jet.$method(Page())".
 // Using a widget function instead of a widget fully guarantees that the widget
 //and its controllers will be removed from memory when they are no longer used.
 //       ''');
@@ -658,10 +658,10 @@ extension GetNavigationExt on JetInterface {
   /// as explained in documentation
   ///
   /// [predicate] can be used like this:
-  /// `Get.until((route) => Get.currentRoute == '/home')`so when you get to home page,
+  /// `Jet.until((route) => Jet.currentRoute == '/home')`so when you get to home page,
   ///
   /// or also like this:
-  /// `Get.until((route) => !Get.isDialogOpen())`, to make sure the
+  /// `Jet.until((route) => !Jet.isDialogOpen())`, to make sure the
   /// dialog is closed
   void until(bool Function(JetPage<dynamic>) predicate, {String? id}) {
     // if (key.currentState.mounted) // add this if appear problems on future with route navigate
@@ -680,10 +680,10 @@ extension GetNavigationExt on JetInterface {
   /// as explained in documentation
   ///
   /// [predicate] can be used like this:
-  /// `Get.offNamedUntil(page, ModalRoute.withName('/home'))`
+  /// `Jet.offNamedUntil(page, ModalRoute.withName('/home'))`
   /// to pop routes in stack until home,
   /// or like this:
-  /// `Get.offNamedUntil((route) => !Get.isDialogOpen())`,
+  /// `Jet.offNamedUntil((route) => !Jet.isDialogOpen())`,
   /// to make sure the dialog is closed
   ///
   /// Note: Always put a slash on the route name ('/page1'), to avoid unexpected errors
@@ -758,9 +758,9 @@ extension GetNavigationExt on JetInterface {
   /// You can send any type of value to the other route in the [arguments].
   ///
   /// [predicate] can be used like this:
-  /// `Get.until((route) => Get.currentRoute == '/home')`so when you get to home page,
+  /// `Jet.until((route) => Jet.currentRoute == '/home')`so when you get to home page,
   /// or also like
-  /// `Get.until((route) => !Get.isDialogOpen())`, to make sure the dialog
+  /// `Jet.until((route) => !Jet.isDialogOpen())`, to make sure the dialog
   /// is closed
   ///
   /// [id] is for when you are using nested navigation,
@@ -800,7 +800,7 @@ extension GetNavigationExt on JetInterface {
   ///
   /// Pop the current page, snackbar, dialog or bottomsheet in the stack
   ///
-  /// if your set [closeOverlays] to true, Get.back() will close the
+  /// if your set [closeOverlays] to true, Jet.back() will close the
   /// currently open snackbar/dialog/bottomsheet AND the current page
   ///
   /// [id] is for when you are using nested navigation,
@@ -834,7 +834,7 @@ extension GetNavigationExt on JetInterface {
 
   /// Pop the current page, snackbar, dialog or bottomsheet in the stack
   ///
-  /// if your set [closeOverlays] to true, Get.back() will close the
+  /// if your set [closeOverlays] to true, Jet.back() will close the
   /// currently open snackbar/dialog/bottomsheet AND the current page
   ///
   /// [id] is for when you are using nested navigation,
@@ -1048,9 +1048,9 @@ extension GetNavigationExt on JetInterface {
   /// as a [fullscreenDialog],
   ///
   /// [predicate] can be used like this:
-  /// `Get.until((route) => Get.currentRoute == '/home')`so when you get to home page,
+  /// `Jet.until((route) => Jet.currentRoute == '/home')`so when you get to home page,
   /// or also like
-  /// `Get.until((route) => !Get.isDialogOpen())`, to make sure the dialog
+  /// `Jet.until((route) => !Jet.isDialogOpen())`, to make sure the dialog
   /// is closed
   ///
   /// [id] is for when you are using nested navigation,
@@ -1123,10 +1123,10 @@ extension GetNavigationExt on JetInterface {
   //     bool? defaultGlobalState,
   //     Transition? defaultTransition}) {
   //   if (enableLog != null) {
-  //     Get.isLogEnable = enableLog;
+  //     Jet.isLogEnable = enableLog;
   //   }
   //   if (logWriterCallback != null) {
-  //     Get.log = logWriterCallback;
+  //     Jet.log = logWriterCallback;
   //   }
   //   if (defaultPopGesture != null) {
   //     _getxController.defaultPopGesture = defaultPopGesture;
@@ -1144,7 +1144,7 @@ extension GetNavigationExt on JetInterface {
   // }
 
   Future<void> updateLocale(Locale l) async {
-    Get.locale = l;
+    Jet.locale = l;
     await forceAppUpdate();
   }
 
@@ -1186,7 +1186,7 @@ extension GetNavigationExt on JetInterface {
   JetDelegate searchDelegate(String? k) {
     JetDelegate key;
     if (k == null) {
-      key = Get.rootController.rootDelegate;
+      key = Jet.rootController.rootDelegate;
     } else {
       if (!keys.containsKey(k)) {
         throw 'Route id ($k) not found';
@@ -1196,9 +1196,9 @@ extension GetNavigationExt on JetInterface {
 
     // if (_key.listenersLength == 0 && !testMode) {
     //   throw """You are trying to use contextless navigation without
-    //   a JetMaterialApp or Get.key.
+    //   a JetMaterialApp or Jet.key.
     //   If you are testing your app, you can use:
-    //   [Get.testMode = true], or if you are running your app on
+    //   [Jet.testMode = true], or if you are running your app on
     //   a physical device or emulator, you must exchange your [MaterialApp]
     //   for a [JetMaterialApp].
     //   """;
@@ -1389,7 +1389,7 @@ extension OverlayExt on JetInterface {
     double opacity = .5,
   }) async {
     final navigatorState =
-        Navigator.of(Get.overlayContext!, rootNavigator: false);
+        Navigator.of(Jet.overlayContext!, rootNavigator: false);
     final overlayState = navigatorState.overlay!;
 
     final overlayEntryOpacity = OverlayEntry(builder: (context) {

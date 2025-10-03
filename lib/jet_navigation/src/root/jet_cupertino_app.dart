@@ -228,7 +228,7 @@ class JetCupertinoApp extends StatelessWidget {
           key: controller.config.unikey,
           builder: (context, child) => Directionality(
             textDirection: textDirection ??
-                (rtlLanguages.contains(Get.locale?.languageCode)
+                (rtlLanguages.contains(Jet.locale?.languageCode)
                     ? TextDirection.rtl
                     : TextDirection.ltr),
             child: builder == null
@@ -239,7 +239,7 @@ class JetCupertinoApp extends StatelessWidget {
           onGenerateTitle: onGenerateTitle,
           color: color,
           theme: theme,
-          locale: Get.locale ?? locale,
+          locale: Jet.locale ?? locale,
           localizationsDelegates: localizationsDelegates,
           localeListResolutionCallback: localeListResolutionCallback,
           localeResolutionCallback: localeResolutionCallback,

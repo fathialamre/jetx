@@ -233,9 +233,9 @@ class JetMaterialApp extends StatelessWidget {
 
       //     ),
       //     onClose: () {
-      //       Get.clearTranslations();
+      //       Jet.clearTranslations();
       //       RouterReportManager.dispose();
-      //       Get.resetInstance(clearRouteBindings: true);
+      //       Jet.resetInstance(clearRouteBindings: true);
       //     },
       //   ),
       //   ...binds,
@@ -251,7 +251,7 @@ class JetMaterialApp extends StatelessWidget {
           key: controller.config.unikey,
           builder: (context, child) => Directionality(
             textDirection: textDirection ??
-                (rtlLanguages.contains(Get.locale?.languageCode)
+                (rtlLanguages.contains(Jet.locale?.languageCode)
                     ? TextDirection.rtl
                     : TextDirection.ltr),
             child: builder == null
@@ -266,7 +266,7 @@ class JetMaterialApp extends StatelessWidget {
               controller.config.theme ??
               ThemeData.fallback(),
           themeMode: controller.config.themeMode,
-          locale: Get.locale ?? locale,
+          locale: Jet.locale ?? locale,
           scaffoldMessengerKey: controller.config.scaffoldMessengerKey,
           localizationsDelegates: localizationsDelegates,
           localeListResolutionCallback: localeListResolutionCallback,
