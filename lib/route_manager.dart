@@ -2,5 +2,5 @@
 ///dialogs and bottomsheets easily, and without the need for context.
 library;
 
-export 'get_core/get_core.dart';
-export 'get_navigation/get_navigation.dart';
+export 'jet_core/jet_core.dart';
+export 'jet_navigation/jet_navigation.dart';

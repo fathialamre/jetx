@@ -1,7 +1,7 @@
-name: get
-description: Open screens/snackbars/dialogs without context, manage states and inject dependencies easily with GetX.
-version: 5.0.0-release-candidate-9.3.2
-homepage: https://github.com/jonataslaw/getx
+name: jet
+description: A powerful Flutter framework for state management, routing, and dependency injection - forked from GetX
+version: 1.0.0
+homepage: https://github.com/alamre/jet
 
 environment:
   sdk: ">=3.4.0 <4.0.0"

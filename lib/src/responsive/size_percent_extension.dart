@@ -1,4 +1,4 @@
-import '../../get.dart';
+import '../../jet.dart';
 
 //Converts a double value to a percentage
 extension PercentSized on double {
