@@ -1,3 +1,3 @@
 export './animations.dart';
 export './extensions.dart';
-export './get_animated_builder.dart';
+export './jet_animated_builder.dart';

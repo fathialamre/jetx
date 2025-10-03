@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'animations.dart';
-import 'get_animated_builder.dart';
+import 'jet_animated_builder.dart';
 
 const _defaultDuration = Duration(seconds: 2);
 const _defaultDelay = Duration.zero;

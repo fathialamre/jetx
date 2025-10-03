@@ -4,7 +4,7 @@
 library;
 
 export 'jet_animations/index.dart';
-export 'jet_common/get_reset.dart';
+export 'jet_common/jet_reset.dart';
 export 'jet_core/jet_core.dart';
 export 'jet_instance/jet_instance.dart';
 export 'jet_navigation/jet_navigation.dart';

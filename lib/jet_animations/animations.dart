@@ -3,7 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/widgets.dart';
 
-import 'get_animated_builder.dart';
+import 'jet_animated_builder.dart';
 
 typedef OffsetBuilder = Offset Function(BuildContext, double);
 
