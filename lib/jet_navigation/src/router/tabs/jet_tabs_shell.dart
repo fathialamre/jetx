@@ -68,13 +68,8 @@ class JetTabsShell extends StatefulWidget {
 }
 
 class _JetTabsShellState extends State<JetTabsShell>
-    with RestorationMixin, WidgetsBindingObserver {
+    with WidgetsBindingObserver {
   late JetTabsController _controller;
-
-  final RestorableInt _currentIndexRestoration = RestorableInt(0);
-
-  @override
-  String? get restorationId => widget.restorationId;
 
   @override
   void initState() {
@@ -89,21 +84,9 @@ class _JetTabsShellState extends State<JetTabsShell>
 
     _controller.onTabChanged = _handleTabChanged;
     _controller.addListener(_onControllerChanged);
-
-    // Restore the current index if available
-    if (_currentIndexRestoration.value >= 0 &&
-        _currentIndexRestoration.value < widget.tabsRoute.tabs.length) {
-      _controller.switchToIndex(_currentIndexRestoration.value);
-    }
-  }
-
-  @override
-  void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
-    registerForRestoration(_currentIndexRestoration, 'tab_index');
   }
 
   void _handleTabChanged(int oldIndex, int newIndex) {
-    _currentIndexRestoration.value = newIndex;
     widget.onTabChanged?.call(oldIndex, newIndex);
   }
 
@@ -120,7 +103,6 @@ class _JetTabsShellState extends State<JetTabsShell>
     WidgetsBinding.instance.removeObserver(this);
     _controller.removeListener(_onControllerChanged);
     _controller.dispose();
-    _currentIndexRestoration.dispose();
     super.dispose();
   }
 
@@ -164,7 +146,7 @@ class _JetTabsShellState extends State<JetTabsShell>
       key: _controller.getNavigatorKey(index),
       onGenerateRoute: (settings) {
         final routeName = settings.name;
-        
+
         // If no route name specified, use the first route
         if (routeName == null || routeName == Navigator.defaultRouteName) {
           return tab.routes.first.createRoute(context);
