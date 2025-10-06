@@ -82,3 +82,6 @@ export 'transitions/index.dart';
 
 // Observers (route lifecycle)
 export 'observers/index.dart';
+
+// Tabs (bottom navigation)
+export 'tabs/index.dart';

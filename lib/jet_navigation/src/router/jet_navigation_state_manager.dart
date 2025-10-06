@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'jet_navigation_state.dart';
+import 'tabs/jet_tabs_controller.dart';
 
 /// Callback type for navigation events
 typedef NavigationCallback = void Function(JetNavigationState state);
@@ -52,6 +53,9 @@ class JetNavigationStateManager extends ChangeNotifier {
 
   /// Stream of navigation state changes
   Stream<JetNavigationState> get navigationStream => _navigationStream.stream;
+
+  /// Tab controller for managing bottom navigation tabs
+  JetTabsController? _tabsController;
 
   JetNavigationStateManager({
     JetNavigationState? initialState,
@@ -407,8 +411,93 @@ class JetNavigationStateManager extends ChangeNotifier {
     return true;
   }
 
+  // ========================================================================
+  // Tabs Navigation Support
+  // ========================================================================
+
+  /// Set the tabs controller for tab-based navigation
+  void setTabsController(JetTabsController controller) {
+    _tabsController?.dispose();
+    _tabsController = controller;
+    _tabsController!.addListener(_onTabsControllerChanged);
+  }
+
+  /// Get the current tabs controller
+  JetTabsController? get tabsController => _tabsController;
+
+  /// Check if tabs are active
+  bool get hasActiveTabs => _tabsController != null;
+
+  /// Get the current active tab index (if tabs are active)
+  int? get currentTabIndex => _tabsController?.currentIndex;
+
+  /// Get the current active tab name (if tabs are active)
+  String? get currentTabName => _tabsController?.currentTabName;
+
+  /// Switch to a tab by index
+  void switchTab({int? index, String? name}) {
+    if (_tabsController == null) {
+      throw StateError('No tabs controller is set. Use setTabsController() first.');
+    }
+
+    if (index != null) {
+      _tabsController!.switchToIndex(index);
+    } else if (name != null) {
+      _tabsController!.switchToName(name);
+    } else {
+      throw ArgumentError('Either index or name must be provided');
+    }
+  }
+
+  /// Push a route in the active tab
+  Future<T?> pushInActiveTab<T>(
+    String path, {
+    Object? arguments,
+  }) async {
+    if (_tabsController == null) {
+      throw StateError('No tabs controller is set');
+    }
+    return _tabsController!.pushNamed<T>(path, arguments: arguments);
+  }
+
+  /// Pop the active tab's navigation stack
+  Future<bool> popActiveTab() async {
+    if (_tabsController == null) {
+      throw StateError('No tabs controller is set');
+    }
+    return _tabsController!.popCurrentTab();
+  }
+
+  /// Check if the active tab can pop
+  bool get canPopActiveTab {
+    return _tabsController?.canPopCurrentTab ?? false;
+  }
+
+  /// Handle system back button (works with tabs)
+  Future<bool> handleSystemBack() async {
+    if (_tabsController != null) {
+      return _tabsController!.handleSystemBack();
+    }
+    // Fallback to regular pop
+    return pop();
+  }
+
+  /// Clear the tabs controller
+  void clearTabsController() {
+    _tabsController?.removeListener(_onTabsControllerChanged);
+    _tabsController?.dispose();
+    _tabsController = null;
+  }
+
+  /// Called when tabs controller state changes
+  void _onTabsControllerChanged() {
+    // Notify listeners that tab state has changed
+    notifyListeners();
+  }
+
   @override
   void dispose() {
+    clearTabsController();
     _navigationStream.close();
     _onNavigationCallbacks.clear();
     if (enableHistory) {
