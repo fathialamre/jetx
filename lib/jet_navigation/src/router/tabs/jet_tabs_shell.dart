@@ -155,7 +155,7 @@ class _JetTabsShellState extends State<JetTabsShell>
         key: navigatorKey,
         onGenerateRoute: (settings) {
           final routeName = settings.name;
-          
+
           // If no route name specified, use the first route
           if (routeName == null || routeName == Navigator.defaultRouteName) {
             return tab.routes.first.createRoute(context);

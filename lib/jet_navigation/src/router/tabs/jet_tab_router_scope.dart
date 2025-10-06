@@ -18,7 +18,8 @@ class JetTabRouterScope extends InheritedWidget {
 
   /// Find the nearest JetTabRouterScope in the widget tree
   static JetNavigationStateManager? of(BuildContext context) {
-    final scope = context.dependOnInheritedWidgetOfExactType<JetTabRouterScope>();
+    final scope =
+        context.dependOnInheritedWidgetOfExactType<JetTabRouterScope>();
     return scope?.router;
   }
 

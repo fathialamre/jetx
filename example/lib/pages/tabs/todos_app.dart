@@ -26,6 +26,10 @@ class TodosApp extends StatelessWidget {
               name: '/app/todos/create',
               page: () => const CreateTodoPage(),
             ),
+            JetPage(
+              name: '/app/todos/about',
+              page: () => const AboutPage(),
+            ),
           ],
         ),
         // Second Tab: Settings
@@ -66,6 +70,15 @@ class TodosTabPage extends StatelessWidget {
         title: const Text('My Todos'),
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            onPressed: () {
+              context.router.pushNamed('/app/todos/about');
+            },
+            icon: const Icon(Icons.info_outline),
+            tooltip: 'About',
+          ),
+        ],
       ),
       body: Center(
         child: Column(
@@ -172,15 +185,14 @@ class CreateTodoPage extends StatelessWidget {
 
             ElevatedButton(
               onPressed: () {
-                // Navigate back to todos list
-                Navigator.of(context).pop();
+                context.router.pushNamed('/app/todos');
               },
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 backgroundColor: Colors.blue,
                 foregroundColor: Colors.white,
               ),
-              child: const Text('Save Todo'),
+              child: const Text('TO Todos'),
             ),
             const SizedBox(height: 12),
             OutlinedButton(
@@ -262,6 +274,106 @@ class SettingsTabPage extends StatelessWidget {
               label: const Text('Go to Todos Tab'),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+// ============================================================================
+// About Page (Sub-page of Todos Tab)
+// ============================================================================
+
+/// About page - app information
+class AboutPage extends StatelessWidget {
+  const AboutPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('About'),
+        backgroundColor: Colors.blue,
+        foregroundColor: Colors.white,
+      ),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.info,
+                size: 100,
+                color: Colors.blue,
+              ),
+              const SizedBox(height: 24),
+              const Text(
+                'About This App',
+                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 12),
+              const Text(
+                'Todos App Demo',
+                style: TextStyle(fontSize: 18, color: Colors.grey),
+              ),
+              const SizedBox(height: 32),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade50,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.blue.shade200),
+                ),
+                child: const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Features:',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 12),
+                    Text('• Route-controlled tabs'),
+                    Text('• Nested navigation'),
+                    Text('• Independent tab stacks'),
+                    Text('• context.router API'),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 32),
+              ElevatedButton.icon(
+                onPressed: () {
+                  // Navigate back to todos using context.router
+                  context.router.pushNamed('/app/todos');
+                },
+                icon: const Icon(Icons.list),
+                label: const Text('Go to Todos'),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 32,
+                    vertical: 16,
+                  ),
+                  backgroundColor: Colors.blue,
+                  foregroundColor: Colors.white,
+                ),
+              ),
+              const SizedBox(height: 12),
+              OutlinedButton.icon(
+                onPressed: () {
+                  // Pop back
+                  context.router.pop();
+                },
+                icon: const Icon(Icons.arrow_back),
+                label: const Text('Go Back'),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 32,
+                    vertical: 16,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

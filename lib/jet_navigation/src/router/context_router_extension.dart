@@ -15,10 +15,10 @@ import 'tabs/jet_tab_router_scope.dart';
 /// Outside tabs, this will use the root router.
 extension JetNavigationContextExtension on BuildContext {
   /// Access the nearest navigation state manager
-  /// 
+  ///
   /// Searches for the nearest JetTabRouterScope in the widget tree.
   /// If found, returns the tab's router. Otherwise, returns the root router.
-  /// 
+  ///
   /// This is similar to auto_route's context.router behavior.
   JetNavigationStateManager get router => JetTabRouterScope.nearest(this);
 }
