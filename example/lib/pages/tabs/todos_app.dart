@@ -85,7 +85,8 @@ class TodosTabPage extends StatelessWidget {
             const SizedBox(height: 32),
             ElevatedButton.icon(
               onPressed: () {
-                context.router.pushNamed('/app/todos/create');
+                // Use nested Navigator within the tab
+                Navigator.of(context).pushNamed('/app/todos/create');
               },
               icon: const Icon(Icons.add),
               label: const Text('Create New Todo'),
