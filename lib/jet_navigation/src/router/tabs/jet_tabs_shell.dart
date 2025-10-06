@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'jet_tabs_controller.dart';
 import 'tab_item.dart';
 import 'tabs_route.dart';
-import '../jet_navigation_state_manager.dart';
+import 'jet_tab_router_scope.dart';
+import 'jet_tab_navigation_delegate.dart';
 
 /// Callback for building custom navigation bar
 typedef NavigationBarBuilder = Widget Function(
@@ -85,10 +86,6 @@ class _JetTabsShellState extends State<JetTabsShell>
 
     _controller.onTabChanged = _handleTabChanged;
     _controller.addListener(_onControllerChanged);
-
-    // Register tabs controller with the navigation state manager
-    // This enables context.router.pushNamed() to work within tabs
-    JetNavigationStateManager.instance.setTabsController(_controller);
   }
 
   void _handleTabChanged(int oldIndex, int newIndex) {
@@ -107,10 +104,6 @@ class _JetTabsShellState extends State<JetTabsShell>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _controller.removeListener(_onControllerChanged);
-
-    // Clear tabs controller from navigation state manager
-    JetNavigationStateManager.instance.clearTabsController();
-
     _controller.dispose();
     super.dispose();
   }
@@ -151,26 +144,34 @@ class _JetTabsShellState extends State<JetTabsShell>
       );
     }
 
-    return Navigator(
-      key: _controller.getNavigatorKey(index),
-      onGenerateRoute: (settings) {
-        final routeName = settings.name;
+    // Create a navigation delegate for this tab
+    final navigatorKey = _controller.getNavigatorKey(index)!;
+    final tabRouter = JetTabNavigationDelegate(navigatorKey: navigatorKey);
 
-        // If no route name specified, use the first route
-        if (routeName == null || routeName == Navigator.defaultRouteName) {
-          return tab.routes.first.createRoute(context);
-        }
-
-        // Find matching route
-        for (final route in tab.routes) {
-          if (route.name == routeName) {
-            return route.createRoute(context);
+    // Wrap the Navigator with a router scope so context.router finds this tab's router
+    return JetTabRouterScope(
+      router: tabRouter,
+      child: Navigator(
+        key: navigatorKey,
+        onGenerateRoute: (settings) {
+          final routeName = settings.name;
+          
+          // If no route name specified, use the first route
+          if (routeName == null || routeName == Navigator.defaultRouteName) {
+            return tab.routes.first.createRoute(context);
           }
-        }
 
-        // Fallback to first route
-        return tab.routes.first.createRoute(context);
-      },
+          // Find matching route
+          for (final route in tab.routes) {
+            if (route.name == routeName) {
+              return route.createRoute(context);
+            }
+          }
+
+          // Fallback to first route
+          return tab.routes.first.createRoute(context);
+        },
+      ),
     );
   }
 

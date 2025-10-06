@@ -85,7 +85,7 @@ class TodosTabPage extends StatelessWidget {
             const SizedBox(height: 32),
             ElevatedButton.icon(
               onPressed: () {
-                // JetX automatically routes within the active tab!
+                // context.router now finds the nearest tab router (auto_route style)
                 context.router.pushNamed('/app/todos/create');
               },
               icon: const Icon(Icons.add),
