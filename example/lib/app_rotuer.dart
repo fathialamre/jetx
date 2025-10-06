@@ -1,6 +1,7 @@
 import 'package:example/pages/home_page.dart';
 import 'package:example/pages/profile_page.dart';
 import 'package:example/pages/settings_page.dart';
+import 'package:example/pages/tabs/tabs_demo_page.dart';
 import 'package:jet/jet_navigation/jet_navigation.dart';
 
 final routes = [
@@ -16,5 +17,12 @@ final routes = [
     page: () => const SettingsPage(),
     transition: Transition.zoom, // Zoom transition
     transitionDuration: const Duration(milliseconds: 350),
+  ),
+  // Tabs demo - route-controlled bottom navigation
+  JetPage(
+    name: '/tabs-demo',
+    page: () => const TabsDemoPage(),
+    transition: Transition.fadeIn,
+    transitionDuration: const Duration(milliseconds: 300),
   ),
 ];
