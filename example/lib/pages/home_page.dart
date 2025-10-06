@@ -175,7 +175,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 const SizedBox(height: 24),
                 
-                // Tabs Demo Section
+                // Todos App Demo Section
                 Container(
                   constraints: const BoxConstraints(maxWidth: 400),
                   padding: const EdgeInsets.all(16),
@@ -187,7 +187,7 @@ class _HomePageState extends State<HomePage> {
                   child: Column(
                     children: [
                       const Text(
-                        '🎯 New! Route-Controlled Tabs',
+                        '📝 Todos App - Route-Controlled Tabs',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -196,7 +196,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       const SizedBox(height: 8),
                       const Text(
-                        'Each tab has its own navigation stack',
+                        'Simple example with 2 tabs and sub-pages',
                         textAlign: TextAlign.center,
                         style: TextStyle(fontSize: 12, color: Colors.grey),
                       ),
@@ -205,8 +205,8 @@ class _HomePageState extends State<HomePage> {
                         onPressed: () {
                           context.router.pushNamed('/tabs-demo');
                         },
-                        icon: const Icon(Icons.tab),
-                        label: const Text('Try Tabs Demo'),
+                        icon: const Icon(Icons.list_alt),
+                        label: const Text('Open Todos App'),
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 24,

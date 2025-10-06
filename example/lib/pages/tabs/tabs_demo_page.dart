@@ -1,70 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:jet/jet.dart';
 
-/// Demo page showing route-controlled bottom navigation
+/// Main layout page with tabs - Todos App Example
 class TabsDemoPage extends StatelessWidget {
   const TabsDemoPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Define the tabs route
+    // Define the tabs route for the todos app
     final tabsRoute = TabsRoute(
       path: '/app',
-      name: 'app_tabs',
-      restorationId: 'app_tabs',
+      name: 'main_layout',
       tabs: [
+        // First Tab: Todos
         TabItem(
-          name: 'home',
-          path: 'home',
-          label: 'Home',
-          icon: const Icon(Icons.home_outlined),
-          selectedIcon: const Icon(Icons.home),
+          name: 'todos',
+          path: 'todos',
+          label: 'Todos',
+          icon: const Icon(Icons.list_outlined),
+          selectedIcon: const Icon(Icons.list),
           initial: true,
-          restorationId: 'home_tab',
           routes: [
             JetPage(
-              name: '/app/home',
-              page: () => const HomeTabPage(),
+              name: '/app/todos',
+              page: () => const TodosTabPage(),
             ),
             JetPage(
-              name: '/app/home/details',
-              page: () => const HomeDetailsPage(),
+              name: '/app/todos/create',
+              page: () => const CreateTodoPage(),
             ),
           ],
         ),
+        // Second Tab: Settings
         TabItem(
-          name: 'search',
-          path: 'search',
-          label: 'Search',
-          icon: const Icon(Icons.search_outlined),
-          selectedIcon: const Icon(Icons.search),
-          restorationId: 'search_tab',
+          name: 'settings',
+          path: 'settings',
+          label: 'Settings',
+          icon: const Icon(Icons.settings_outlined),
+          selectedIcon: const Icon(Icons.settings),
           routes: [
             JetPage(
-              name: '/app/search',
-              page: () => const SearchTabPage(),
-            ),
-            JetPage(
-              name: '/app/search/results',
-              page: () => const SearchResultsPage(),
-            ),
-          ],
-        ),
-        TabItem(
-          name: 'profile',
-          path: 'profile',
-          label: 'Profile',
-          icon: const Icon(Icons.person_outline),
-          selectedIcon: const Icon(Icons.person),
-          restorationId: 'profile_tab',
-          routes: [
-            JetPage(
-              name: '/app/profile',
-              page: () => const ProfileTabPage(),
-            ),
-            JetPage(
-              name: '/app/profile/settings',
-              page: () => const ProfileSettingsPage(),
+              name: '/app/settings',
+              page: () => const SettingsTabPage(),
             ),
           ],
         ),
@@ -73,7 +50,6 @@ class TabsDemoPage extends StatelessWidget {
 
     return JetTabsShell(
       tabsRoute: tabsRoute,
-      restorationId: 'tabs_shell',
       onTabChanged: (oldIndex, newIndex) {
         debugPrint('Tab changed from $oldIndex to $newIndex');
       },
@@ -81,38 +57,64 @@ class TabsDemoPage extends StatelessWidget {
   }
 }
 
-/// Home tab page
-class HomeTabPage extends StatelessWidget {
-  const HomeTabPage({super.key});
+// ============================================================================
+// Todos Tab (First Tab)
+// ============================================================================
+
+/// Todos tab page - displays list of todos
+class TodosTabPage extends StatelessWidget {
+  const TodosTabPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Home Tab'),
+        title: const Text('My Todos'),
         backgroundColor: Colors.blue,
+        foregroundColor: Colors.white,
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            const Icon(
+              Icons.list_alt,
+              size: 100,
+              color: Colors.blue,
+            ),
+            const SizedBox(height: 24),
             const Text(
-              'Home Tab',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              'Todos List',
+              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                context.router.pushNamed('/app/home/details');
-              },
-              child: const Text('Go to Home Details'),
+            const SizedBox(height: 12),
+            const Text(
+              'Placeholder for todos list',
+              style: TextStyle(fontSize: 16, color: Colors.grey),
             ),
-            const SizedBox(height: 10),
-            ElevatedButton(
+            const SizedBox(height: 32),
+            ElevatedButton.icon(
               onPressed: () {
-                context.router.switchTab(name: 'profile');
+                context.router.pushNamed('/app/todos/create');
               },
-              child: const Text('Switch to Profile Tab'),
+              icon: const Icon(Icons.add),
+              label: const Text('Create New Todo'),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 16,
+                ),
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 16),
+            OutlinedButton.icon(
+              onPressed: () {
+                context.router.switchTab(name: 'settings');
+              },
+              icon: const Icon(Icons.settings),
+              label: const Text('Go to Settings Tab'),
             ),
           ],
         ),
@@ -121,138 +123,90 @@ class HomeTabPage extends StatelessWidget {
   }
 }
 
-/// Home details page
-class HomeDetailsPage extends StatelessWidget {
-  const HomeDetailsPage({super.key});
+// ============================================================================
+// Create Todo Page (Sub-page of Todos Tab)
+// ============================================================================
+
+/// Create todo page - form to create a new todo
+class CreateTodoPage extends StatelessWidget {
+  const CreateTodoPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Home Details'),
+        title: const Text('Create Todo'),
         backgroundColor: Colors.blue,
+        foregroundColor: Colors.white,
       ),
-      body: Center(
+      body: Padding(
+        padding: const EdgeInsets.all(24.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            const Icon(
+              Icons.note_add,
+              size: 80,
+              color: Colors.blue,
+            ),
+            const SizedBox(height: 24),
             const Text(
-              'Home Details Page',
+              'Create New Todo',
+              textAlign: TextAlign.center,
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 20),
-            const Text('This is a detail page within the Home tab.'),
-            const SizedBox(height: 10),
-            const Text('Use the back button to go back to Home.'),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// Search tab page
-class SearchTabPage extends StatelessWidget {
-  const SearchTabPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Search Tab'),
-        backgroundColor: Colors.green,
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              'Search Tab',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            const SizedBox(height: 32),
+            
+            // Placeholder for form fields
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.grey.shade300),
+              ),
+              child: const Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Title',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 8),
+                  Text('[ Input field placeholder ]'),
+                  SizedBox(height: 16),
+                  Text(
+                    'Description',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 8),
+                  Text('[ Textarea placeholder ]'),
+                ],
+              ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
+            
             ElevatedButton(
               onPressed: () {
-                context.router.pushNamed('/app/search/results');
+                // Navigate back to todos list
+                Navigator.of(context).pop();
               },
-              child: const Text('View Search Results'),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Save Todo'),
             ),
-            const SizedBox(height: 10),
-            ElevatedButton(
+            const SizedBox(height: 12),
+            OutlinedButton(
               onPressed: () {
-                context.router.switchTab(index: 0);
+                Navigator.of(context).pop();
               },
-              child: const Text('Switch to Home Tab'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// Search results page
-class SearchResultsPage extends StatelessWidget {
-  const SearchResultsPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Search Results'),
-        backgroundColor: Colors.green,
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              'Search Results',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 20),
-            const Text('Search results would appear here.'),
-            const SizedBox(height: 10),
-            const Text('Each tab maintains its own navigation stack.'),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// Profile tab page
-class ProfileTabPage extends StatelessWidget {
-  const ProfileTabPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profile Tab'),
-        backgroundColor: Colors.purple,
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              'Profile Tab',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                context.router.pushNamed('/app/profile/settings');
-              },
-              child: const Text('Go to Profile Settings'),
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () {
-                context.router.switchTab(name: 'search');
-              },
-              child: const Text('Switch to Search Tab'),
+              style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+              ),
+              child: const Text('Cancel'),
             ),
           ],
         ),
@@ -261,31 +215,72 @@ class ProfileTabPage extends StatelessWidget {
   }
 }
 
-/// Profile settings page
-class ProfileSettingsPage extends StatelessWidget {
-  const ProfileSettingsPage({super.key});
+// ============================================================================
+// Settings Tab (Second Tab)
+// ============================================================================
+
+/// Settings tab page - app settings
+class SettingsTabPage extends StatelessWidget {
+  const SettingsTabPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profile Settings'),
-        backgroundColor: Colors.purple,
+        title: const Text('Settings'),
+        backgroundColor: Colors.deepPurple,
+        foregroundColor: Colors.white,
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
-              'Profile Settings',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            const Icon(
+              Icons.settings,
+              size: 100,
+              color: Colors.deepPurple,
             ),
-            const SizedBox(height: 20),
-            const Text('Settings page within Profile tab.'),
-            const SizedBox(height: 10),
-            const Text('Try switching tabs and coming back!'),
-            const SizedBox(height: 10),
-            const Text('Your navigation state is preserved.'),
+            const SizedBox(height: 24),
+            const Text(
+              'Settings',
+              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12),
+            const Text(
+              'Placeholder for settings options',
+              style: TextStyle(fontSize: 16, color: Colors.grey),
+            ),
+            const SizedBox(height: 32),
+            Container(
+              padding: const EdgeInsets.all(16),
+              margin: const EdgeInsets.symmetric(horizontal: 32),
+              decoration: BoxDecoration(
+                color: Colors.deepPurple.shade50,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.deepPurple.shade200),
+              ),
+              child: const Column(
+                children: [
+                  Text(
+                    'Settings Options:',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 12),
+                  Text('• Theme'),
+                  Text('• Notifications'),
+                  Text('• Language'),
+                  Text('• Privacy'),
+                ],
+              ),
+            ),
+            const SizedBox(height: 32),
+            OutlinedButton.icon(
+              onPressed: () {
+                context.router.switchTab(name: 'todos');
+              },
+              icon: const Icon(Icons.list),
+              label: const Text('Go to Todos Tab'),
+            ),
           ],
         ),
       ),
