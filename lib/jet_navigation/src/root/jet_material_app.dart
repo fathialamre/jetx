@@ -3,91 +3,81 @@ import 'package:flutter/material.dart';
 import 'package:jet/instance_manager.dart';
 
 import '../../../jet_state_manager/jet_state_manager.dart';
-import '../../../jet_utils/jet_utils.dart';
 import '../../jet_navigation.dart';
+import '../router/jet_router_config.dart';
 import 'jet_root.dart';
 
+/// JetX Material App with pure Navigator 2.0 implementation
+///
+/// This is the main app widget that provides Navigator 2.0 navigation,
+/// state management, internationalization, and more.
+///
+/// Example:
+/// ```dart
+/// JetMaterialApp(
+///   title: 'My App',
+///   routes: [
+///     JetPage(name: '/', page: () => HomePage()),
+///     JetPage(name: '/profile', page: () => ProfilePage()),
+///   ],
+///   initialRoute: '/',
+/// )
+/// ```
 class JetMaterialApp extends StatelessWidget {
   final GlobalKey<NavigatorState>? navigatorKey;
   final GlobalKey<ScaffoldMessengerState>? scaffoldMessengerKey;
-  final Widget? home;
-  final Map<String, WidgetBuilder>? routes;
-  final String? initialRoute;
-  final RouteFactory? onGenerateRoute;
-  final InitialRouteListFactory? onGenerateInitialRoutes;
-  final RouteFactory? onUnknownRoute;
-  final List<NavigatorObserver>? navigatorObservers;
-  final TransitionBuilder? builder;
   final String title;
   final GenerateAppTitle? onGenerateTitle;
+  final Color? color;
   final ThemeData? theme;
   final ThemeData? darkTheme;
+  final ThemeData? highContrastTheme;
+  final ThemeData? highContrastDarkTheme;
   final ThemeMode themeMode;
-  final CustomTransition? customTransition;
-  final Color? color;
-  final Map<String, Map<String, String>>? translationsKeys;
-  final Translations? translations;
-  final TextDirection? textDirection;
   final Locale? locale;
   final Locale? fallbackLocale;
   final Iterable<LocalizationsDelegate<dynamic>>? localizationsDelegates;
   final LocaleListResolutionCallback? localeListResolutionCallback;
   final LocaleResolutionCallback? localeResolutionCallback;
   final Iterable<Locale> supportedLocales;
+  final bool debugShowMaterialGrid;
   final bool showPerformanceOverlay;
   final bool checkerboardRasterCacheImages;
   final bool checkerboardOffscreenLayers;
   final bool showSemanticsDebugger;
   final bool debugShowCheckedModeBanner;
   final Map<LogicalKeySet, Intent>? shortcuts;
-  final ScrollBehavior? scrollBehavior;
-  final ThemeData? highContrastTheme;
-  final ThemeData? highContrastDarkTheme;
   final Map<Type, Action<Intent>>? actions;
-  final bool debugShowMaterialGrid;
-  final ValueChanged<Routing?>? routingCallback;
-  final Transition? defaultTransition;
-  final bool? opaqueRoute;
+  final ScrollBehavior? scrollBehavior;
+  final TransitionBuilder? builder;
+
+  // JetX-specific properties
+  final List<JetPage> routes;
+  final String initialRoute;
+  final JetPage? notFoundPage;
+  final List<NavigatorObserver>? navigatorObservers;
+  final Map<String, Map<String, String>>? translationsKeys;
+  final Translations? translations;
   final VoidCallback? onInit;
   final VoidCallback? onReady;
   final VoidCallback? onDispose;
-  final bool? enableLog;
+  final bool enableLog;
   final LogWriterCallback? logWriterCallback;
-  final bool? popGesture;
   final SmartManagement smartManagement;
   final List<Bind> binds;
-  final Duration? transitionDuration;
-  final bool? defaultGlobalState;
-  final List<JetPage>? getPages;
-  final JetPage? unknownRoute;
-  final RouteInformationProvider? routeInformationProvider;
-  final RouteInformationParser<Object>? routeInformationParser;
-  final RouterDelegate<Object>? routerDelegate;
-  final RouterConfig<Object>? routerConfig;
-  final BackButtonDispatcher? backButtonDispatcher;
-  final bool useInheritedMediaQuery;
+  final ValueChanged<Routing?>? routingCallback;
 
   const JetMaterialApp({
     super.key,
     this.navigatorKey,
     this.scaffoldMessengerKey,
-    this.home,
-    Map<String, Widget Function(BuildContext)> this.routes =
-        const <String, WidgetBuilder>{},
-    this.initialRoute,
-    this.onGenerateRoute,
-    this.onGenerateInitialRoutes,
-    this.onUnknownRoute,
-    this.useInheritedMediaQuery = false,
-    List<NavigatorObserver> this.navigatorObservers =
-        const <NavigatorObserver>[],
-    this.builder,
-    this.textDirection,
     this.title = '',
     this.onGenerateTitle,
     this.color,
     this.theme,
     this.darkTheme,
+    this.highContrastTheme,
+    this.highContrastDarkTheme,
     this.themeMode = ThemeMode.system,
     this.locale,
     this.fallbackLocale,
@@ -102,186 +92,72 @@ class JetMaterialApp extends StatelessWidget {
     this.showSemanticsDebugger = false,
     this.debugShowCheckedModeBanner = true,
     this.shortcuts,
-    this.scrollBehavior,
-    this.customTransition,
-    this.translationsKeys,
-    this.translations,
-    this.onInit,
-    this.onReady,
-    this.onDispose,
-    this.routingCallback,
-    this.defaultTransition,
-    this.getPages,
-    this.opaqueRoute,
-    this.enableLog = kDebugMode,
-    this.logWriterCallback,
-    this.popGesture,
-    this.transitionDuration,
-    this.defaultGlobalState,
-    this.smartManagement = SmartManagement.full,
-    this.binds = const [],
-    this.unknownRoute,
-    this.highContrastTheme,
-    this.highContrastDarkTheme,
     this.actions,
-  })  : routeInformationProvider = null,
-        backButtonDispatcher = null,
-        routeInformationParser = null,
-        routerDelegate = null,
-        routerConfig = null;
-
-  const JetMaterialApp.router({
-    super.key,
-    this.routeInformationProvider,
-    this.scaffoldMessengerKey,
-    this.routeInformationParser,
-    this.routerDelegate,
-    this.routerConfig,
-    this.backButtonDispatcher,
+    this.scrollBehavior,
     this.builder,
-    this.title = '',
-    this.onGenerateTitle,
-    this.color,
-    this.theme,
-    this.darkTheme,
-    this.useInheritedMediaQuery = false,
-    this.highContrastTheme,
-    this.highContrastDarkTheme,
-    this.themeMode = ThemeMode.system,
-    this.locale,
-    this.localizationsDelegates,
-    this.localeListResolutionCallback,
-    this.localeResolutionCallback,
-    this.supportedLocales = const <Locale>[Locale('en', 'US')],
-    this.debugShowMaterialGrid = false,
-    this.showPerformanceOverlay = false,
-    this.checkerboardRasterCacheImages = false,
-    this.checkerboardOffscreenLayers = false,
-    this.showSemanticsDebugger = false,
-    this.debugShowCheckedModeBanner = true,
-    this.shortcuts,
-    this.scrollBehavior,
-    this.actions,
-    this.customTransition,
-    this.translationsKeys,
-    this.translations,
-    this.textDirection,
-    this.fallbackLocale,
-    this.routingCallback,
-    this.defaultTransition,
-    this.opaqueRoute,
-    this.onInit,
-    this.onReady,
-    this.onDispose,
-    this.enableLog = kDebugMode,
-    this.logWriterCallback,
-    this.popGesture,
-    this.smartManagement = SmartManagement.full,
-    this.binds = const [],
-    this.transitionDuration,
-    this.defaultGlobalState,
-    this.getPages,
+    required this.routes,
+    this.initialRoute = '/',
+    this.notFoundPage,
     this.navigatorObservers,
-    this.unknownRoute,
-  })  : navigatorKey = null,
-        onGenerateRoute = null,
-        home = null,
-        onGenerateInitialRoutes = null,
-        onUnknownRoute = null,
-        routes = null,
-        initialRoute = null;
+    this.translationsKeys,
+    this.translations,
+    this.onInit,
+    this.onReady,
+    this.onDispose,
+    this.enableLog = kDebugMode,
+    this.logWriterCallback,
+    this.smartManagement = SmartManagement.full,
+    this.binds = const [],
+    this.routingCallback,
+  });
 
   @override
   Widget build(BuildContext context) {
     return JetRoot(
-      config: ConfigData(
-        backButtonDispatcher: backButtonDispatcher,
-        binds: binds,
-        customTransition: customTransition,
-        defaultGlobalState: defaultGlobalState,
-        defaultTransition: defaultTransition,
-        enableLog: enableLog,
-        fallbackLocale: fallbackLocale,
-        getPages: getPages,
-        home: home,
-        initialRoute: initialRoute,
-        locale: locale,
-        logWriterCallback: logWriterCallback,
-        navigatorKey: navigatorKey,
-        navigatorObservers: navigatorObservers,
-        onDispose: onDispose,
-        onInit: onInit,
-        onReady: onReady,
-        routeInformationParser: routeInformationParser,
-        routeInformationProvider: routeInformationProvider,
-        routerDelegate: routerDelegate,
-        routingCallback: routingCallback,
-        scaffoldMessengerKey: scaffoldMessengerKey,
-        smartManagement: smartManagement,
-        transitionDuration: transitionDuration,
-        translations: translations,
-        translationsKeys: translationsKeys,
-        unknownRoute: unknownRoute,
+      translations: translations,
+      translationsKeys: translationsKeys,
+      locale: locale,
+      fallbackLocale: fallbackLocale,
+      onInit: onInit,
+      onReady: onReady,
+      onDispose: onDispose,
+      smartManagement: smartManagement,
+      binds: binds,
+      enableLog: enableLog,
+      logWriterCallback: logWriterCallback,
+      child: MaterialApp.router(
+        routerConfig: JetRouterConfig(
+          routes: routes,
+          initialRoute: initialRoute,
+          notFoundPage: notFoundPage,
+          navigatorObservers: navigatorObservers,
+          navigatorKey: navigatorKey,
+          enableLog: enableLog,
+        ),
+        title: title,
+        onGenerateTitle: onGenerateTitle,
+        color: color,
         theme: theme,
         darkTheme: darkTheme,
+        highContrastTheme: highContrastTheme,
+        highContrastDarkTheme: highContrastDarkTheme,
         themeMode: themeMode,
-        defaultPopGesture: popGesture,
+        localizationsDelegates: localizationsDelegates,
+        localeListResolutionCallback: localeListResolutionCallback,
+        localeResolutionCallback: localeResolutionCallback,
+        supportedLocales: supportedLocales,
+        debugShowMaterialGrid: debugShowMaterialGrid,
+        showPerformanceOverlay: showPerformanceOverlay,
+        checkerboardRasterCacheImages: checkerboardRasterCacheImages,
+        checkerboardOffscreenLayers: checkerboardOffscreenLayers,
+        showSemanticsDebugger: showSemanticsDebugger,
+        debugShowCheckedModeBanner: debugShowCheckedModeBanner,
+        shortcuts: shortcuts,
+        actions: actions,
+        scrollBehavior: scrollBehavior,
+        scaffoldMessengerKey: scaffoldMessengerKey,
+        builder: builder,
       ),
-      // binds: [
-      //   Bind.lazyPut<GetMaterialController>(
-      //     () => GetMaterialController(
-
-      //     ),
-      //     onClose: () {
-      //       Jet.clearTranslations();
-      //       RouterReportManager.dispose();
-      //       Jet.resetInstance(clearRouteBindings: true);
-      //     },
-      //   ),
-      //   ...binds,
-      // ],
-      child: Builder(builder: (context) {
-        final controller = JetRoot.of(context);
-        return MaterialApp.router(
-          routerDelegate: controller.config.routerDelegate,
-          routeInformationParser: controller.config.routeInformationParser,
-          backButtonDispatcher: backButtonDispatcher,
-          routeInformationProvider: routeInformationProvider,
-          routerConfig: routerConfig,
-          key: controller.config.unikey,
-          builder: (context, child) => Directionality(
-            textDirection: textDirection ??
-                (rtlLanguages.contains(Jet.locale?.languageCode)
-                    ? TextDirection.rtl
-                    : TextDirection.ltr),
-            child: builder == null
-                ? (child ?? const Material())
-                : builder!(context, child ?? const Material()),
-          ),
-          title: title,
-          onGenerateTitle: onGenerateTitle,
-          color: color,
-          theme: controller.config.theme ?? ThemeData.fallback(),
-          darkTheme: controller.config.darkTheme ??
-              controller.config.theme ??
-              ThemeData.fallback(),
-          themeMode: controller.config.themeMode,
-          locale: Jet.locale ?? locale,
-          scaffoldMessengerKey: controller.config.scaffoldMessengerKey,
-          localizationsDelegates: localizationsDelegates,
-          localeListResolutionCallback: localeListResolutionCallback,
-          localeResolutionCallback: localeResolutionCallback,
-          supportedLocales: supportedLocales,
-          debugShowMaterialGrid: debugShowMaterialGrid,
-          showPerformanceOverlay: showPerformanceOverlay,
-          checkerboardRasterCacheImages: checkerboardRasterCacheImages,
-          checkerboardOffscreenLayers: checkerboardOffscreenLayers,
-          showSemanticsDebugger: showSemanticsDebugger,
-          debugShowCheckedModeBanner: debugShowCheckedModeBanner,
-          shortcuts: shortcuts,
-          scrollBehavior: scrollBehavior,
-        );
-      }),
     );
   }
 }
