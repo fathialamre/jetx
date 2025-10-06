@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return JetMaterialApp(
-      title: 'JetX Navigator 2.0 Demo',
+      title: 'Todos App - JetX Tabs Demo',
       routes: routes,
       initialRoute: '/',
 

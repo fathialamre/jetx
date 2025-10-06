@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:jet/jet.dart';
 
-/// Main layout page with tabs - Todos App Example
-class TabsDemoPage extends StatelessWidget {
-  const TabsDemoPage({super.key});
+/// Main layout page with tabs - Todos App
+class TodosApp extends StatelessWidget {
+  const TodosApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,10 +21,7 @@ class TabsDemoPage extends StatelessWidget {
           selectedIcon: const Icon(Icons.list),
           initial: true,
           routes: [
-            JetPage(
-              name: '/app/todos',
-              page: () => const TodosTabPage(),
-            ),
+            JetPage(name: '/app/todos', page: () => const TodosTabPage()),
             JetPage(
               name: '/app/todos/create',
               page: () => const CreateTodoPage(),
@@ -39,10 +36,7 @@ class TabsDemoPage extends StatelessWidget {
           icon: const Icon(Icons.settings_outlined),
           selectedIcon: const Icon(Icons.settings),
           routes: [
-            JetPage(
-              name: '/app/settings',
-              page: () => const SettingsTabPage(),
-            ),
+            JetPage(name: '/app/settings', page: () => const SettingsTabPage()),
           ],
         ),
       ],
@@ -77,11 +71,7 @@ class TodosTabPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
-              Icons.list_alt,
-              size: 100,
-              color: Colors.blue,
-            ),
+            const Icon(Icons.list_alt, size: 100, color: Colors.blue),
             const SizedBox(height: 24),
             const Text(
               'Todos List',
@@ -144,11 +134,7 @@ class CreateTodoPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Icon(
-              Icons.note_add,
-              size: 80,
-              color: Colors.blue,
-            ),
+            const Icon(Icons.note_add, size: 80, color: Colors.blue),
             const SizedBox(height: 24),
             const Text(
               'Create New Todo',
@@ -156,7 +142,7 @@ class CreateTodoPage extends StatelessWidget {
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 32),
-            
+
             // Placeholder for form fields
             Container(
               padding: const EdgeInsets.all(16),
@@ -168,10 +154,7 @@ class CreateTodoPage extends StatelessWidget {
               child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Title',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
+                  Text('Title', style: TextStyle(fontWeight: FontWeight.bold)),
                   SizedBox(height: 8),
                   Text('[ Input field placeholder ]'),
                   SizedBox(height: 16),
@@ -185,7 +168,7 @@ class CreateTodoPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
-            
+
             ElevatedButton(
               onPressed: () {
                 // Navigate back to todos list
@@ -235,11 +218,7 @@ class SettingsTabPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
-              Icons.settings,
-              size: 100,
-              color: Colors.deepPurple,
-            ),
+            const Icon(Icons.settings, size: 100, color: Colors.deepPurple),
             const SizedBox(height: 24),
             const Text(
               'Settings',
