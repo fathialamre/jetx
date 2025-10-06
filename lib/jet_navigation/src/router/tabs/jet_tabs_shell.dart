@@ -102,15 +102,6 @@ class _JetTabsShellState extends State<JetTabsShell>
     registerForRestoration(_currentIndexRestoration, 'tab_index');
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // Register controller with navigation state manager if needed
-    // This allows Jet.router.switchTab() to work
-    // final stateManager = JetNavigationStateManager.instance;
-    // stateManager.setTabsController(_controller);
-  }
-
   void _handleTabChanged(int oldIndex, int newIndex) {
     _currentIndexRestoration.value = newIndex;
     widget.onTabChanged?.call(oldIndex, newIndex);
@@ -160,29 +151,34 @@ class _JetTabsShellState extends State<JetTabsShell>
   }
 
   Widget _buildTabNavigator(TabItem tab, int index) {
+    // If no routes defined, show placeholder
+    if (tab.routes.isEmpty) {
+      return Scaffold(
+        body: Center(
+          child: Text('No routes configured for tab: ${tab.name}'),
+        ),
+      );
+    }
+
     return Navigator(
       key: _controller.getNavigatorKey(index),
       onGenerateRoute: (settings) {
-        // Find the route for this tab
-        final route = tab.findRoute(settings.name ?? '');
-        if (route != null) {
-          return route.createRoute(context);
-        }
-
-        // Default to the first route in the tab
-        if (tab.routes.isNotEmpty) {
+        final routeName = settings.name;
+        
+        // If no route name specified, use the first route
+        if (routeName == null || routeName == Navigator.defaultRouteName) {
           return tab.routes.first.createRoute(context);
         }
 
-        // Fallback: show error page
-        return MaterialPageRoute(
-          builder: (context) => Scaffold(
-            appBar: AppBar(title: const Text('Not Found')),
-            body: Center(
-              child: Text('No routes found for tab: ${tab.name}'),
-            ),
-          ),
-        );
+        // Find matching route
+        for (final route in tab.routes) {
+          if (route.name == routeName) {
+            return route.createRoute(context);
+          }
+        }
+
+        // Fallback to first route
+        return tab.routes.first.createRoute(context);
       },
     );
   }
