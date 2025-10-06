@@ -85,8 +85,8 @@ class TodosTabPage extends StatelessWidget {
             const SizedBox(height: 32),
             ElevatedButton.icon(
               onPressed: () {
-                // Use nested Navigator within the tab
-                Navigator.of(context).pushNamed('/app/todos/create');
+                // JetX automatically routes within the active tab!
+                context.router.pushNamed('/app/todos/create');
               },
               icon: const Icon(Icons.add),
               label: const Text('Create New Todo'),

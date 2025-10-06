@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'jet_tabs_controller.dart';
 import 'tab_item.dart';
 import 'tabs_route.dart';
+import '../jet_navigation_state_manager.dart';
 
 /// Callback for building custom navigation bar
 typedef NavigationBarBuilder = Widget Function(
@@ -84,6 +85,10 @@ class _JetTabsShellState extends State<JetTabsShell>
 
     _controller.onTabChanged = _handleTabChanged;
     _controller.addListener(_onControllerChanged);
+
+    // Register tabs controller with the navigation state manager
+    // This enables context.router.pushNamed() to work within tabs
+    JetNavigationStateManager.instance.setTabsController(_controller);
   }
 
   void _handleTabChanged(int oldIndex, int newIndex) {
@@ -102,6 +107,10 @@ class _JetTabsShellState extends State<JetTabsShell>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _controller.removeListener(_onControllerChanged);
+
+    // Clear tabs controller from navigation state manager
+    JetNavigationStateManager.instance.clearTabsController();
+
     _controller.dispose();
     super.dispose();
   }

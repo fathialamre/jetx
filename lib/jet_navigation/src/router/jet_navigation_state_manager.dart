@@ -100,12 +100,27 @@ class JetNavigationStateManager extends ChangeNotifier {
   }
 
   /// Push a page by path
+  /// 
+  /// Automatically detects if you're in a tabs context and routes within the active tab.
+  /// This provides a unified API: context.router.pushNamed() works everywhere!
   void pushNamed(
     String path, {
     Object? arguments,
     Map<String, String>? parameters,
     String? name,
-  }) {
+  }) async {
+    // If tabs are active, try to route within the active tab first
+    if (_tabsController != null) {
+      try {
+        await _tabsController!.pushNamed(path, arguments: arguments);
+        return;
+      } catch (e) {
+        // If tab routing fails, fall through to main routing
+        debugPrint('[JetNavigationStateManager] Tab routing failed, using main router: $e');
+      }
+    }
+    
+    // Use main router
     push(JetPageConfiguration(
       path: path,
       arguments: arguments,
