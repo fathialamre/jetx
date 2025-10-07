@@ -13,6 +13,7 @@ mixin JetNavigationRestoration on RouterDelegate<JetNavigationState> {
   JetNavigationState? get restorationData => currentConfiguration;
 
   /// Restore from a previous navigation state
+  @override
   Future<void> setRestoredRoutePath(JetNavigationState configuration) async {
     return setNewRoutePath(configuration);
   }

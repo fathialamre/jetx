@@ -26,10 +26,7 @@ class TodosApp extends StatelessWidget {
               name: '/app/todos/create',
               page: () => const CreateTodoPage(),
             ),
-            JetPage(
-              name: '/app/todos/about',
-              page: () => const AboutPage(),
-            ),
+            JetPage(name: '/app/todos/about', page: () => const AboutPage()),
           ],
         ),
         // Second Tab: Settings
@@ -302,11 +299,7 @@ class AboutPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(
-                Icons.info,
-                size: 100,
-                color: Colors.blue,
-              ),
+              const Icon(Icons.info, size: 100, color: Colors.blue),
               const SizedBox(height: 24),
               const Text(
                 'About This App',
