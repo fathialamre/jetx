@@ -27,7 +27,7 @@
   - [Context Extensions](#context-extensions)
 - [Additional Features](#additional-features)
   - [Internationalization](#internationalization)
-  - [JetConnect - HTTP & WebSockets](#jetconnect---http--websockets)
+  - [JetNetworking - HTTP Client with Dio](#jetnetworking---http-client-with-dio)
   - [Middleware](#middleware)
 - [Advanced Topics](#advanced-topics)
   - [Local State Widgets](#local-state-widgets)
@@ -36,6 +36,7 @@
   - [Reactive Programming Deep Dive](#reactive-programming-deep-dive)
   - [Testing](#testing)
 - [Complete Guides](#complete-guides)
+  - [Networking Guide](#networking-guide)
   - [State Management Guide](#state-management-guide)
   - [Route Management Guide](#route-management-guide)
   - [Dependency Management Guide](#dependency-management-guide)
@@ -537,60 +538,109 @@ Jet.updateLocale(Locale('es', 'ES'));
 
 ---
 
-### JetConnect - HTTP & WebSockets
+### JetNetworking - HTTP Client with Dio
 
-Easy communication with your backend.
+Powerful HTTP networking built on top of Dio with clean abstractions.
 
-#### HTTP Requests
-
-```dart
-class UserProvider extends JetConnect {
-  Future<Response> getUser(int id) => get('https://api.example.com/users/$id');
-  
-  Future<Response> createUser(Map data) => post('https://api.example.com/users', body: data);
-  
-  Future<Response> updateUser(int id, Map data) => put('https://api.example.com/users/$id', body: data);
-}
-```
-
-#### Custom Configuration
+#### Create Custom API Service
 
 ```dart
-class ApiProvider extends JetConnect {
+class UserApiService extends JetApiService {
   @override
-  void onInit() {
-    httpClient.baseUrl = 'https://api.example.com';
-    httpClient.defaultDecoder = User.fromJson;
-    
-    // Add auth header to all requests
-    httpClient.addRequestModifier((request) {
-      request.headers['Authorization'] = 'Bearer $token';
-      return request;
-    });
-    
-    // Transform responses
-    httpClient.addResponseModifier((request, response) {
-      // Process response
-      return response;
-    });
+  String get baseUrl => 'https://api.example.com';
+  
+  @override
+  List<Interceptor> get interceptors => [
+    PrettyDioLogger(
+      requestHeader: true,
+      requestBody: true,
+      responseBody: true,
+      error: true,
+      compact: true,
+    ),
+  ];
+  
+  Future<User> getUser(int id) async {
+    return get<User>(
+      '/users/$id',
+      decoder: (data) => User.fromJson(data),
+    );
+  }
+  
+  Future<List<User>> getUsers() async {
+    return get<List<User>>(
+      '/users',
+      decoder: (data) => (data as List).map((e) => User.fromJson(e)).toList(),
+    );
+  }
+  
+  Future<User> createUser(Map<String, dynamic> userData) async {
+    return post<User>(
+      '/users',
+      data: userData,
+      decoder: (data) => User.fromJson(data),
+    );
+  }
+  
+  Future<User> updateUser(int id, Map<String, dynamic> userData) async {
+    return put<User>(
+      '/users/$id',
+      data: userData,
+      decoder: (data) => User.fromJson(data),
+    );
   }
 }
 ```
 
-#### WebSocket Support
+#### With Authentication Interceptor
 
 ```dart
-class ChatProvider extends JetConnect {
-  JetSocket chatRoom() {
-    return socket('wss://api.example.com/chat');
+class AuthInterceptor extends Interceptor {
+  @override
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+    final token = Jet.find<AuthService>().token;
+    options.headers['Authorization'] = 'Bearer $token';
+    handler.next(options);
   }
 }
 
-// Usage
-final socket = provider.chatRoom();
-socket.onMessage((data) => print('Message: $data'));
-socket.send('Hello!');
+class ApiService extends JetApiService {
+  @override
+  String get baseUrl => 'https://api.example.com';
+  
+  @override
+  List<Interceptor> get interceptors => [
+    AuthInterceptor(),
+    PrettyDioLogger(compact: true),
+  ];
+}
 ```
+
+#### File Upload
+
+```dart
+class FileApiService extends JetApiService {
+  @override
+  String get baseUrl => 'https://api.example.com';
+  
+  Future<UploadResult> uploadImage(File imageFile) async {
+    final formData = FormData.fromMap({
+      'file': await MultipartFile.fromFile(
+        imageFile.path,
+        filename: 'upload.jpg',
+      ),
+    });
+    
+    return upload<UploadResult>(
+      '/upload',
+      formData,
+      decoder: (data) => UploadResult.fromJson(data),
+      onSendProgress: (sent, total) {
+        print('Upload progress: ${(sent / total * 100).toStringAsFixed(0)}%');
+      },
+    );
+  }
+}
 
 ---
 
@@ -916,6 +966,56 @@ tearDown(() {
 ## Complete Guides
 
 This section contains comprehensive guides for all JetX features. Each guide includes detailed explanations, best practices, and complete working examples.
+
+### Networking Guide
+
+JetX provides a powerful HTTP client built on Dio with clean abstractions, type safety, and seamless integration with JetX's dependency injection.
+
+**Quick Example:**
+
+```dart
+class UserApiService extends JetApiService {
+  @override
+  String get baseUrl => 'https://api.example.com';
+  
+  @override
+  List<Interceptor> get interceptors => [
+    PrettyDioLogger(compact: true),
+  ];
+  
+  Future<User> getUser(int id) async {
+    return get<User>(
+      '/users/$id',
+      decoder: (data) => User.fromJson(data),
+    );
+  }
+}
+
+// Usage in controller
+class UserController extends JetxController {
+  final api = Jet.find<UserApiService>();
+  
+  Future<void> loadUser() async {
+    try {
+      final user = await api.getUser(1);
+      // Handle success
+    } on DioException catch (e) {
+      // Handle error
+    }
+  }
+}
+```
+
+**Features:**
+
+- ✅ Type-safe API calls with required decoders
+- ✅ Authentication with interceptors
+- ✅ File upload/download with progress
+- ✅ Request cancellation
+- ✅ Pretty logging with `pretty_dio_logger`
+- ✅ Full Dio feature support
+
+---
 
 ### State Management Guide
 
