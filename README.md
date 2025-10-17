@@ -15,6 +15,7 @@
 ## Table of Contents
 
 - [What is jetx?](#what-is-jetx)
+- [🆕 What's New in JetX](#-whats-new-in-jetx)
 - [Quick Start](#quick-start)
   - [Installation](#installation)
   - [Counter App Example](#counter-app-example)
@@ -23,9 +24,12 @@
   - [State Management](#state-management)
   - [Route Management](#route-management)
   - [Dependency Injection](#dependency-injection)
+- [UI Features](#ui-features)
+  - [Theming](#theming)
+  - [Dialogs & Snackbars](#dialogs--snackbars)
+  - [Context Extensions](#context-extensions)
 - [Additional Features](#additional-features)
   - [Internationalization](#internationalization)
-  - [Theme Management](#theme-management)
   - [JetConnect - HTTP & WebSockets](#jetconnect---http--websockets)
   - [Middleware](#middleware)
 - [Advanced Topics](#advanced-topics)
@@ -51,6 +55,113 @@ jetx combines **high-performance state management**, **intelligent dependency in
 - **📦 Organization** - Complete decoupling of UI, business logic, and navigation. No context needed.
 
 jetx is modular by design. Use only what you need—if you only use state management, only that code is compiled. Each feature is independently usable without bloating your app.
+
+---
+
+## 🆕 What's New in JetX
+
+JetX introduces powerful new reactive programming features that significantly enhance developer productivity and code quality. These features are **not available in the original GetX**.
+
+### ✨ Computed Values - Automatic Derived State
+
+Create reactive values that automatically recompute when dependencies change - no manual updates needed!
+
+```dart
+class CartController extends JetxController {
+  final items = <Item>[].obs;
+  final taxRate = 0.08.obs;
+  
+  // Automatically recomputes when items change!
+  late final subtotal = computed(
+    () => items.fold(0.0, (sum, item) => sum + item.price),
+    watch: [items],
+  );
+  
+  // Chain computed values
+  late final tax = computed(
+    () => subtotal.value * taxRate.value,
+    watch: [subtotal, taxRate],
+  );
+  
+  late final total = computed(
+    () => subtotal.value + tax.value,
+    watch: [subtotal, tax],
+  );
+}
+
+// UI updates automatically when items or taxRate changes!
+Obx(() => Text('Total: \$${controller.total.value}'))
+```
+
+### ✨ Reactive Operators - Functional Transformations
+
+Transform, filter, and combine reactive values with ease.
+
+```dart
+// Transform
+final temperature = 0.obs;
+final fahrenheit = temperature.map((c) => c * 9/5 + 32);
+
+// Filter
+final input = ''.obs;
+final validInput = input.where((text) => text.length >= 3);
+
+// Combine
+final firstName = 'John'.obs;
+final lastName = 'Doe'.obs;
+final fullName = Rx.combine2(
+  firstName, lastName,
+  (a, b) => '$a $b',
+);
+
+// Accumulate
+final events = 0.obs;
+final totalEvents = events.scan<int>(
+  0,
+  (total, event, i) => total + event,
+);
+```
+
+### ✨ Stream Integration - Seamless Stream Binding
+
+Bridge the gap between reactive programming and stream-based APIs.
+
+```dart
+// Auto-managed
+final status = Rx.fromStream(statusStream, initial: Status.idle);
+
+// Manual management in controllers
+class ChatController extends JetxController {
+  final messages = <Message>[].obs;
+  late StreamSubscription _sub;
+  
+  @override
+  void onInit() {
+    super.onInit();
+    _sub = messages.listenToStream(chatService.messagesStream);
+  }
+  
+  @override
+  void onClose() {
+    _sub.cancel();
+    super.onClose();
+  }
+}
+```
+
+### 🚀 Why These Features Matter
+
+- **🚀 Zero Boilerplate** - No manual state synchronization
+- **⚡ Performance** - Only recomputes when dependencies change
+- **🔗 Declarative** - Clean, functional programming patterns
+- **🛡️ Type Safe** - Full type safety and null safety support
+- **🧪 Testable** - Easy to test with predictable behavior
+
+### 📚 Learn More
+
+- **[Complete What's New Guide →](./documentation/whats_new_in_jetx.md)** - Detailed overview of all new features
+- **[State Management Guide →](./documentation/state_management.md#-advanced-reactive-features)** - Complete guide including new reactive features
+- **[Quick Reference →](./documentation/quick_reference.md)** - Fast lookup for all JetX features
 
 ---
 
@@ -157,10 +268,11 @@ class Other extends StatelessWidget {
 
 > **TL;DR:** Add `.obs` to make variables reactive, wrap widgets in `Obx()` to auto-update. No code generators, no boilerplate.
 
-jetx offers two state managers:
+jetx offers powerful state management with **new reactive features not available in GetX**:
 
 - **Simple State Manager** (`JetBuilder`) - Lightweight, manual control
 - **Reactive State Manager** (`Obx`) - Automatic updates when observables change
+- **🆕 Advanced Reactive Features** - Computed values, operators, stream integration
 
 #### Reactive Example
 
@@ -173,6 +285,27 @@ Obx(() => Text(name.value));
 ```
 
 When `name` changes, the UI updates automatically. No `setState()`, no `StreamBuilder`, no complications.
+
+#### 🆕 Advanced Reactive Features
+
+**Computed Values** - Automatic derived state:
+```dart
+late final total = computed(
+  () => items.fold(0.0, (sum, item) => sum + item.price),
+  watch: [items],
+);
+```
+
+**Reactive Operators** - Transform, filter, combine:
+```dart
+final validInput = input.where((text) => text.length >= 3);
+final fullName = Rx.combine2(firstName, lastName, (a, b) => '$a $b');
+```
+
+**Stream Integration** - Seamless stream binding:
+```dart
+final status = Rx.fromStream(statusStream, initial: Status.idle);
+```
 
 #### Quick Reference
 
@@ -306,6 +439,72 @@ JetPage(
 
 ---
 
+## UI Features
+
+### Theming
+
+Switch themes dynamically without boilerplate.
+
+```dart
+// Change theme
+Jet.changeTheme(ThemeData.dark());
+
+// Toggle dark mode
+Jet.changeTheme(Jet.isDarkMode ? ThemeData.light() : ThemeData.dark());
+
+// Check current theme
+if (Jet.isDarkMode) {
+  // Dark mode is active
+}
+```
+
+### Dialogs & Snackbars
+
+Show dialogs and snackbars without context.
+
+```dart
+// Simple dialog
+Jet.defaultDialog(
+  title: 'Confirmation',
+  middleText: 'Are you sure?',
+  onConfirm: () => Jet.back(),
+);
+
+// Snackbar
+Jet.snackbar('Success', 'Operation completed!');
+
+// Bottom sheet
+Jet.bottomSheet(Container(child: Text('Content')));
+```
+
+### Context Extensions
+
+Powerful context extensions for responsive design.
+
+```dart
+// Screen dimensions
+Container(
+  width: context.width * 0.8,
+  height: context.height * 0.5,
+)
+
+// Responsive values
+Text(
+  'Responsive Text',
+  style: TextStyle(
+    fontSize: context.responsiveValue<double>(
+      mobile: 16,
+      tablet: 20,
+      desktop: 24,
+    ),
+  ),
+)
+```
+
+**📚 [Complete UI Features Guide →](./documentation/ui_features.md)**
+
+---
+
 ## Additional Features
 
 ### Internationalization
@@ -346,24 +545,7 @@ Jet.updateLocale(Locale('es', 'ES'));
 'item'.trPlural('items', count);
 ```
 
----
-
-### Theme Management
-
-Switch themes dynamically without boilerplate.
-
-```dart
-// Change theme
-Jet.changeTheme(ThemeData.dark());
-
-// Toggle dark mode
-Jet.changeTheme(Jet.isDarkMode ? ThemeData.light() : ThemeData.dark());
-
-// Check current theme
-if (Jet.isDarkMode) {
-  // Dark mode is active
-}
-```
+**📚 [Complete Internationalization Guide →](./documentation/internationalization.md)**
 
 ---
 

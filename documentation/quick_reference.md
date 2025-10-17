@@ -4,6 +4,29 @@ Fast lookup for common JetX patterns and features.
 
 ---
 
+## 🆕 What's New in JetX
+
+### Quick Links
+- **[Computed Values](#computed-values)** - Automatic derived state
+- **[Reactive Operators](#reactive-operators)** - Functional transformations
+- **[Stream Integration](#stream-integration)** - Seamless stream binding
+- **[Full Documentation →](./whats_new_in_jetx.md)**
+
+### New Features Summary
+```dart
+// Computed Values - Auto-updating derived state
+late final total = computed(() => items.fold(0.0, (s, i) => s + i.price), watch: [items]);
+
+// Reactive Operators - Transform, filter, combine
+final validInput = input.where((text) => text.length >= 3);
+final fullName = Rx.combine2(firstName, lastName, (a, b) => '$a $b');
+
+// Stream Integration - Bind streams to reactive values
+final status = Rx.fromStream(statusStream, initial: Status.idle);
+```
+
+---
+
 ## Computed Values
 
 ### Basic
@@ -33,6 +56,15 @@ late final tax = computed(
 late final total = computed(
   () => subtotal.value + tax.value,
   watch: [subtotal, tax],
+);
+```
+
+### Custom Equality
+```dart
+final sortedItems = computed(
+  () => items.toList()..sort(),
+  watch: [items],
+  equals: (a, b) => listEquals(a, b),
 );
 ```
 
@@ -206,25 +238,284 @@ JetMaterialApp(
 )
 ```
 
-### Dialogs & Snackbars
+### Middleware
 ```dart
-// Dialog
+class AuthMiddleware extends JetMiddleware {
+  @override
+  RouteSettings? redirect(String? route) {
+    final authService = Jet.find<AuthService>();
+    return authService.isAuthenticated ? null : RouteSettings(name: '/login');
+  }
+}
+
+// Use with route
+JetPage(
+  name: '/dashboard',
+  page: () => DashboardScreen(),
+  middlewares: [AuthMiddleware()],
+)
+```
+
+---
+
+## Dependency Injection
+
+### Basic Methods
+```dart
+// Put (immediate)
+Jet.put(MyController());
+
+// Lazy put (on first use)
+Jet.lazyPut(() => HeavyService());
+
+// Put async (async initialization)
+Jet.putAsync(() => DatabaseService().init());
+
+// Create (new instance each time)
+Jet.create(() => ProductController());
+
+// Find
+final controller = Jet.find<MyController>();
+
+// Delete
+Jet.delete<MyController>();
+```
+
+### Bindings
+```dart
+class HomeBinding extends Bindings {
+  @override
+  void dependencies() {
+    Jet.put(HomeController());
+    Jet.lazyPut(() => ApiService());
+  }
+}
+
+// Use with route
+JetPage(
+  name: '/home',
+  page: () => HomeScreen(),
+  binding: HomeBinding(),
+)
+```
+
+---
+
+## 🆕 Theming
+
+### Change Theme
+```dart
+// Change to dark theme
+Jet.changeTheme(ThemeData.dark());
+
+// Toggle theme
+Jet.changeTheme(Jet.isDarkMode ? ThemeData.light() : ThemeData.dark());
+
+// Check current theme
+if (Jet.isDarkMode) {
+  // Dark mode is active
+}
+```
+
+### Access Theme
+```dart
+// Get current theme
+final currentTheme = Jet.theme;
+
+// Use in widgets
+Container(
+  color: Jet.theme.primaryColor,
+  child: Text('Themed Text', style: Jet.theme.textTheme.headline6),
+)
+```
+
+### Reactive Theme
+```dart
+class ThemeController extends JetxController {
+  final isDarkMode = false.obs;
+  
+  void toggleTheme() {
+    isDarkMode.value = !isDarkMode.value;
+    Jet.changeTheme(isDarkMode.value ? ThemeData.dark() : ThemeData.light());
+  }
+}
+```
+
+---
+
+## 🆕 Dialogs & Snackbars
+
+### Dialogs
+```dart
+// Default dialog
 Jet.defaultDialog(
   title: 'Title',
   middleText: 'Content',
+  onConfirm: () => Jet.back(),
 );
 
-// Snackbar
+// Custom dialog
+Jet.dialog(
+  AlertDialog(
+    title: Text('Custom Dialog'),
+    content: Text('This is a custom dialog.'),
+    actions: [
+      TextButton(
+        onPressed: () => Jet.back(),
+        child: Text('Close'),
+      ),
+    ],
+  ),
+);
+
+// Dialog with result
+final result = await Jet.dialog(MyDialog());
+```
+
+### Snackbars
+```dart
+// Basic snackbar
+Jet.snackbar('Title', 'Message');
+
+// Customized snackbar
 Jet.snackbar(
-  'Title',
-  'Message',
-  snackPosition: SnackPosition.BOTTOM,
+  'Success',
+  'Operation completed!',
+  backgroundColor: Colors.green,
+  colorText: Colors.white,
+  icon: Icon(Icons.check, color: Colors.white),
+  snackPosition: SnackPosition.TOP,
+);
+```
+
+### Bottom Sheets
+```dart
+// Basic bottom sheet
+Jet.bottomSheet(
+  Container(
+    padding: EdgeInsets.all(20),
+    child: Text('Bottom Sheet Content'),
+  ),
 );
 
-// Bottom sheet
+// Customized bottom sheet
 Jet.bottomSheet(
-  Container(child: Text('Content')),
+  Container(
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text('Custom Bottom Sheet'),
+        ElevatedButton(
+          onPressed: () => Jet.back(),
+          child: Text('Close'),
+        ),
+      ],
+    ),
+  ),
 );
+```
+
+---
+
+## 🆕 Internationalization
+
+### Setup
+```dart
+class Messages extends Translations {
+  @override
+  Map<String, Map<String, String>> get keys => {
+    'en_US': {
+      'hello': 'Hello',
+      'welcome': 'Welcome to JetX',
+    },
+    'es_ES': {
+      'hello': 'Hola',
+      'welcome': 'Bienvenido a JetX',
+    },
+  };
+}
+
+// Configure app
+JetMaterialApp(
+  translations: Messages(),
+  locale: Locale('en', 'US'),
+  fallbackLocale: Locale('en', 'US'),
+  home: HomeScreen(),
+)
+```
+
+### Usage
+```dart
+// Basic translation
+Text('hello'.tr);
+
+// With parameters
+Text('welcome_user'.trParams({'name': 'John'}));
+
+// Pluralization
+Text('item'.trPlural('items', count));
+```
+
+### Dynamic Locale
+```dart
+// Change locale
+Jet.updateLocale(Locale('es', 'ES'));
+
+// Locale controller
+class LocaleController extends JetxController {
+  final currentLocale = Locale('en', 'US').obs;
+  
+  void changeLocale(Locale locale) {
+    currentLocale.value = locale;
+    Jet.updateLocale(locale);
+  }
+}
+```
+
+---
+
+## Context Extensions
+
+### Screen Dimensions
+```dart
+// Get screen dimensions
+final width = context.width;
+final height = context.height;
+
+// Responsive container
+Container(
+  width: context.width * 0.8,  // 80% of screen width
+  height: context.height * 0.5, // 50% of screen height
+)
+```
+
+### Theme Access
+```dart
+// Access theme
+final primaryColor = context.theme.primaryColor;
+final isDark = context.isDarkMode;
+
+// Responsive values
+final fontSize = context.responsiveValue<double>(
+  mobile: 16,
+  tablet: 20,
+  desktop: 24,
+);
+```
+
+### Platform Detection
+```dart
+// Check platform
+if (JetPlatform.isMobile) { }
+if (JetPlatform.isTablet) { }
+if (JetPlatform.isDesktop) { }
+if (JetPlatform.isWeb) { }
+if (JetPlatform.isAndroid) { }
+if (JetPlatform.isIOS) { }
 ```
 
 ---
@@ -410,6 +701,18 @@ testWidgets('Counter displays value', (tester) async {
 });
 ```
 
+### Integration Test
+```dart
+testWidgets('Navigation works', (tester) async {
+  await tester.pumpWidget(MyApp());
+  
+  await tester.tap(find.text('Go to Details'));
+  await tester.pumpAndSettle();
+  
+  expect(find.text('Details Screen'), findsOneWidget);
+});
+```
+
 ---
 
 ## Common Patterns
@@ -485,10 +788,40 @@ class PaginatedController extends JetxController {
 }
 ```
 
+### Search with Debouncing
+```dart
+class SearchController extends JetxController {
+  final searchQuery = ''.obs;
+  
+  // Debounced and filtered search
+  late final validQuery = searchQuery
+      .where((q) => q.length >= 3)
+      .distinct();
+  
+  // Search results computed from valid query
+  late final results = computed(
+    () => _performSearch(validQuery.value),
+    watch: [validQuery],
+  );
+  
+  List<Result> _performSearch(String query) {
+    // Perform search...
+    return [];
+  }
+}
+```
+
 ---
 
-**📚 For detailed examples, see:**
-- [Advanced Features Guide](./advanced_features.md)
-- [State Management Guide](./state_management.md)
-- [Route Management Guide](./route_management.md)
+## 📚 For detailed examples, see:
 
+- **[What's New in JetX](./whats_new_in_jetx.md)** - New features and improvements
+- **[State Management Guide](./state_management.md)** - Complete reactive state management
+- **[Route Management Guide](./route_management.md)** - Navigation without context
+- **[Dependency Management Guide](./dependency_management.md)** - Smart dependency injection
+- **[UI Features Guide](./ui_features.md)** - Theming, dialogs, snackbars, and more
+- **[Internationalization Guide](./internationalization.md)** - Multi-language support
+
+---
+
+**Happy Coding with JetX! 🚀**
