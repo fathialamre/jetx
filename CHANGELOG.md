@@ -2,6 +2,28 @@
 
 All notable changes to the JetX project will be documented in this file.
 
+## [0.1.0-alpha] - 2025-01-27
+
+### Added
+- **Initial Alpha Release**: First public release of JetX framework
+- **Core Framework**: Complete state management, dependency injection, and navigation system
+- **Reactive System**: Advanced reactive programming with computed values and operators
+- **HTTP Client**: Full-featured HTTP client with interceptors and error handling
+- **Navigation**: Comprehensive routing system with middleware support
+- **Animations**: Smooth animation system with custom transitions
+- **Internationalization**: Built-in i18n support
+- **Testing**: Comprehensive test suite with 100+ test cases
+- **Documentation**: Extensive documentation and examples
+
+### Features
+- High-performance state management with reactive programming
+- Intelligent dependency injection system
+- Intuitive route management with middleware
+- HTTP & WebSocket support (JetConnect)
+- Theme management and internationalization
+- Local state widgets and full lifecycle management
+- Testing utilities and benchmarks
+
 ## [Unreleased]
 
 ### Fixed
