@@ -87,7 +87,8 @@ class JetBuilder<T extends JetxController> extends StatelessWidget {
 }
 
 abstract class Bind<T> extends StatelessWidget {
-  const Bind({
+  const Bind(
+    bool bool, {
     super.key,
     required this.child,
     this.init,
@@ -263,7 +264,6 @@ abstract class Bind<T> extends StatelessWidget {
     return controller;
   }
 
-  @factory
   Bind<T> _copyWithChild(Widget child);
 }
 
@@ -312,7 +312,7 @@ class _FactoryBind<T> extends Bind<T> {
     this.id,
     this.didChangeDependencies,
     this.didUpdateWidget,
-  }) : super(child: child);
+  }) : super(true, child: child);
 
   @override
   Bind<T> _copyWithChild(Widget child) {

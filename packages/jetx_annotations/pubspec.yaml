@@ -1,0 +1,11 @@
+name: jetx_annotations
+description: Annotations for JetX route code generation
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ">=3.4.0 <4.0.0"
+
+dependencies:
+  meta: ^1.16.0
+

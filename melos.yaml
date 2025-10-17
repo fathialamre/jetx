@@ -1,0 +1,29 @@
+name: jetx
+repository: https://github.com/alamre/jetx
+
+packages:
+  - .
+  - packages/**
+
+command:
+  bootstrap:
+    environment:
+      sdk: ">=3.4.0 <4.0.0"
+      flutter: ">=3.22.0"
+    
+scripts:
+  analyze:
+    run: melos exec -- "flutter analyze ."
+    
+  test:
+    run: melos exec --dir-exists=test -- "flutter test"
+    
+  build:
+    run: melos exec -- "flutter pub run build_runner build --delete-conflicting-outputs"
+    
+  watch:
+    run: melos exec -- "flutter pub run build_runner watch --delete-conflicting-outputs"
+    
+  clean:
+    run: melos exec -- "flutter clean && flutter pub get"
+

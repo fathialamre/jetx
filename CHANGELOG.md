@@ -2,6 +2,20 @@
 
 All notable changes to the JetX project will be documented in this file.
 
+## [Unreleased]
+
+### ✨ Added
+- **Complex Object Parameters**: Automatic detection and handling of complex types in route parameters
+  - Complex types (custom classes, `List<T>`, `Map`, etc.) are automatically passed as arguments instead of URL parameters
+  - Primitive types (`int`, `double`, `bool`, `String`, `num`, `DateTime`) remain in URL for deep linking
+  - New `@ArgumentParam` annotation to explicitly mark parameters as arguments
+  - Generated navigation methods automatically pass complex objects seamlessly
+  - Maintains type safety and supports deep linking for URL-based parameters
+
+### 🔧 Fixed
+- **Route Parameter Matching**: Fixed substring matching bug where `:userId` would incorrectly match parameter named `user`
+  - Now uses regex with word boundaries for accurate path parameter detection
+
 ## [0.1.0-alpha.1] - 2025-01-27
 
 ### 🚀 Initial Alpha Release
@@ -56,6 +70,53 @@ First public release of JetX framework - a modern, actively maintained fork of G
   - `GetHttpException` → `JetHttpException`
 
 ## [Unreleased]
+
+### ✨ Added
+- **JetX Route Code Generator**: Complete code generation system for type-safe routes with centralized router
+  - `@JetRouter()` annotation for creating centralized router (similar to `auto_route`)
+  - `@RoutePage()` annotation for marking individual pages as routes
+  - Automatic path generation from class names (e.g., `UserPage` → `/user`)
+  - Type-safe navigation with compile-time parameter checking
+  - Single `app_router.g.dart` file containing all route classes and `getPages` array
+  - `NavigableRoute` base class providing comprehensive navigation methods
+  - Auto-generated route classes extend `NavigableRoute` for cleaner generated code
+  - Navigation methods: `.push()`, `.pushReplacement()`, `.pushAndRemoveUntil()`, `.pushAndRemoveAll()`, `.pushWithArgs()`, `.pushWithParameters()`, and more
+  - Utility methods: `.isActive` to check if route is current, `.routeName` to get path
+  - Automatic parameter conversion (int, double, bool, String)
+  - Support for path parameters (`:userId`) and query parameters (`@QueryParam()`)
+  - `@RouteBinding` annotation for automatic controller binding
+  - `@RouteMiddleware` annotation for route guards
+  - Uses `build_runner` and `code_builder` for efficient code generation
+  - Complete documentation with examples
+  - Monorepo structure with `jetx_annotations` and `jetx_generator` packages
+
+- **JetNetworking**: Modern HTTP client powered by Dio
+  - `JetApiService` abstract class for creating API services
+  - Integrated `pretty_dio_logger` for beautiful request/response logging
+  - Type-safe responses with generic decoder functions
+  - Support for all HTTP methods (GET, POST, PUT, DELETE, PATCH, HEAD, OPTIONS)
+  - File upload and download capabilities
+  - Custom interceptor support
+  - Header management utilities
+  - Request cancellation with CancelToken
+  - Configurable timeouts
+  - Direct access to underlying Dio instance
+
+### 🔄 Changed
+- **Replaced JetConnect with JetNetworking**: Removed custom HTTP implementation in favor of industry-standard Dio
+- **Documentation Structure**: Consolidated all documentation into main README.md for easier navigation
+- **Export Structure**: `jetx.dart` now exports `jetx_annotations` for convenient access
+
+### 🗑️ Removed
+- **JetConnect**: Removed custom HTTP client and WebSocket implementation
+- **Documentation Files**: Removed separate `.md` files from `documentation/` folder (content merged into README)
+
+### 📝 Documentation
+- Added comprehensive route generator guide in `packages/jetx_generator/README.md`
+- Added annotations documentation in `packages/jetx_annotations/README.md`
+- Updated main README with type-safe routes section
+- Added networking guide with Dio examples
+- Updated example app to demonstrate code generation
 
 ## [1.0.0] - Initial Release
 

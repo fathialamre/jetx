@@ -20,6 +20,7 @@
 - [Core Features](#core-features)
   - [State Management](#state-management)
   - [Route Management](#route-management)
+  - [Code Generator - Type-Safe Routes](#code-generator---type-safe-routes)
   - [Dependency Injection](#dependency-injection)
 - [UI Features](#ui-features)
   - [Theming](#theming)
@@ -375,6 +376,188 @@ var result = await Jet.to(SelectionScreen());
 // Conditional navigation until
 Jet.offUntil(HomeScreen(), (route) => route.isFirst);
 ```
+
+---
+
+### Code Generator - Type-Safe Routes
+
+> **TL;DR:** Create a centralized router with `@JetRouter()` and get type-safe navigation for all routes!
+
+JetX includes a powerful code generator that creates type-safe route classes using a centralized router approach, similar to `auto_route`.
+
+#### Quick Example
+
+**1. Annotate your pages:**
+
+```dart
+// pages/user_page.dart
+import 'package:flutter/material.dart';
+import 'package:jetx/jetx.dart';
+
+@RoutePage(path: '/user/:userId')
+class UserPage extends StatelessWidget {
+  final int userId;
+  
+  @QueryParam()
+  final String? tab;
+  
+  const UserPage({super.key, required this.userId, this.tab});
+  
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('User $userId')),
+      body: Text('Tab: ${tab ?? "none"}'),
+    );
+  }
+}
+```
+
+**2. Create centralized router:**
+
+```dart
+// app_router.dart
+import 'package:jetx/jetx.dart';
+import 'pages/home_page.dart';
+import 'pages/user_page.dart';
+
+part 'app_router.g.dart';
+
+@JetRouter([
+  HomePage,
+  UserPage,
+])
+class AppRouter {}
+```
+
+**3. Run code generation:**
+
+```bash
+flutter pub run build_runner build --delete-conflicting-outputs
+```
+
+**4. Use generated routes:**
+
+```dart
+// main.dart
+JetMaterialApp(
+  getPages: getPages,  // All routes in one array!
+)
+
+// Type-safe navigation
+const UserPageRoute(userId: 42, tab: 'posts').push();
+```
+
+#### Features
+
+- 📁 **Centralized router** - All routes defined in one place like `auto_route`
+- ✨ **Auto-generate paths** from class names (`UserPage` → `/user`)
+- 🎯 **Type-safe parameters** with compile-time checking
+- 🔄 **Automatic conversion** of path and query parameters (int, double, bool, String)
+- 🎁 **Complex object support** - Auto-detects and passes custom classes, Lists as arguments
+- 📦 **Binding support** with `@RouteBinding` annotation
+- 🛡️ **Middleware support** with `@RouteMiddleware` annotation
+- 🚀 **Clean navigation API** with route classes
+
+#### Complex Objects (Auto-Detected)
+
+Pass complex objects seamlessly! Primitives go in URL, complex types passed as arguments automatically:
+
+```dart
+class User {
+  final int id;
+  final String name;
+  User({required this.id, required this.name});
+}
+
+@RoutePage(path: '/user/:userId')
+class UserPage extends StatelessWidget {
+  final int userId;           // ✅ In URL (primitive)
+  final User user;            // ✅ Auto-passed as argument (complex)
+  final List<String>? tags;   // ✅ Auto-passed as argument (complex)
+  
+  const UserPage({
+    super.key,
+    required this.userId,
+    required this.user,
+    this.tags,
+  });
+}
+
+// Navigate - it just works!
+final user = User(id: 42, name: 'John');
+const UserPageRoute(
+  userId: 42,              // Goes in URL
+  user: user,              // Passed as argument automatically
+  tags: ['flutter', 'dart'], // Passed as argument automatically
+).push();
+
+// Generated URL: /user/42 (clean, shareable!)
+// Arguments: { 'user': user, 'tags': ['flutter', 'dart'] }
+```
+
+**Benefits:**
+- ✅ **Type-safe**: Pass full objects without serialization
+- ✅ **Deep link friendly**: URLs stay clean with only primitives
+- ✅ **Zero config**: Automatic detection, no extra annotations needed
+- ✅ **Flexible**: Supports callbacks, models, collections, etc.
+
+#### Setup
+
+Add to your `pubspec.yaml`:
+
+```yaml
+dependencies:
+  jetx: ^0.1.0
+
+dev_dependencies:
+  jetx_generator:
+    path: packages/jetx_generator
+  build_runner: ^2.4.0
+```
+
+#### More Examples
+
+**Auto-generated paths:**
+
+```dart
+@RoutePage()  // Path: /home
+class HomePage extends StatelessWidget { ... }
+
+@RoutePage()  // Path: /user-profile
+class UserProfilePage extends StatelessWidget { ... }
+```
+
+**With bindings:**
+
+```dart
+@RoutePage(path: '/profile')
+@RouteBinding(UserController)
+class ProfilePage extends StatelessWidget { ... }
+```
+
+**With middleware:**
+
+```dart
+@RoutePage(path: '/admin')
+@RouteMiddleware(AuthMiddleware)
+class AdminPage extends StatelessWidget { ... }
+```
+
+**Navigation methods:**
+
+```dart
+// Push route
+const UserPageRoute(userId: 123).push();
+
+// Replace current route
+const UserPageRoute(userId: 123).pushReplacement();
+
+// Push and remove until
+const UserPageRoute(userId: 123).pushAndRemoveUntil((route) => route.name == '/');
+```
+
+📖 **See the [Route Generator Guide](packages/jetx_generator/README.md) for complete documentation.**
 
 ---
 

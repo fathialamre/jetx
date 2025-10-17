@@ -1,0 +1,9 @@
+builders:
+  jetx_route_builder:
+    import: "package:jetx_generator/builder.dart"
+    builder_factories: ["jetxRouteBuilder"]
+    build_extensions: {".dart": [".jetx_route.g.part"]}
+    auto_apply: dependents
+    build_to: cache
+    applies_builders: ["source_gen|combining_builder"]
+

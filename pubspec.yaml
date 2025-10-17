@@ -16,8 +16,13 @@ dependencies:
     sdk: flutter
   dio: ^5.7.0
   pretty_dio_logger: ^1.4.0
+  jetx_annotations:
+    path: packages/jetx_annotations
 
 dev_dependencies:
   flutter_lints: ^6.0.0
   flutter_test:
     sdk: flutter
+  jetx_generator:
+    path: packages/jetx_generator
+  build_runner: ^2.4.0
