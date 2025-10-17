@@ -2,7 +2,7 @@
 
 All notable changes to the JetX project will be documented in this file.
 
-## [0.1.0-alpha] - 2025-01-27
+## [0.1.0-alpha.1] - 2025-01-27
 
 ### 🚀 Initial Alpha Release
 First public release of JetX framework - a modern, actively maintained fork of GetX with enhanced reactive programming capabilities.
