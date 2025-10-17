@@ -1,7 +1,8 @@
 name: jetx
 description: A modern Flutter framework for state management, dependency injection, and route management. An actively maintained fork of GetX.
-version: 1.0.0
+version: 0.1.0-alpha
 homepage: https://github.com/alamre/jetx
+keywords: flutter, state management, dependency injection, get, getx, jetx
 
 environment:
   sdk: ">=3.4.0 <4.0.0"

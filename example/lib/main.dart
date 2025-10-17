@@ -22,7 +22,10 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       getPages: [
         JetPage(name: '/', page: () => const HomePage()),
-        JetPage(name: '/profile', page: () => const ProfilePage()),
+        JetPage(
+          name: '/profile',
+          page: () => const ProfilePage(),
+        ),
         JetPage(
           name: '/reactive',
           page: () => const ReactiveExampleView(),

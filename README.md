@@ -1,4 +1,4 @@
-# jetx
+# JetX
 
 [![pub package](https://img.shields.io/pub/v/jetx.svg?label=jetx&color=blue)](https://pub.dev/packages/jetx)
 [![popularity](https://img.shields.io/pub/popularity/jetx?logo=dart)](https://pub.dev/packages/jetx/score)
@@ -14,7 +14,7 @@
 
 ## Table of Contents
 
-- [What is jetx?](#what-is-jetx)
+- [What is JetX?](#what-is-jetx)
 - [🆕 What's New in JetX](#-whats-new-in-jetx)
 - [Quick Start](#quick-start)
   - [Installation](#installation)
@@ -39,12 +39,12 @@
   - [Reactive Programming Deep Dive](#reactive-programming-deep-dive)
   - [Testing](#testing)
 - [Migration Guide](#migration-guide)
-- [Why jetx?](#why-jetx)
+- [Why JetX?](#why-jetx)
 - [Community & Contributing](#community--contributing)
 
 ---
 
-## What is jetx?
+## What is JetX?
 
 jetx combines **high-performance state management**, **intelligent dependency injection**, and **intuitive route management** into a single, cohesive package for Flutter.
 
@@ -169,14 +169,14 @@ class ChatController extends JetxController {
 
 ### Installation
 
-Add jetx to your `pubspec.yaml`:
+Add JetX to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
   jetx: ^1.0.0
 ```
 
-Import jetx in your files:
+Import JetX in your files:
 
 ```dart
 import 'package:jetx/jetx.dart';
@@ -184,7 +184,7 @@ import 'package:jetx/jetx.dart';
 
 ### Counter App Example
 
-> **The power of jetx in 26 lines of code** - A complete counter app with state management, navigation, and shared state between screens.
+> **The power of JetX in 26 lines of code** - A complete counter app with state management, navigation, and shared state between screens.
 
 **Step 1:** Wrap your `MaterialApp` with `JetMaterialApp`
 
@@ -640,7 +640,7 @@ JetPage(
 
 ## 🎯 Modern Reactive Features
 
-jetx includes cutting-edge reactive programming features inspired by modern frameworks like Riverpod, while maintaining jetx's signature simplicity.
+jetx includes cutting-edge reactive programming features inspired by modern frameworks like Riverpod, while maintaining JetX's signature simplicity.
 
 ### Computed Values - Auto-Updating Derived State
 
@@ -1028,7 +1028,7 @@ tearDown(() {
 
 ## Migration Guide
 
-### From GetX to jetx
+### From GetX to JetX
 
 jetx maintains API compatibility with GetX while adding improvements. Migration is straightforward:
 
@@ -1036,7 +1036,7 @@ jetx maintains API compatibility with GetX while adding improvements. Migration 
 
 ```yaml
 dependencies:
-  jetx: ^1.0.0  # Replace 'get'
+  JetX: ^1.0.0  # Replace 'get'
 ```
 
 #### 2. Update Imports
@@ -1051,7 +1051,7 @@ import 'package:jetx/jetx.dart';
 
 #### 3. Update API Calls
 
-| GetX | jetx |
+| GetX | JetX |
 |------|------|
 | `Get.to()` | `Jet.to()` |
 | `Get.put()` | `Jet.put()` |
@@ -1102,11 +1102,11 @@ JetMaterialApp(
 
 ---
 
-## Why jetx?
+## Why JetX?
 
 ### Compared to Other Solutions
 
-| Feature | jetx | Provider | BLoC | Riverpod |
+| Feature | JetX | Provider | BLoC | Riverpod |
 |---------|------|----------|------|----------|
 | State Management | ✅ | ✅ | ✅ | ✅ |
 | Route Management | ✅ | ❌ | ❌ | ❌ |
@@ -1171,7 +1171,7 @@ We welcome contributions! Here's how you can help:
 ```bash
 # Clone the repository
 git clone https://github.com/alamre/jetx.git
-cd jetx
+cd JetX
 
 # Install dependencies
 flutter pub get
@@ -1198,7 +1198,7 @@ jetx is released under the [MIT License](LICENSE).
 
 ## Acknowledgments
 
-jetx is built upon the foundation of GetX, created by Jonatas Borges. We're grateful to the original GetX community and all contributors who made this framework possible. jetx continues that legacy with enhanced features and active maintenance.
+jetx is built upon the foundation of GetX, created by Jonatas Borges. We're grateful to the original GetX community and all contributors who made this framework possible. JetX continues that legacy with enhanced features and active maintenance.
 
 ---
 
@@ -1206,6 +1206,6 @@ jetx is built upon the foundation of GetX, created by Jonatas Borges. We're grat
 
 **[⬆ Back to Top](#jetx)**
 
-Made with ❤️ by the jetx community
+Made with ❤️ by the JetX community
 
 </div>

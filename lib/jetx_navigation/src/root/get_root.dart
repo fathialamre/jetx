@@ -416,7 +416,7 @@ class JetRootState extends State<JetRoot> with WidgetsBindingObserver {
     Jet.log = config.logWriterCallback ?? defaultLogWriterCallback;
 
     if (config.defaultTransition == null) {
-      config = config.copyWith(defaultTransition: getThemeTransition());
+      config = config.copyWith(defaultTransition: Transition.fade);
     }
 
     // defaultOpaqueRoute = config.opaqueRoute ?? true;
