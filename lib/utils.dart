@@ -1,6 +1,6 @@
-/// Get utils is a set of tools that allows you to access high-level
-/// APIs and obtain validation tools for Flutter and GetX
+/// JetX utils is a set of tools that allows you to access high-level
+/// APIs and obtain validation tools for Flutter and JetX
 library;
 
-export 'get_core/get_core.dart';
-export 'get_utils/get_utils.dart';
+export 'jetx_core/jetx_core.dart';
+export 'jetx_utils/jetx_utils.dart';

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/get.dart';
+import 'package:jetx/jetx.dart';
 
 void main() {
-  Get.lazyPut<Controller2>(() => Controller2());
-  testWidgets("GetxController smoke test", (tester) async {
+  Jet.lazyPut<Controller2>(() => Controller2());
+  testWidgets("JetxController smoke test", (tester) async {
     await tester.pumpWidget(
       MaterialApp(
-        home: GetX<Controller>(
+        home: JetX<Controller>(
           init: Controller(),
           builder: (controller) {
             return Column(
@@ -34,10 +34,10 @@ void main() {
                   child: const Text("increment"),
                   onPressed: () => controller.increment(),
                 ),
-                GetX<Controller2>(builder: (controller) {
+                JetX<Controller2>(builder: (controller) {
                   return Text('lazy ${controller.lazy.value}');
                 }),
-                GetX<ControllerNonGlobal>(
+                JetX<ControllerNonGlobal>(
                     init: ControllerNonGlobal(),
                     global: false,
                     builder: (controller) {
@@ -73,16 +73,16 @@ void main() {
   });
 }
 
-class Controller2 extends GetxController {
+class Controller2 extends JetxController {
   RxInt lazy = 0.obs;
 }
 
-class ControllerNonGlobal extends GetxController {
+class ControllerNonGlobal extends JetxController {
   RxInt nonGlobal = 0.obs;
 }
 
-class Controller extends GetxController {
-  static Controller get to => Get.find();
+class Controller extends JetxController {
+  static Controller get to => Jet.find();
 
   RxInt counter = 0.obs;
   RxDouble doubleNum = 0.0.obs;

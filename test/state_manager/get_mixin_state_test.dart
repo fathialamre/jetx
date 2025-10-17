@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/get.dart';
-import 'package:get/get_state_manager/src/simple/mixin_builder.dart';
+import 'package:jetx/jetx.dart';
+import 'package:jetx/jetx_state_manager/src/simple/mixin_builder.dart';
 
 void main() {
   testWidgets("MixinBuilder with reactive and not reactive", (tester) async {
@@ -89,8 +89,8 @@ void main() {
   // );
 }
 
-class Controller extends GetxController {
-  static Controller get to => Get.find();
+class Controller extends JetxController {
+  static Controller get to => Jet.find();
   int count = 0;
   RxInt counter = 0.obs;
   RxDouble doubleNum = 0.0.obs;

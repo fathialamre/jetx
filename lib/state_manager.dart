@@ -1,6 +1,6 @@
-/// Get State Manager is a light, modern and powerful state manager to Flutter
+/// JetX State Manager is a light, modern and powerful state manager for Flutter
 library;
 
-export 'get_core/get_core.dart';
-export 'get_rx/get_rx.dart';
-export 'get_state_manager/get_state_manager.dart';
+export 'jetx_core/jetx_core.dart';
+export 'jetx_rx/jetx_rx.dart';
+export 'jetx_state_manager/jetx_state_manager.dart';

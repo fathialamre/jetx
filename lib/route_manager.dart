@@ -1,6 +1,6 @@
-///Get Navigator allows you to navigate routes, open snackbars,
-///dialogs and bottomsheets easily, and without the need for context.
+/// JetX Navigator allows you to navigate routes, open snackbars,
+/// dialogs and bottomsheets easily, and without the need for context.
 library;
 
-export 'get_core/get_core.dart';
-export 'get_navigation/get_navigation.dart';
+export 'jetx_core/jetx_core.dart';
+export 'jetx_navigation/jetx_navigation.dart';

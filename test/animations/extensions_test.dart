@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/get.dart';
+import 'package:jetx/jetx.dart';
 
 void main() {
   group('Animation Extension', () {
@@ -197,7 +197,7 @@ void main() {
 }
 
 void _testDefaultValues<T>({
-  required GetAnimatedBuilder animation,
+  required JetAnimatedBuilder animation,
   required Widget widget,
   required T begin,
   required T end,

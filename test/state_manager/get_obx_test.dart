@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/get.dart';
+import 'package:jetx/jetx.dart';
 
 void main() {
-  testWidgets("GetxController smoke test", (tester) async {
-    final controller = Get.put(Controller());
+  testWidgets("JetxController smoke test", (tester) async {
+    final controller = Jet.put(Controller());
     await tester.pumpWidget(
       MaterialApp(
         home: Column(
@@ -51,8 +51,8 @@ void main() {
   });
 }
 
-class Controller extends GetxController {
-  static Controller get to => Get.find();
+class Controller extends JetxController {
+  static Controller get to => Jet.find();
 
   RxInt counter = 0.obs;
   RxDouble doubleNum = 0.0.obs;
