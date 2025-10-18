@@ -9,7 +9,5 @@ class UserController extends JetxController {
   final name = 'John'.obs;
   final age = 30.obs;
 
-  void loadUserData() {
-    print(service.getUserData());
-  }
+  void loadUserData() {}
 }

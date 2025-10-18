@@ -29,9 +29,6 @@ class RouteParser {
       }
     }
 
-    // Parse middlewares
-    final middlewares = _parseMiddlewares(element);
-
     // Parse transition
     final transition = _parseTransition(annotation);
 
@@ -40,8 +37,8 @@ class RouteParser {
       routeName: routePath,
       routePath: routePath,
       parameters: parameters,
-      bindings: const [], // No automatic bindings - user registers manually
-      middlewares: middlewares,
+      bindings: [],
+      middlewares: [],
       transition: transition,
       fullscreenDialog:
           annotation.getField('fullscreenDialog')?.toBoolValue() ?? false,
@@ -62,11 +59,7 @@ class RouteParser {
 
     if (withoutPage.isEmpty) return '/';
 
-    return '/' +
-        withoutPage
-            .replaceAllMapped(
-                RegExp(r'[A-Z]'), (m) => '-${m[0]!.toLowerCase()}')
-            .substring(1); // Remove leading dash
+    return '/${withoutPage.replaceAllMapped(RegExp(r'[A-Z]'), (m) => '-${m[0]!.toLowerCase()}').substring(1)}'; // Remove leading dash
   }
 
   static ParamConfig _parseParameter(
@@ -115,37 +108,6 @@ class RouteParser {
       'num',
       'DateTime',
     ].contains(baseType);
-  }
-
-  static List<String> _parseMiddlewares(ClassElement element) {
-    final middlewares = <String>[];
-
-    // Check @RouteMiddleware
-    for (final annotation
-        in TypeChecker.fromRuntime(RouteMiddleware).annotationsOf(element)) {
-      final middleware = annotation.getField('middleware')?.toTypeValue();
-      if (middleware != null) {
-        middlewares.add(middleware.getDisplayString(withNullability: false));
-      }
-    }
-
-    // Check @RouteMiddlewares
-    final middlewaresAnnotation =
-        TypeChecker.fromRuntime(RouteMiddlewares).firstAnnotationOf(element);
-
-    if (middlewaresAnnotation != null) {
-      final list = middlewaresAnnotation.getField('middlewares')?.toListValue();
-      if (list != null) {
-        for (final item in list) {
-          final type = item.toTypeValue();
-          if (type != null) {
-            middlewares.add(type.getDisplayString(withNullability: false));
-          }
-        }
-      }
-    }
-
-    return middlewares;
   }
 
   static TransitionConfig? _parseTransition(DartObject annotation) {

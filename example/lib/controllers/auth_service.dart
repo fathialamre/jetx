@@ -1,4 +1,4 @@
-// No dependencies - base service
+// No annotation needed!
 class AuthService {
   bool isAuthenticated() {
     return true;

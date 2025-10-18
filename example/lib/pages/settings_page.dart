@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jetx/jetx.dart';
 import 'package:jetx_annotations/jetx_annotations.dart';
+import '../controllers/user_controller.dart';
 
 @RoutePage(path: '/settings')
 class SettingsPage extends StatelessWidget {

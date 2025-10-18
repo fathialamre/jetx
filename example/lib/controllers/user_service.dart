@@ -1,3 +1,4 @@
+import 'package:jetx_annotations/jetx_annotations.dart';
 import 'auth_service.dart';
 
 class UserService {

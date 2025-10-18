@@ -1,5 +1,4 @@
 import 'package:analyzer/dart/element/element.dart';
-import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:jetx_annotations/jetx_annotations.dart';
@@ -18,40 +17,62 @@ class RouterParser {
 
     if (annotation == null) return null;
 
-    // Extract list of route types
-    final routesField = annotation.getField('routes');
-    if (routesField == null || routesField.isNull) {
-      return null;
-    }
-
-    final routesList = routesField.toListValue();
-    if (routesList == null || routesList.isEmpty) {
-      return null;
-    }
-
     final routes = <RouteConfig>[];
     final imports = <String, String>{};
 
-    // Parse each route type
-    for (final routeType in routesList) {
-      final type = routeType.toTypeValue();
-      if (type == null) continue;
+    // Scan the current library and all imported libraries recursively for @RoutePage classes
+    final library = element.library;
+    final librariesToScan = <LibraryElement>{};
+    final visitedLibraries = <String>{};
 
-      final routeConfig = await _parseRouteType(type, resolver);
-      if (routeConfig != null) {
-        routes.add(routeConfig);
+    // Recursively collect all imported libraries
+    void collectLibraries(LibraryElement lib) {
+      final uri = lib.source.uri.toString();
+      // Skip already visited libraries and dart/flutter core libraries
+      if (visitedLibraries.contains(uri) ||
+          uri.startsWith('dart:') ||
+          uri.startsWith('package:flutter/')) {
+        return;
+      }
+      visitedLibraries.add(uri);
+      librariesToScan.add(lib);
 
-        // Store import path for this route
-        final typeElement = type.element;
-        if (typeElement != null) {
-          final importPath = _getImportPath(typeElement);
+      // Recursively scan imports
+      for (final import in lib.libraryImports) {
+        final importedLibrary = import.importedLibrary;
+        if (importedLibrary != null) {
+          collectLibraries(importedLibrary);
+        }
+      }
+    }
+
+    collectLibraries(library);
+
+    // Scan all libraries for @RoutePage classes
+    for (final lib in librariesToScan) {
+      for (final libraryElement in lib.topLevelElements) {
+        if (libraryElement is! ClassElement) continue;
+
+        // Check if class has @RoutePage annotation
+        final routePageAnnotation = TypeChecker.fromRuntime(RoutePage)
+            .firstAnnotationOf(libraryElement);
+
+        if (routePageAnnotation == null) continue;
+
+        // Parse this route
+        final routeConfig = RouteParser.parseClass(libraryElement);
+        if (routeConfig != null) {
+          routes.add(routeConfig);
+
+          // Store import path for this route
+          final importPath = _getImportPath(libraryElement);
           if (importPath != null) {
             imports[routeConfig.className] = importPath;
           }
-        }
 
-        // Store import paths for bindings
-        await _collectBindingImports(routeConfig, resolver, imports);
+          // Store import paths for bindings
+          await _collectBindingImports(routeConfig, resolver, imports);
+        }
       }
     }
 
@@ -60,17 +81,6 @@ class RouterParser {
       routes: routes,
       imports: imports,
     );
-  }
-
-  static Future<RouteConfig?> _parseRouteType(
-    DartType type,
-    Resolver resolver,
-  ) async {
-    final element = type.element;
-    if (element is! ClassElement) return null;
-
-    // Use existing RouteParser
-    return RouteParser.parseClass(element);
   }
 
   static String? _getImportPath(Element element) {

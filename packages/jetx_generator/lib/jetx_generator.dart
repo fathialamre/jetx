@@ -19,6 +19,34 @@ class JetXRouterGenerator extends GeneratorForAnnotation<JetRouter> {
       );
     }
 
+    // Scan the library and all imported libraries recursively
+    final library = element.library;
+    final librariesToScan = <LibraryElement>{};
+    final visitedLibraries = <String>{};
+
+    // Recursively collect all imported libraries
+    void collectLibraries(LibraryElement lib) {
+      final uri = lib.source.uri.toString();
+      // Skip already visited libraries and dart/flutter core libraries
+      if (visitedLibraries.contains(uri) ||
+          uri.startsWith('dart:') ||
+          uri.startsWith('package:flutter/')) {
+        return;
+      }
+      visitedLibraries.add(uri);
+      librariesToScan.add(lib);
+
+      // Recursively scan imports
+      for (final import in lib.libraryImports) {
+        final importedLibrary = import.importedLibrary;
+        if (importedLibrary != null) {
+          collectLibraries(importedLibrary);
+        }
+      }
+    }
+
+    collectLibraries(library);
+
     final config = await RouterParser.parseRouter(element, buildStep.resolver);
     if (config == null) {
       throw InvalidGenerationSourceError(
@@ -27,6 +55,6 @@ class JetXRouterGenerator extends GeneratorForAnnotation<JetRouter> {
       );
     }
 
-    return RouterCodeGenerator.generate(config);
+    return RouterCodeGenerator.generate(config, librariesToScan);
   }
 }

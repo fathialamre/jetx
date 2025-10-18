@@ -15,4 +15,3 @@ export 'jetx_state_manager/jetx_state_manager.dart';
 export 'jetx_utils/jetx_utils.dart';
 export 'jet_networking/jet_networking.dart';
 export 'route_manager.dart';
-export 'package:jetx_annotations/jetx_annotations.dart' show Inject;

@@ -6,15 +6,62 @@ part of 'app_router.dart';
 // JetXRouterGenerator
 // **************************************************************************
 
-
 class HomePageRoute extends NavigableRoute {
   const HomePageRoute();
 
   static String get routePath => '/home';
 
+  static BindingsBuilder? get binding => null;
+
   static Widget Function() get page => () {
         return HomePage();
       };
+
+  static JetPage build({
+    BindingsInterface? binding,
+    List<BindingsInterface>? bindings,
+    List<Bind>? binds,
+    Transition? transition,
+    CustomTransition? customTransition,
+    Duration? transitionDuration,
+    Duration? reverseTransitionDuration,
+    List<JetMiddleware>? middlewares,
+    String? title,
+    bool? fullscreenDialog,
+    bool? maintainState,
+    bool? preventDuplicates,
+    bool? popGesture,
+    bool? opaque,
+    Curve? curve,
+    Alignment? alignment,
+    bool? participatesInRootNavigator,
+    double Function(BuildContext)? gestureWidth,
+    bool? showCupertinoParallax,
+  }) {
+    return JetPage(
+      name: routePath,
+      page: page,
+      binding: binding,
+      bindings: bindings ?? const [],
+      binds: binds ?? const [],
+      transition: transition,
+      transitionDuration: transitionDuration,
+      customTransition: customTransition,
+      reverseTransitionDuration: reverseTransitionDuration,
+      middlewares: middlewares ?? const [],
+      title: title,
+      fullscreenDialog: fullscreenDialog ?? false,
+      maintainState: maintainState ?? true,
+      preventDuplicates: preventDuplicates ?? true,
+      popGesture: popGesture,
+      opaque: opaque ?? true,
+      curve: curve ?? Curves.linear,
+      alignment: alignment,
+      participatesInRootNavigator: participatesInRootNavigator,
+      gestureWidth: gestureWidth,
+      showCupertinoParallax: showCupertinoParallax ?? true,
+    );
+  }
 
   @override
   String get path => '/home';
@@ -38,6 +85,8 @@ class UserPageRoute extends NavigableRoute {
 
   static String get routePath => '/user';
 
+  static BindingsBuilder? get binding => null;
+
   static Widget Function() get page => () {
         final userId = int.parse(Jet.parameters['userId']!);
         final tab = Jet.parameters['tab'];
@@ -51,6 +100,52 @@ class UserPageRoute extends NavigableRoute {
           tags: tags,
         );
       };
+
+  static JetPage build({
+    BindingsInterface? binding,
+    List<BindingsInterface>? bindings,
+    List<Bind>? binds,
+    Transition? transition,
+    CustomTransition? customTransition,
+    Duration? transitionDuration,
+    Duration? reverseTransitionDuration,
+    List<JetMiddleware>? middlewares,
+    String? title,
+    bool? fullscreenDialog,
+    bool? maintainState,
+    bool? preventDuplicates,
+    bool? popGesture,
+    bool? opaque,
+    Curve? curve,
+    Alignment? alignment,
+    bool? participatesInRootNavigator,
+    double Function(BuildContext)? gestureWidth,
+    bool? showCupertinoParallax,
+  }) {
+    return JetPage(
+      name: routePath,
+      page: page,
+      binding: binding,
+      bindings: bindings ?? const [],
+      binds: binds ?? const [],
+      transition: transition,
+      transitionDuration: transitionDuration,
+      customTransition: customTransition,
+      reverseTransitionDuration: reverseTransitionDuration,
+      middlewares: middlewares ?? const [],
+      title: title,
+      fullscreenDialog: fullscreenDialog ?? false,
+      maintainState: maintainState ?? true,
+      preventDuplicates: preventDuplicates ?? true,
+      popGesture: popGesture,
+      opaque: opaque ?? true,
+      curve: curve ?? Curves.linear,
+      alignment: alignment,
+      participatesInRootNavigator: participatesInRootNavigator,
+      gestureWidth: gestureWidth,
+      showCupertinoParallax: showCupertinoParallax ?? true,
+    );
+  }
 
   @override
   String get path {
@@ -99,9 +194,57 @@ class ProfilePageRoute extends NavigableRoute {
 
   static String get routePath => '/profile';
 
+  static BindingsBuilder? get binding => null;
+
   static Widget Function() get page => () {
         return ProfilePage();
       };
+
+  static JetPage build({
+    BindingsInterface? binding,
+    List<BindingsInterface>? bindings,
+    List<Bind>? binds,
+    Transition? transition,
+    CustomTransition? customTransition,
+    Duration? transitionDuration,
+    Duration? reverseTransitionDuration,
+    List<JetMiddleware>? middlewares,
+    String? title,
+    bool? fullscreenDialog,
+    bool? maintainState,
+    bool? preventDuplicates,
+    bool? popGesture,
+    bool? opaque,
+    Curve? curve,
+    Alignment? alignment,
+    bool? participatesInRootNavigator,
+    double Function(BuildContext)? gestureWidth,
+    bool? showCupertinoParallax,
+  }) {
+    return JetPage(
+      name: routePath,
+      page: page,
+      binding: binding,
+      bindings: bindings ?? const [],
+      binds: binds ?? const [],
+      transition: transition,
+      transitionDuration: transitionDuration,
+      customTransition: customTransition,
+      reverseTransitionDuration: reverseTransitionDuration,
+      middlewares: middlewares ?? const [],
+      title: title,
+      fullscreenDialog: fullscreenDialog ?? false,
+      maintainState: maintainState ?? true,
+      preventDuplicates: preventDuplicates ?? true,
+      popGesture: popGesture,
+      opaque: opaque ?? true,
+      curve: curve ?? Curves.linear,
+      alignment: alignment,
+      participatesInRootNavigator: participatesInRootNavigator,
+      gestureWidth: gestureWidth,
+      showCupertinoParallax: showCupertinoParallax ?? true,
+    );
+  }
 
   @override
   String get path => '/profile';
@@ -112,9 +255,57 @@ class SettingsPageRoute extends NavigableRoute {
 
   static String get routePath => '/settings';
 
+  static BindingsBuilder? get binding => null;
+
   static Widget Function() get page => () {
         return SettingsPage();
       };
+
+  static JetPage build({
+    BindingsInterface? binding,
+    List<BindingsInterface>? bindings,
+    List<Bind>? binds,
+    Transition? transition,
+    CustomTransition? customTransition,
+    Duration? transitionDuration,
+    Duration? reverseTransitionDuration,
+    List<JetMiddleware>? middlewares,
+    String? title,
+    bool? fullscreenDialog,
+    bool? maintainState,
+    bool? preventDuplicates,
+    bool? popGesture,
+    bool? opaque,
+    Curve? curve,
+    Alignment? alignment,
+    bool? participatesInRootNavigator,
+    double Function(BuildContext)? gestureWidth,
+    bool? showCupertinoParallax,
+  }) {
+    return JetPage(
+      name: routePath,
+      page: page,
+      binding: binding,
+      bindings: bindings ?? const [],
+      binds: binds ?? const [],
+      transition: transition,
+      transitionDuration: transitionDuration,
+      customTransition: customTransition,
+      reverseTransitionDuration: reverseTransitionDuration,
+      middlewares: middlewares ?? const [],
+      title: title,
+      fullscreenDialog: fullscreenDialog ?? false,
+      maintainState: maintainState ?? true,
+      preventDuplicates: preventDuplicates ?? true,
+      popGesture: popGesture,
+      opaque: opaque ?? true,
+      curve: curve ?? Curves.linear,
+      alignment: alignment,
+      participatesInRootNavigator: participatesInRootNavigator,
+      gestureWidth: gestureWidth,
+      showCupertinoParallax: showCupertinoParallax ?? true,
+    );
+  }
 
   @override
   String get path => '/settings';

@@ -44,18 +44,12 @@ class ParamConfig {
 
 class DependencyConfig {
   final String typeName;
-  final bool lazy;
   final String? tag;
-  final bool permanent;
-  final bool useFind;
   final String? importPath;
 
   DependencyConfig({
     required this.typeName,
-    this.lazy = true,
     this.tag,
-    this.permanent = false,
-    this.useFind = true,
     this.importPath,
   });
 
@@ -76,6 +70,7 @@ class BindingConfig {
   final bool lazy;
   final String? tag;
   final bool permanent;
+  final bool useFind; // Find existing instance instead of registering
   final List<DependencyConfig> dependencies; // Changed from List<String>
   final int
       directDependencyCount; // Number of direct constructor params (vs nested)
@@ -86,6 +81,7 @@ class BindingConfig {
     required this.lazy,
     this.tag,
     this.permanent = false,
+    this.useFind = false,
     this.dependencies = const [],
     this.directDependencyCount = 0,
     this.importPath,

@@ -1,17 +1,18 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
+import 'package:analyzer/dart/element/element.dart';
 import '../models/router_config.dart';
 import '../models/route_config.dart';
 
 class RouterCodeGenerator {
-  static String generate(RouterConfig config) {
+  static String generate(
+    RouterConfig config,
+    Set<LibraryElement> libraries,
+  ) {
     final library = Library((b) {
-      // Add necessary imports
-      b.directives.add(Directive.import('package:flutter/material.dart'));
-
       // Generate all route classes
       for (final route in config.routes) {
-        b.body.add(_generateRouteClass(route));
+        b.body.add(_generateRouteClass(route, libraries));
       }
 
       // DON'T generate AppRouter class - user defines it manually
@@ -26,7 +27,10 @@ class RouterCodeGenerator {
     return DartFormatter().format('${library.accept(emitter)}');
   }
 
-  static Class _generateRouteClass(RouteConfig config) {
+  static Class _generateRouteClass(
+    RouteConfig config,
+    Set<LibraryElement> libraries,
+  ) {
     final hasArguments = config.parameters.any((p) => p.isArgument);
 
     return Class((b) {
@@ -48,8 +52,14 @@ class RouterCodeGenerator {
       // Add static path getter
       b.methods.add(_generateStaticPathGetter(config));
 
+      // Add static binding getter (always, null if no bindings)
+      b.methods.add(_generateStaticBindingGetter(config));
+
       // Add static page builder
-      b.methods.add(_generateStaticPageBuilder(config));
+      b.methods.add(_generateStaticPageBuilder(config, libraries));
+
+      // Add static build() method
+      b.methods.add(_generateStaticBuildMethod(config));
 
       // Add instance path getter with @override annotation
       b.methods.add(_generatePathGetter(config));
@@ -92,19 +102,25 @@ class RouterCodeGenerator {
   }
 
   /// Generate static page builder - returns a function that extracts params and returns page widget
-  static Method _generateStaticPageBuilder(RouteConfig config) {
+  static Method _generateStaticPageBuilder(
+    RouteConfig config,
+    Set<LibraryElement> libraries,
+  ) {
     return Method((m) {
       m.name = 'page';
       m.type = MethodType.getter;
       m.static = true;
       m.returns = refer('Widget Function()');
       m.lambda = true;
-      m.body = Code('() { ${_generatePageBuilderCode(config)} }');
+      m.body = Code('() { ${_generatePageBuilderCode(config, libraries)} }');
     });
   }
 
   /// Generate the code for the static page builder
-  static String _generatePageBuilderCode(RouteConfig config) {
+  static String _generatePageBuilderCode(
+    RouteConfig config,
+    Set<LibraryElement> libraries,
+  ) {
     final buffer = StringBuffer();
 
     final urlParams = config.parameters.where((p) => !p.isArgument).toList();
@@ -274,57 +290,6 @@ class RouterCodeGenerator {
     });
   }
 
-  /// Generate AppRouter class with empty getPages for manual registration
-  static Class _generateAppRouterClass(List<RouteConfig> routes) {
-    return Class((b) {
-      b.name = 'AppRouter';
-
-      // Add static getPages getter
-      b.methods.add(Method((m) {
-        m.name = 'getPages';
-        m.type = MethodType.getter;
-        m.static = true;
-        m.returns = refer('List<JetPage>');
-        m.body = Code(_buildAppRouterGetPagesCode(routes));
-      }));
-    });
-  }
-
-  /// Generate the body of the getPages getter with TODO comments
-  static String _buildAppRouterGetPagesCode(List<RouteConfig> routes) {
-    final buffer = StringBuffer();
-    buffer.writeln('return [');
-    buffer.writeln('  // TODO: Register your routes here');
-    buffer.writeln('  // Use the static helpers on route classes:');
-    buffer.writeln('  //');
-
-    // Add example for first route if available
-    if (routes.isNotEmpty) {
-      final exampleRoute = routes.first;
-      buffer.writeln('  // Example for ${exampleRoute.className}:');
-      buffer.writeln('  // JetPage(');
-      buffer.writeln('  //   name: ${exampleRoute.className}Route.routePath,');
-      buffer.writeln('  //   page: ${exampleRoute.className}Route.page,');
-      buffer.writeln('  //   binding: BindingsBuilder(() {');
-      buffer.writeln('  //     // Add your bindings here');
-      buffer.writeln('  //     // Jet.lazyPut(() => YourController());');
-      buffer.writeln('  //   }),');
-      if (exampleRoute.middlewares.isNotEmpty) {
-        buffer.writeln(
-            '  //   middlewares: [${exampleRoute.middlewares.map((m) => '$m()').join(', ')}],');
-      }
-      buffer.writeln(
-          '  //   fullscreenDialog: ${exampleRoute.fullscreenDialog},');
-      buffer.writeln('  //   maintainState: ${exampleRoute.maintainState},');
-      buffer.writeln(
-          '  //   preventDuplicates: ${exampleRoute.preventDuplicates},');
-      buffer.writeln('  // ),');
-    }
-
-    buffer.writeln('];');
-    return buffer.toString();
-  }
-
   static String _getParameterExtraction(ParamConfig param) {
     final paramAccess = "Jet.parameters['${param.name}']!";
     return _getParameterConversion(param, paramAccess);
@@ -431,5 +396,215 @@ return Jet.offAllNamed<T>(
     final entries =
         argumentParams.map((p) => "'${p.name}': ${p.name}").join(', ');
     return '{$entries}';
+  }
+
+  // ==================== JetPage Builder Methods ====================
+
+  /// Generate static binding getter - returns BindingsBuilder or null
+  static Method _generateStaticBindingGetter(RouteConfig config) {
+    return Method((m) {
+      m.name = 'binding';
+      m.type = MethodType.getter;
+      m.static = true;
+      m.returns = refer('BindingsBuilder?');
+      m.lambda = true;
+
+      if (config.bindings.isEmpty) {
+        m.body = Code('null');
+      } else {
+        final buffer = StringBuffer();
+        buffer.write('BindingsBuilder(() {');
+        for (final binding in config.bindings) {
+          buffer.writeln();
+          final putMethod = binding.lazy ? 'Jet.lazyPut' : 'Jet.put';
+          final constructor = _buildBindingConstructor(binding);
+          buffer.write('        $putMethod(() => $constructor);');
+        }
+        buffer.writeln();
+        buffer.write('      })');
+        m.body = Code(buffer.toString());
+      }
+    });
+  }
+
+  /// Build constructor call with dependencies using Jet.find
+  static String _buildBindingConstructor(BindingConfig binding) {
+    if (binding.dependencies.isEmpty) {
+      return '${binding.controllerType}()';
+    }
+
+    final params = binding.dependencies.map((dep) {
+      final tag = dep.tag != null ? ", tag: '${dep.tag}'" : '';
+      return 'Jet.find<${dep.typeName}>($tag)';
+    }).join(', ');
+
+    return '${binding.controllerType}($params)';
+  }
+
+  /// Generates: static JetPage build({binding, transition, ...}) => JetPage(...)
+  static Method _generateStaticBuildMethod(RouteConfig config) {
+    return Method((m) {
+      m.name = 'build';
+      m.static = true;
+      m.returns = refer('JetPage');
+
+      // Add all optional parameters
+      m.optionalParameters.addAll([
+        Parameter((p) {
+          p.name = 'binding';
+          p.named = true;
+          p.type = refer('BindingsInterface?');
+        }),
+        Parameter((p) {
+          p.name = 'bindings';
+          p.named = true;
+          p.type = refer('List<BindingsInterface>?');
+        }),
+        Parameter((p) {
+          p.name = 'binds';
+          p.named = true;
+          p.type = refer('List<Bind>?');
+        }),
+        Parameter((p) {
+          p.name = 'transition';
+          p.named = true;
+          p.type = refer('Transition?');
+        }),
+        Parameter((p) {
+          p.name = 'customTransition';
+          p.named = true;
+          p.type = refer('CustomTransition?');
+        }),
+        Parameter((p) {
+          p.name = 'transitionDuration';
+          p.named = true;
+          p.type = refer('Duration?');
+        }),
+        Parameter((p) {
+          p.name = 'reverseTransitionDuration';
+          p.named = true;
+          p.type = refer('Duration?');
+        }),
+        Parameter((p) {
+          p.name = 'middlewares';
+          p.named = true;
+          p.type = refer('List<JetMiddleware>?');
+        }),
+        Parameter((p) {
+          p.name = 'title';
+          p.named = true;
+          p.type = refer('String?');
+        }),
+        Parameter((p) {
+          p.name = 'fullscreenDialog';
+          p.named = true;
+          p.type = refer('bool?');
+        }),
+        Parameter((p) {
+          p.name = 'maintainState';
+          p.named = true;
+          p.type = refer('bool?');
+        }),
+        Parameter((p) {
+          p.name = 'preventDuplicates';
+          p.named = true;
+          p.type = refer('bool?');
+        }),
+        Parameter((p) {
+          p.name = 'popGesture';
+          p.named = true;
+          p.type = refer('bool?');
+        }),
+        Parameter((p) {
+          p.name = 'opaque';
+          p.named = true;
+          p.type = refer('bool?');
+        }),
+        Parameter((p) {
+          p.name = 'curve';
+          p.named = true;
+          p.type = refer('Curve?');
+        }),
+        Parameter((p) {
+          p.name = 'alignment';
+          p.named = true;
+          p.type = refer('Alignment?');
+        }),
+        Parameter((p) {
+          p.name = 'participatesInRootNavigator';
+          p.named = true;
+          p.type = refer('bool?');
+        }),
+        Parameter((p) {
+          p.name = 'gestureWidth';
+          p.named = true;
+          p.type = refer('double Function(BuildContext)?');
+        }),
+        Parameter((p) {
+          p.name = 'showCupertinoParallax';
+          p.named = true;
+          p.type = refer('bool?');
+        }),
+      ]);
+
+      m.body = Code(_buildJetPageWithParams(config));
+    });
+  }
+
+  /// Helper to generate JetPage constructor code with parameters and annotation defaults
+  static String _buildJetPageWithParams(RouteConfig config) {
+    final buffer = StringBuffer();
+    buffer.writeln('return JetPage(');
+    buffer.writeln('  name: routePath,');
+    buffer.writeln('  page: page,');
+
+    // Use passed parameter or default from annotation/binding
+    if (config.bindings.isNotEmpty) {
+      buffer.writeln('  binding: binding ?? binding,');
+    } else {
+      buffer.writeln('  binding: binding,');
+    }
+    buffer.writeln('  bindings: bindings ?? const [],');
+    buffer.writeln('  binds: binds ?? const [],');
+
+    // Transition - parameter overrides annotation
+    if (config.transition != null) {
+      buffer.writeln(
+          '  transition: transition ?? Transition.${config.transition!.type},');
+      if (config.transition!.durationMs != null) {
+        buffer.writeln(
+            '  transitionDuration: transitionDuration ?? Duration(milliseconds: ${config.transition!.durationMs}),');
+      } else {
+        buffer.writeln('  transitionDuration: transitionDuration,');
+      }
+    } else {
+      buffer.writeln('  transition: transition,');
+      buffer.writeln('  transitionDuration: transitionDuration,');
+    }
+
+    buffer.writeln('  customTransition: customTransition,');
+    buffer.writeln('  reverseTransitionDuration: reverseTransitionDuration,');
+    buffer.writeln('  middlewares: middlewares ?? const [],');
+    buffer.writeln('  title: title,');
+
+    // Bool properties - parameter overrides annotation default
+    buffer.writeln(
+        '  fullscreenDialog: fullscreenDialog ?? ${config.fullscreenDialog},');
+    buffer
+        .writeln('  maintainState: maintainState ?? ${config.maintainState},');
+    buffer.writeln(
+        '  preventDuplicates: preventDuplicates ?? ${config.preventDuplicates},');
+
+    buffer.writeln('  popGesture: popGesture,');
+    buffer.writeln('  opaque: opaque ?? true,');
+    buffer.writeln('  curve: curve ?? Curves.linear,');
+    buffer.writeln('  alignment: alignment,');
+    buffer
+        .writeln('  participatesInRootNavigator: participatesInRootNavigator,');
+    buffer.writeln('  gestureWidth: gestureWidth,');
+    buffer.writeln('  showCupertinoParallax: showCupertinoParallax ?? true,');
+    buffer.writeln(');');
+
+    return buffer.toString();
   }
 }
