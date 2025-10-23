@@ -52,13 +52,27 @@ part 'router.g.dart';
 @JetRouteConfig(generateForDir: ['lib'])
 class AppRouter {
   static List<JetPage> get pages => [
-    // Your routes will be generated here
-    HomePageRoute.page(),
-    ProfilePageRoute.page(),
-    SettingsPageRoute.page(),
+    JetPage(name: HomePageRoute.path, page: () => HomePageRoute.page()),
+    JetPage(name: ProfilePageRoute.path, page: () => ProfilePageRoute.page()),
+    JetPage(name: SettingsPageRoute.path, page: () => SettingsPageRoute.page()),
   ];
 }
 ```
+
+> **Note:**  
+You should manually register all your generated route pages here in the `AppRouter.pages` list, as shown above.  
+
+For each page you want routed, add an entry like:  
+```dart
+JetPage(
+  name: SomePageRoute.path,
+  page: () => SomePageRoute.page(),
+  // Optionally set other JetPage properties such as
+  // transition, binding, middlewares, etc.
+)
+```
+Make sure to include every page you wish to expose for navigation, following this pattern and populating any needed properties per your use case.
+
 
 **After creating the file, you should register the routes in your app like this:**
 
