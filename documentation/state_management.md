@@ -11,6 +11,7 @@
     - [Why i have to use .value](#why-i-have-to-use-value)
     - [Obx()](#obx)
     - [Workers](#workers)
+    - [Computed Observables](#computed-observables)
   + [Simple State Manager](#simple-state-manager)
     - [Advantages](#advantages-1)
     - [Usage](#usage)
@@ -39,6 +40,8 @@ With JetX, even nested widgets are respected. If you have Obx watching your List
 * _It only reconstructs if its variable REALLY changes_: JetX has flow control, that means if you display a Text with 'Paola', if you change the observable variable to 'Paola' again, the widget will not be reconstructed. That's because JetX knows that 'Paola' is already being displayed in Text, and will not do unnecessary reconstructions.
 
 Most (if not all) current state managers will rebuild on the screen.
+
+* _Computed Observables_: JetX introduces computed observables that automatically derive state from other observables without manual updates. Similar to MobX computed values but without code generators, providing automatic dependency tracking and efficient recomputation only when dependencies change.
 
 ## Reactive State Manager
 
@@ -453,6 +456,195 @@ All workers returns a `Worker` instance, that you can use to cancel ( via `dispo
 'interval' is different from the debouce. debouce if the user makes 1000 changes to a variable within 1 second, he will send only the last one after the stipulated timer (the default is 800 milliseconds). Interval will instead ignore all user actions for the stipulated period. If you send events for 1 minute, 1000 per second, debounce will only send you the last one, when the user stops strafing events. interval will deliver events every second, and if set to 3 seconds, it will deliver 20 events that minute. This is recommended to avoid abuse, in functions where the user can quickly click on something and get some advantage (imagine that the user can earn coins by clicking on something, if he clicked 300 times in the same minute, he would have 300 coins, using interval, you can set a time frame for 3 seconds, and even then clicking 300 or a thousand times, the maximum he would get in 1 minute would be 20 coins, clicking 300 or 1 million times). The debounce is suitable for anti-DDos, for functions like search where each change to onChange would cause a query to your api. Debounce will wait for the user to stop typing the name, to make the request. If it were used in the coin scenario mentioned above, the user would only win 1 coin, because it is only executed, when the user "pauses" for the established time.
 
 * NOTE: Workers should always be used when starting a Controller or Class, so it should always be on onInit (recommended), Class constructor, or the initState of a StatefulWidget (this practice is not recommended in most cases, but it shouldn't have any side effects).
+
+### Computed Observables
+
+Computed observables are derived reactive values that automatically track their dependencies and recompute when any dependency changes. This feature provides automatic derived state without manual updates, similar to MobX computed values but without code generators.
+
+#### What are Computed Observables?
+
+A computed observable is a reactive value that is calculated from other observables. It automatically:
+- Tracks which observables are accessed during computation
+- Subscribes to those observables
+- Recomputes when any dependency changes
+- Notifies its own listeners when the computed value changes
+
+#### Basic Usage
+
+```dart
+class ProductController extends JetxController {
+  final products = <Product>[].obs;
+  
+  // Computed total that automatically updates when products list changes
+  late final total = Computed(() {
+    return products.fold(0.0, (sum, product) => sum + (product.price * product.quantity));
+  });
+  
+  void addProduct(Product product) {
+    products.add(product);
+    // total automatically updates without manual calculation
+  }
+}
+
+// In your UI
+Obx(() => Text('Total: \$${controller.total.value}'))
+```
+
+#### Best Practices
+
+1. **Always use inside JetxController**: Computed observables should be used within controllers for automatic disposal and proper lifecycle management.
+
+```dart
+// ✅ Good - inside controller
+class ProductController extends JetxController {
+  late final total = Computed(() => calculateTotal());
+}
+
+// ❌ Avoid - outside controller (memory leaks)
+class MyWidget extends StatelessWidget {
+  late final total = Computed(() => calculateTotal()); // Will leak memory
+}
+```
+
+2. **Keep computations pure**: Computed functions should not have side effects. They should only read observables and return a value.
+
+```dart
+// ✅ Good - pure computation
+late final total = Computed(() => products.fold(0.0, (sum, p) => sum + p.price));
+
+// ❌ Avoid - side effects
+late final total = Computed(() {
+  print('Calculating...'); // Side effect!
+  return products.fold(0.0, (sum, p) => sum + p.price);
+});
+```
+
+3. **Use late final**: Always declare computed values as `late final` for proper initialization.
+
+4. **Break down complex computations**: Use multiple computed values for complex calculations instead of one large computation.
+
+```dart
+// ✅ Good - broken down
+late final subtotal = Computed(() => calculateSubtotal());
+late final tax = Computed(() => subtotal.value * 0.1);
+late final total = Computed(() => subtotal.value + tax.value);
+
+// ❌ Avoid - everything in one computation
+late final everything = Computed(() {
+  // Lots of complex logic here - hard to debug and maintain
+});
+```
+
+#### When to Use Computed Observables
+
+- **Derived state**: When you need to calculate values from other observables
+- **Automatic updates**: When you want values to update automatically when dependencies change
+- **Performance**: When you want to avoid manual updates and potential inconsistencies
+
+Use computed observables instead of:
+- Manual calculations in methods
+- Getters that perform heavy computations
+- Manual state synchronization
+
+#### Memory Management
+
+**Inside JetxController (Recommended):**
+```dart
+class ProductController extends JetxController {
+  late final total = Computed(() => calculateTotal());
+  
+  // Computed will be automatically disposed when controller is removed
+}
+```
+
+**Outside Controller (Not Recommended):**
+```dart
+// ❌ Manual disposal required
+final computed = Computed(() => someExpensiveCalculation());
+// Must manually call: computed.close();
+```
+
+#### Complete Example
+
+Here's a complete example showing proper usage:
+
+```dart
+class Product {
+  final String name;
+  final double price;
+  final int quantity;
+  Product(this.name, this.price, this.quantity);
+}
+
+class ProductController extends JetxController {
+  final products = <Product>[].obs;
+  
+  late final total = Computed(() {
+    return products.fold(0.0, (sum, product) => sum + (product.price * product.quantity));
+  });
+  
+  void addRandomProduct() {
+    final randomProducts = [
+      Product('Widget', 29.99, 1),
+      Product('Gadget', 49.99, 2),
+      Product('Tool', 19.99, 3),
+      Product('Device', 99.99, 1),
+    ];
+    
+    final randomIndex = DateTime.now().millisecondsSinceEpoch % randomProducts.length;
+    products.add(randomProducts[randomIndex]);
+  }
+  
+  void clearProducts() {
+    products.clear();
+  }
+}
+
+class ProductPage extends JetView<ProductController> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Column(
+        children: [
+          // Total automatically updates when products change
+          Obx(() => Text('Total: \$${controller.total.value.toStringAsFixed(2)}')),
+          
+          // Products list
+          Expanded(
+            child: Obx(() => ListView.builder(
+              itemCount: controller.products.length,
+              itemBuilder: (context, index) {
+                final product = controller.products[index];
+                return ListTile(
+                  title: Text(product.name),
+                  subtitle: Text('Qty: ${product.quantity} × \$${product.price}'),
+                  trailing: Text('\$${(product.price * product.quantity).toStringAsFixed(2)}'),
+                );
+              },
+            )),
+          ),
+          
+          // Action buttons
+          Row(
+            children: [
+              ElevatedButton(
+                onPressed: controller.addRandomProduct,
+                child: Text('Add Random Product'),
+              ),
+              ElevatedButton(
+                onPressed: controller.clearProducts,
+                child: Text('Clear'),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+```
+
+For comprehensive details about computed observables, see the [Computed Observables documentation](computed_observables.md).
 
 ## Simple State Manager
 
