@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:jet/jet.dart';
+import 'package:jetx_annotations/jetx_annotations.dart';
 
+@RoutablePage(path: '/settings')
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
 

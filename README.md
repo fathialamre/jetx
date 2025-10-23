@@ -253,6 +253,8 @@ Noticed that you didn't have to use context to do any of these things? That's on
 
 **Jet works with named routes and also offers lower-level control over your routes! There is in-depth documentation [here](./documentation/en_US/route_management.md)**
 
+**NEW: JetX Route Generator** - Automatically generate type-safe route classes from annotated pages! See the [Route Generator Guide](./documentation/route_generator.md) for details.
+
 ## Dependency management
 
 Jet has a simple and powerful dependency manager that allows you to retrieve the same class as your Bloc or Controller with just 1 lines of code, no Provider context, no inheritedWidget:

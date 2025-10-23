@@ -1,6 +1,6 @@
 name: jet
 description: Open screens/snackbars/dialogs without context, manage states and inject dependencies easily with JetX.
-version: 5.0.0-release-candidate-9.3.2
+version: 0.1.0-alpha.4
 homepage: https://github.com/fathialamre/jetx
 
 environment:

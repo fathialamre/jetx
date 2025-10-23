@@ -1,6 +1,9 @@
+import 'package:example/pages/profile_page.dart';
+import 'package:example/router.dart';
 import 'package:flutter/material.dart';
-import 'package:jet/jet.dart';
+import 'package:jetx_annotations/jetx_annotations.dart';
 
+@RoutablePage(path: '/home')
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
@@ -15,7 +18,11 @@ class HomePage extends StatelessWidget {
         child: Text('Home Page', style: TextStyle(fontSize: 24)),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => Jet.toNamed('/profile'),
+        onPressed: () => ProfilePageRoute.push(
+          userId: '123',
+          profile: Profile(userId: '888'),
+          name: "Fathi Alamre",
+        ),
         child: const Icon(Icons.person),
       ),
     );

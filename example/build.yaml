@@ -1,0 +1,4 @@
+# This file configures the build_runner for JetX route generation
+# Run: dart run build_runner build --delete-conflicting-outputs
+# Or watch: dart run build_runner watch --delete-conflicting-outputs
+

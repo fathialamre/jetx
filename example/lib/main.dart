@@ -1,3 +1,4 @@
+import 'package:example/router.dart';
 import 'package:flutter/material.dart';
 import 'package:jet/jet.dart';
 import 'pages/home_page.dart';
@@ -20,11 +21,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: const HomePage(),
-      jetPages: [
-        JetPage(name: '/', page: () => const HomePage()),
-        JetPage(name: '/profile', page: () => const ProfilePage()),
-        JetPage(name: '/settings', page: () => const SettingsPage()),
-      ],
+      jetPages: AppRouter.pages,
     );
   }
 }
