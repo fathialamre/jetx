@@ -60,6 +60,16 @@ class AppRouter {
 }
 ```
 
+**After creating the file, you should register the routes in your app like this:**
+
+```dart
+// In your main.dart or app configuration
+JetMaterialApp(
+  getPages: AppRouter.pages,  // Register the generated routes
+  home: HomePage(),
+)
+```
+
 ### 2. Annotate your pages
 
 Annotate each page with `@RoutablePage`:
