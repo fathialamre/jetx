@@ -1,7 +1,7 @@
 // ignore_for_file: avoid_classes_with_only_static_members
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:jet/jet.dart';
+import 'package:jetx/jet.dart';
 
 import 'util/matcher.dart' as m;
 

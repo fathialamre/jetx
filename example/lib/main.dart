@@ -1,6 +1,6 @@
 import 'package:example/router.dart';
 import 'package:flutter/material.dart';
-import 'package:jet/jet.dart';
+import 'package:jetx/jet.dart';
 import 'pages/home_page.dart';
 import 'pages/profile_page.dart';
 import 'pages/settings_page.dart';

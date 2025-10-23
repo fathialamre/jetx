@@ -10,7 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8
-  jet:
+  jetx:
     path: ../
   jetx_annotations:
     path: ../packages/jetx_annotations

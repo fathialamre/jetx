@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:jet/jet.dart';
+import 'package:jetx/jet.dart';
 
 import 'utils/wrapper.dart';
 

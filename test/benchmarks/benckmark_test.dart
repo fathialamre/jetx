@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:jet/state_manager.dart';
+import 'package:jetx/state_manager.dart';
 
 int times = 30;
 

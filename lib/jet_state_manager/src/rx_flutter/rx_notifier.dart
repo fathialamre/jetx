@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:jet/utils.dart';
+import 'package:jetx/utils.dart';
 
 import '../../../jet_rx/src/rx_types/rx_types.dart';
 import '../../../instance_manager.dart';

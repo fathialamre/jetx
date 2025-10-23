@@ -1,7 +1,7 @@
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
-import 'package:jet/jet_navigation/src/routes/test_kit.dart';
+import 'package:jetx/jet_navigation/src/routes/test_kit.dart';
 
 import '../../jet.dart';
 import 'dialog/dialog_route.dart';

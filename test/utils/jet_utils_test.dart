@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:jet/jet.dart';
+import 'package:jetx/jet.dart';
 
 class TestClass {
   final name = "John";

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:jet/jet.dart';
+import 'package:jetx/jet.dart';
 
 void main() {
   testWidgets("test if Jet.isSnackbarOpen works with Jet.snackbar",

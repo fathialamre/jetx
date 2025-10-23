@@ -58,8 +58,8 @@ lib/
 In `router.dart`:
 
 ```dart
-import 'package:jet/jet.dart';
-import 'package:jetx_annotations/jetx_annotations.dart';
+import 'package:jetx/jet.dart';
+import 'package:jetxx_annotations/jetx_annotations.dart';
 
 part 'router.g.dart';
 
@@ -75,7 +75,7 @@ In your page files:
 
 ```dart
 import 'package:flutter/material.dart';
-import 'package:jetx_annotations/jetx_annotations.dart';
+import 'package:jetxx_annotations/jetx_annotations.dart';
 
 @JetPageRoute(path: '/home')
 class HomePage extends StatelessWidget {
@@ -97,7 +97,7 @@ In `main.dart`:
 
 ```dart
 import 'package:flutter/material.dart';
-import 'package:jet/jet.dart';
+import 'package:jetx/jet.dart';
 import 'router.dart';
 
 void main() {
@@ -250,8 +250,8 @@ part 'router.g.dart';  // Must match your file name
 Ensure you have the necessary imports:
 
 ```dart
-import 'package:jet/jet.dart';
-import 'package:jetx_annotations/jetx_annotations.dart';
+import 'package:jetx/jet.dart';
+import 'package:jetxx_annotations/jetx_annotations.dart';
 ```
 
 ## Learn More

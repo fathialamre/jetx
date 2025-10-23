@@ -18,31 +18,16 @@ JetX is a powerful Flutter framework that combines high-performance state manage
 - **Cross-Platform:** Runs on Android, iOS, Web, Mac, Linux, Windows, and server
 - **Modular:** Only compiles features you use - no bloat
 
-**Reuse your frontend code on the backend with [Jet Server](https://github.com/fathialamre/jet_server)**
+## New Features
 
-# 🚀 JetX Route Generator
+JetX builds upon the solid foundation with exclusive enhancements:
 
-Automatically generate type-safe route classes from annotated pages! No more manual route definitions or string-based navigation.
-
-## Quick Preview
-
-```dart
-// 1. Annotate your page
-@RoutablePage()
-class HomePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) => Scaffold(/*...*/);
-}
-
-// 2. Generate routes automatically
-// Run: dart run build_runner build
-
-// 3. Use type-safe navigation
-Jet.to(HomePageRoute());
-Jet.toNamed(HomePageRoute.name);
-```
-
-**See the complete [Route Generator Guide](./documentation/route_generator.md) for detailed documentation.**
+- **🚀 Route Generator:** Automatically generate type-safe route classes from annotated pages - no more string-based navigation or manual route definitions
+- **📦 Enhanced State Management:** Improved reactive state with better performance and memory management
+- **🎯 Smart Dependency Injection:** Advanced lazy loading with automatic cleanup and lifecycle management
+- **⚡ Performance Optimizations:** Reduced overhead and faster rebuilds with optimized reactive updates
+- **🛠️ Developer Experience:** Better error messages, improved debugging, and enhanced IDE support
+- **🔧 Modern Architecture:** Built for Flutter 3.x with null-safety and latest best practices
 
 ## Table of Contents
 
@@ -94,13 +79,13 @@ Add Jet to your pubspec.yaml file:
 
 ```yaml
 dependencies:
-  jet:
+  jetx:
 ```
 
 Import jet in files that it will be used:
 
 ```dart
-import 'package:jet/jet.dart';
+import 'package:jetx/jet.dart';
 ```
 
 # Counter App with JetX
@@ -266,11 +251,47 @@ Jet.offAll(NextScreen());
 
 Noticed that you didn't have to use context to do any of these things? That's one of the biggest advantages of using Jet route management. With this, you can execute all these methods from within your controller class, without worries.
 
-### More details about route management
+### Route Generator
 
-**Jet works with named routes and also offers lower-level control over your routes! There is in-depth documentation [here](./documentation/en_US/route_management.md)**
+JetX includes a powerful route generator that eliminates manual route definitions and provides type-safe navigation throughout your app.
 
-**NEW: JetX Route Generator** - Automatically generate type-safe route classes from annotated pages! See the [Route Generator Guide](./documentation/route_generator.md) for details.
+#### Key Benefits
+
+- **Type-Safe Navigation:** Navigate with compile-time parameter checking instead of error-prone strings
+- **Auto-Generated Routes:** Annotate your pages with `@RoutablePage()` and let the generator handle the rest
+- **Parameter Detection:** Automatically categorizes parameters as URL params or complex arguments
+- **Clean API:** Each route gets just 3 navigation methods: `push()`, `off()`, and `offAll()`
+- **Zero Boilerplate:** No manual parameter extraction or route configuration needed
+
+#### Quick Example
+
+```dart
+// 1. Annotate your page
+@RoutablePage(path: '/profile')
+class ProfilePage extends StatelessWidget {
+  final String userId;
+  final Profile profile;
+  
+  const ProfilePage({
+    super.key,
+    required this.userId,
+    required this.profile,
+  });
+  
+  @override
+  Widget build(BuildContext context) => Scaffold(/*...*/);
+}
+
+// 2. Generate routes: dart run build_runner build
+
+// 3. Navigate with type safety
+ProfilePageRoute.push(
+  userId: '123',
+  profile: myProfile,
+);
+```
+
+**See the complete [Route Generator Guide](./documentation/route_generator.md) for setup, advanced features, and detailed documentation.**
 
 ## Dependency management
 
@@ -318,7 +339,7 @@ Translations are kept as a simple key-value dictionary map.
 To add custom translations, create a class and extend `Translations`.
 
 ```dart
-import 'package:jet/jet.dart';
+import 'package:jetx/jet.dart';
 
 class Messages extends Translations {
   @override
@@ -351,7 +372,7 @@ Text('singularKey'.trPlural('pluralKey', products.length, Args));
 #### Using translation with parameters
 
 ```dart
-import 'package:jet/jet.dart';
+import 'package:jetx/jet.dart';
 
 
 Map<String, Map<String, String>> get keys => {

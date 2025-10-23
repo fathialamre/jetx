@@ -39,8 +39,8 @@ flutter pub get
 Create a file `lib/router.dart`:
 
 ```dart
-import 'package:jet/jet.dart';
-import 'package:jetx_annotations/jetx_annotations.dart';
+import 'package:jetx/jet.dart';
+import 'package:jetxx_annotations/jetx_annotations.dart';
 
 // Import all your page files
 import 'pages/home_page.dart';
@@ -76,7 +76,7 @@ Annotate each page with `@RoutablePage`:
 
 ```dart
 import 'package:flutter/material.dart';
-import 'package:jetx_annotations/jetx_annotations.dart';
+import 'package:jetxx_annotations/jetx_annotations.dart';
 
 @RoutablePage(path: '/home')
 class HomePage extends StatelessWidget {

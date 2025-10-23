@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:jet/jet.dart';
+import 'package:jetx/jet.dart';
 import 'package:jetx_annotations/jetx_annotations.dart';
 
 // Import all page files so generated code can reference them

@@ -45,7 +45,7 @@ class LibraryGenerator {
   }
 
   void _writeImports(StringBuffer buffer, List<RouteConfig> routes) {
-    buffer.writeln("import 'package:jet/jet.dart';");
+    buffer.writeln("import 'package:jetx/jet.dart';");
 
     // Add unique imports from routes
     final imports = routes.map((r) => r.import).toSet().toList();

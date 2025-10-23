@@ -30,8 +30,8 @@ dev_dependencies:
 Create a router class and annotate it with `@JetRouteConfig`:
 
 ```dart
-import 'package:jet/jet.dart';
-import 'package:jetx_annotations/jetx_annotations.dart';
+import 'package:jetx/jet.dart';
+import 'package:jetxx_annotations/jetx_annotations.dart';
 
 part 'router.g.dart';
 
@@ -47,7 +47,7 @@ Add `@RoutablePage` to your page widgets:
 
 ```dart
 import 'package:flutter/material.dart';
-import 'package:jetx_annotations/jetx_annotations.dart';
+import 'package:jetxx_annotations/jetx_annotations.dart';
 
 @RoutablePage(path: '/home')
 class HomePage extends StatefulWidget {
@@ -98,7 +98,7 @@ HomePageRoute.offAll();
 
 ```dart
 import 'package:flutter/material.dart';
-import 'package:jet/jet.dart';
+import 'package:jetx/jet.dart';
 import 'router.dart';
 
 void main() {
@@ -277,8 +277,8 @@ part 'router.g.dart';  // Must match your file name
 Ensure all necessary imports are present:
 
 ```dart
-import 'package:jet/jet.dart';
-import 'package:jetx_annotations/jetx_annotations.dart';
+import 'package:jetx/jet.dart';
+import 'package:jetxx_annotations/jetx_annotations.dart';
 ```
 
 ## License

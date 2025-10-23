@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:jet/instance_manager.dart';
+import 'package:jetx/instance_manager.dart';
 
 import '../../../jet_state_manager/jet_state_manager.dart';
 import '../../../jet_utils/jet_utils.dart';

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:jet/jet.dart';
+import 'package:jetx/jet.dart';
 
 class Wrapper extends StatelessWidget {
   final Widget? child;
