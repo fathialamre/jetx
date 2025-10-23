@@ -1,55 +1,55 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/get.dart';
+import 'package:jet/jet.dart';
 
 void main() {
   test('Parse Page with children', () {
     final testParams = {'hi': 'value'};
-    final pageTree = GetPage(
+    final pageTree = JetPage(
       name: '/city',
       page: () => Container(),
       children: [
-        GetPage(
+        JetPage(
           name: '/home',
           page: () => Container(),
           transition: Transition.rightToLeftWithFade,
           children: [
-            GetPage(
+            JetPage(
               name: '/bed-room',
               transition: Transition.size,
               page: () => Container(),
             ),
-            GetPage(
+            JetPage(
               name: '/living-room',
               transition: Transition.topLevel,
               page: () => Container(),
             ),
           ],
         ),
-        GetPage(
+        JetPage(
           name: '/work',
           transition: Transition.upToDown,
           page: () => Container(),
           children: [
-            GetPage(
+            JetPage(
               name: '/office',
               transition: Transition.zoom,
               page: () => Container(),
               children: [
-                GetPage(
+                JetPage(
                   name: '/pen',
                   transition: Transition.cupertino,
                   page: () => Container(),
                   parameters: testParams,
                 ),
-                GetPage(
+                JetPage(
                   name: '/paper',
                   page: () => Container(),
                   transition: Transition.downToUp,
                 ),
               ],
             ),
-            GetPage(
+            JetPage(
               name: '/meeting-room',
               transition: Transition.fade,
               page: () => Container(),
@@ -59,7 +59,7 @@ void main() {
       ],
     );
 
-    final tree = ParseRouteTree(routes: <GetPage>[]);
+    final tree = ParseRouteTree(routes: <JetPage>[]);
 
     tree.addRoute(pageTree);
 
@@ -76,39 +76,39 @@ void main() {
 
   test('Parse Page without children', () {
     final pageTree = [
-      GetPage(
+      JetPage(
           name: '/city',
           page: () => Container(),
           transition: Transition.cupertino),
-      GetPage(
+      JetPage(
           name: '/city/home',
           page: () => Container(),
           transition: Transition.downToUp),
-      GetPage(
+      JetPage(
           name: '/city/home/bed-room',
           page: () => Container(),
           transition: Transition.fade),
-      GetPage(
+      JetPage(
           name: '/city/home/living-room',
           page: () => Container(),
           transition: Transition.fadeIn),
-      GetPage(
+      JetPage(
           name: '/city/work',
           page: () => Container(),
           transition: Transition.leftToRight),
-      GetPage(
+      JetPage(
           name: '/city/work/office',
           page: () => Container(),
           transition: Transition.leftToRightWithFade),
-      GetPage(
+      JetPage(
           name: '/city/work/office/pen',
           page: () => Container(),
           transition: Transition.native),
-      GetPage(
+      JetPage(
           name: '/city/work/office/paper',
           page: () => Container(),
           transition: Transition.noTransition),
-      GetPage(
+      JetPage(
           name: '/city/work/meeting-room',
           page: () => Container(),
           transition: Transition.rightToLeft),
@@ -129,80 +129,80 @@ void main() {
   testWidgets(
     'test params from dynamic route',
     (tester) async {
-      await tester.pumpWidget(GetMaterialApp(
+      await tester.pumpWidget(JetMaterialApp(
         initialRoute: '/first/juan',
-        getPages: [
-          GetPage(page: () => Container(), name: '/first/:name'),
-          GetPage(page: () => Container(), name: '/second/:id'),
-          GetPage(page: () => Container(), name: '/third'),
-          GetPage(page: () => Container(), name: '/last/:id/:name/profile'),
-          GetPage(page: () => Container(), name: '/first/second/:token')
+        jetPages: [
+          JetPage(page: () => Container(), name: '/first/:name'),
+          JetPage(page: () => Container(), name: '/second/:id'),
+          JetPage(page: () => Container(), name: '/third'),
+          JetPage(page: () => Container(), name: '/last/:id/:name/profile'),
+          JetPage(page: () => Container(), name: '/first/second/:token')
         ],
       ));
 
-      expect(Get.parameters['name'], 'juan');
+      expect(Jet.parameters['name'], 'juan');
 
-      Get.toNamed('/second/1234');
-
-      await tester.pumpAndSettle();
-
-      expect(Get.parameters['id'], '1234');
-
-      Get.toNamed('/third?name=jonny&job=dev');
+      Jet.toNamed('/second/1234');
 
       await tester.pumpAndSettle();
 
-      expect(Get.parameters['name'], 'jonny');
-      expect(Get.parameters['job'], 'dev');
+      expect(Jet.parameters['id'], '1234');
 
-      Get.toNamed('/last/1234/ana/profile');
-
-      await tester.pumpAndSettle();
-
-      expect(Get.parameters['id'], '1234');
-      expect(Get.parameters['name'], 'ana');
-
-      Get.toNamed('/last/1234/ana/profile?job=dev');
+      Jet.toNamed('/third?name=jonny&job=dev');
 
       await tester.pumpAndSettle();
 
-      expect(Get.parameters['id'], '1234');
-      expect(Get.parameters['name'], 'ana');
-      expect(Get.parameters['job'], 'dev');
+      expect(Jet.parameters['name'], 'jonny');
+      expect(Jet.parameters['job'], 'dev');
 
-      Get.toNamed(
+      Jet.toNamed('/last/1234/ana/profile');
+
+      await tester.pumpAndSettle();
+
+      expect(Jet.parameters['id'], '1234');
+      expect(Jet.parameters['name'], 'ana');
+
+      Jet.toNamed('/last/1234/ana/profile?job=dev');
+
+      await tester.pumpAndSettle();
+
+      expect(Jet.parameters['id'], '1234');
+      expect(Jet.parameters['name'], 'ana');
+      expect(Jet.parameters['job'], 'dev');
+
+      Jet.toNamed(
         'https://www.example.com/first/second/fa9662f4-ec3f-11ee-a806-169a3915b383',
       );
       await tester.pumpAndSettle();
-      expect(Get.parameters['token'], 'fa9662f4-ec3f-11ee-a806-169a3915b383');
+      expect(Jet.parameters['token'], 'fa9662f4-ec3f-11ee-a806-169a3915b383');
     },
   );
 
   testWidgets(
     'params in url by parameters',
     (tester) async {
-      await tester.pumpWidget(GetMaterialApp(
+      await tester.pumpWidget(JetMaterialApp(
         initialRoute: '/first/juan',
-        getPages: [
-          GetPage(page: () => Container(), name: '/first/:name'),
-          GetPage(page: () => Container(), name: '/italy'),
+        jetPages: [
+          JetPage(page: () => Container(), name: '/first/:name'),
+          JetPage(page: () => Container(), name: '/italy'),
         ],
       ));
 
-      // Get.parameters = ({"varginias": "varginia", "vinis": "viniiss"});
+      // Jet.parameters = ({"varginias": "varginia", "vinis": "viniiss"});
       var parameters = <String, String>{
         "varginias": "varginia",
         "vinis": "viniiss"
       };
-      // print("Get.parameters: ${Get.parameters}");
+      // print("Jet.parameters: ${Jet.parameters}");
       parameters.addAll({"a": "b", "c": "d"});
-      Get.toNamed("/italy", parameters: parameters);
+      Jet.toNamed("/italy", parameters: parameters);
 
       await tester.pumpAndSettle();
-      expect(Get.parameters['varginias'], 'varginia');
-      expect(Get.parameters['vinis'], 'viniiss');
-      expect(Get.parameters['a'], 'b');
-      expect(Get.parameters['c'], 'd');
+      expect(Jet.parameters['varginias'], 'varginia');
+      expect(Jet.parameters['vinis'], 'viniiss');
+      expect(Jet.parameters['a'], 'b');
+      expect(Jet.parameters['c'], 'd');
     },
   );
 }

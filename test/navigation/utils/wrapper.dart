@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:jet/jet.dart';
 
 class Wrapper extends StatelessWidget {
   final Widget? child;
-  final List<GetPage>? namedRoutes;
+  final List<JetPage>? namedRoutes;
   final String? initialRoute;
   final Transition? defaultTransition;
 
@@ -17,12 +17,12 @@ class Wrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
+    return JetMaterialApp(
       defaultTransition: defaultTransition,
       initialRoute: initialRoute,
       translations: WrapperTranslations(),
       locale: WrapperTranslations.locale,
-      getPages: namedRoutes,
+      jetPages: namedRoutes,
       home: namedRoutes == null
           ? Scaffold(
               body: child,
@@ -34,7 +34,7 @@ class Wrapper extends StatelessWidget {
 
 class WrapperNamed extends StatelessWidget {
   final Widget? child;
-  final List<GetPage>? namedRoutes;
+  final List<JetPage>? namedRoutes;
   final String? initialRoute;
   final Transition? defaultTransition;
 
@@ -48,10 +48,10 @@ class WrapperNamed extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
+    return JetMaterialApp(
       defaultTransition: defaultTransition,
       initialRoute: initialRoute,
-      getPages: namedRoutes,
+      jetPages: namedRoutes,
     );
   }
 }

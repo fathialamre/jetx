@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/get.dart';
+import 'package:jet/jet.dart';
 
 import 'utils/wrapper.dart';
 
@@ -10,54 +10,54 @@ void main() {
       Wrapper(child: Container()),
     );
 
-    expect(Get.isRegistered<Controller2>(), false);
-    expect(Get.isRegistered<Controller>(), false);
+    expect(Jet.isRegistered<Controller2>(), false);
+    expect(Jet.isRegistered<Controller>(), false);
 
-    Get.to(() => const First());
+    Jet.to(() => const First());
 
     await tester.pumpAndSettle();
 
     expect(find.byType(First), findsOneWidget);
 
-    expect(Get.isRegistered<Controller>(), true);
+    expect(Jet.isRegistered<Controller>(), true);
 
-    Get.to(() => const Second());
+    Jet.to(() => const Second());
 
     await tester.pumpAndSettle();
 
     expect(find.byType(Second), findsOneWidget);
 
-    expect(Get.isRegistered<Controller>(), true);
-    expect(Get.isRegistered<Controller2>(), true);
+    expect(Jet.isRegistered<Controller>(), true);
+    expect(Jet.isRegistered<Controller2>(), true);
 
-    Get.back();
+    Jet.back();
 
     await tester.pumpAndSettle();
 
     expect(find.byType(First), findsOneWidget);
 
-    expect(Get.isRegistered<Controller>(), true);
-    expect(Get.isRegistered<Controller2>(), false);
+    expect(Jet.isRegistered<Controller>(), true);
+    expect(Jet.isRegistered<Controller2>(), false);
 
-    Get.back();
+    Jet.back();
 
     await tester.pumpAndSettle();
 
-    expect(Get.isRegistered<Controller>(), false);
-    expect(Get.isRegistered<Controller2>(), false);
+    expect(Jet.isRegistered<Controller>(), false);
+    expect(Jet.isRegistered<Controller2>(), false);
   });
 }
 
-class Controller extends GetxController {}
+class Controller extends JetxController {}
 
-class Controller2 extends GetxController {}
+class Controller2 extends JetxController {}
 
 class First extends StatelessWidget {
   const First({super.key});
 
   @override
   Widget build(BuildContext context) {
-    Get.put(Controller());
+    Jet.put(Controller());
     return const Center(
       child: Text("first"),
     );
@@ -69,7 +69,7 @@ class Second extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Get.put(Controller2());
+    Jet.put(Controller2());
     return const Center(
       child: Text("second"),
     );

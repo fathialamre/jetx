@@ -1,6 +1,6 @@
-/// Get Instance Manager is a modern and intelligent dependency injector
+/// Jet Instance Manager is a modern and intelligent dependency injector
 /// that injects and removes dependencies seasonally.
 library;
 
-export 'get_core/get_core.dart';
-export 'get_instance/get_instance.dart';
+export 'jet_core/jet_core.dart';
+export 'jet_instance/jet_instance.dart';

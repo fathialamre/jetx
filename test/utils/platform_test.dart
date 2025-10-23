@@ -4,16 +4,16 @@ library;
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/get.dart';
+import 'package:jet/jet.dart';
 
 void main() {
   test('Platform test', () {
-    expect(GetPlatform.isAndroid, Platform.isAndroid);
-    expect(GetPlatform.isIOS, Platform.isIOS);
-    expect(GetPlatform.isFuchsia, Platform.isFuchsia);
-    expect(GetPlatform.isLinux, Platform.isLinux);
-    expect(GetPlatform.isMacOS, Platform.isMacOS);
-    expect(GetPlatform.isWindows, Platform.isWindows);
-    expect(GetPlatform.isWeb, false);
+    expect(JetPlatform.isAndroid, Platform.isAndroid);
+    expect(JetPlatform.isIOS, Platform.isIOS);
+    expect(JetPlatform.isFuchsia, Platform.isFuchsia);
+    expect(JetPlatform.isLinux, Platform.isLinux);
+    expect(JetPlatform.isMacOS, Platform.isMacOS);
+    expect(JetPlatform.isWindows, Platform.isWindows);
+    expect(JetPlatform.isWeb, false);
   });
 }
