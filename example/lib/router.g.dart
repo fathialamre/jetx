@@ -9,6 +9,34 @@
 
 part of 'router.dart';
 
+/// Route class for [ComputedExamplePage].
+class ComputedExamplePageRoute {
+  ComputedExamplePageRoute._();
+
+  /// Route path: '/computed-example'
+  static const String path = '/computed-example';
+
+  /// Creates an instance of [ComputedExamplePage].
+  static ComputedExamplePage page() {
+    return ComputedExamplePage();
+  }
+
+  /// Pushes [ComputedExamplePage] onto the navigation stack.
+  static Future<T?>? push<T>() {
+    return Jet.toNamed<T>(path);
+  }
+
+  /// Replaces the current route with [ComputedExamplePage].
+  static Future<T?>? off<T>() {
+    return Jet.offNamed<T>(path);
+  }
+
+  /// Removes all routes and pushes [ComputedExamplePage].
+  static Future<T?>? offAll<T>() {
+    return Jet.offAllNamed<T>(path);
+  }
+}
+
 /// Route class for [HomePage].
 class HomePageRoute {
   HomePageRoute._();
@@ -23,23 +51,17 @@ class HomePageRoute {
 
   /// Pushes [HomePage] onto the navigation stack.
   static Future<T?>? push<T>() {
-    return Jet.toNamed<T>(
-      path,
-    );
+    return Jet.toNamed<T>(path);
   }
 
   /// Replaces the current route with [HomePage].
   static Future<T?>? off<T>() {
-    return Jet.offNamed<T>(
-      path,
-    );
+    return Jet.offNamed<T>(path);
   }
 
   /// Removes all routes and pushes [HomePage].
   static Future<T?>? offAll<T>() {
-    return Jet.offAllNamed<T>(
-      path,
-    );
+    return Jet.offAllNamed<T>(path);
   }
 }
 
@@ -66,15 +88,10 @@ class ProfilePageRoute {
     required String userId,
     String? name,
   }) {
-    return {
-      'userId': userId,
-      if (name != null) 'name': name,
-    };
+    return {'userId': userId, if (name != null) 'name': name};
   }
 
-  static dynamic _buildArguments({
-    required Profile profile,
-  }) {
+  static dynamic _buildArguments({required Profile profile}) {
     return profile;
   }
 
@@ -132,22 +149,16 @@ class SettingsPageRoute {
 
   /// Pushes [SettingsPage] onto the navigation stack.
   static Future<T?>? push<T>() {
-    return Jet.toNamed<T>(
-      path,
-    );
+    return Jet.toNamed<T>(path);
   }
 
   /// Replaces the current route with [SettingsPage].
   static Future<T?>? off<T>() {
-    return Jet.offNamed<T>(
-      path,
-    );
+    return Jet.offNamed<T>(path);
   }
 
   /// Removes all routes and pushes [SettingsPage].
   static Future<T?>? offAll<T>() {
-    return Jet.offAllNamed<T>(
-      path,
-    );
+    return Jet.offAllNamed<T>(path);
   }
 }

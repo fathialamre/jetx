@@ -2,7 +2,7 @@
 ///
 /// This library provides code generation for JetX routes.
 /// Use with build_runner to generate type-safe route classes.
-library jetx_generator;
+library;
 
 export 'src/models/route_config.dart';
 export 'src/models/route_parameter.dart';

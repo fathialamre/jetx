@@ -1,6 +1,6 @@
 builders:
   jetx_page_route_builder:
-    import: "package:jetxx_generator/builder.dart"
+    import: "package:jetx_generator/builder.dart"
     builder_factories: ["jetPageRouteBuilder"]
     build_extensions: { ".dart": [".route.json"] }
     auto_apply: dependents
@@ -8,7 +8,7 @@ builders:
     applies_builders: ["jetx_generator:jetx_router_builder"]
 
   jetx_router_builder:
-    import: "package:jetxx_generator/builder.dart"
+    import: "package:jetx_generator/builder.dart"
     builder_factories: ["jetRouterBuilder"]
     build_extensions: { ".dart": [".g.dart"] }
     auto_apply: none

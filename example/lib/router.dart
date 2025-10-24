@@ -1,3 +1,4 @@
+import 'package:example/pages/computed_example_page.dart';
 import 'package:jetx/jet.dart';
 import 'package:jetx_annotations/jetx_annotations.dart';
 
@@ -14,5 +15,9 @@ class AppRouter {
     JetPage(name: HomePageRoute.path, page: () => HomePageRoute.page()),
     JetPage(name: ProfilePageRoute.path, page: () => ProfilePageRoute.page()),
     JetPage(name: SettingsPageRoute.path, page: () => SettingsPageRoute.page()),
+    JetPage(
+      name: ComputedExamplePageRoute.path,
+      page: () => ComputedExamplePageRoute.page(),
+    ),
   ];
 }
