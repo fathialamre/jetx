@@ -1,4 +1,5 @@
-import 'package:flutter/foundation.dart';
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 import '../config/jet_route.dart';
 import '../config/route_config.dart';
@@ -76,7 +77,11 @@ class JetRouterDelegate extends RouterDelegate<RouteInformationState>
     }
 
     if (_pages.isNotEmpty) {
-      _pages.removeLast();
+      final page = _pages.removeLast();
+      // Complete the completer with the result
+      if (page.completer != null && !page.completer!.isCompleted) {
+        page.completer!.complete(result);
+      }
       notifyListeners();
     }
 
@@ -89,7 +94,7 @@ class JetRouterDelegate extends RouterDelegate<RouteInformationState>
   }
 
   /// Navigates to a path.
-  Future<void> _navigate(
+  Future<T?> _navigate<T>(
     String path, {
     Object? arguments,
     bool replace = false,
@@ -100,7 +105,7 @@ class JetRouterDelegate extends RouterDelegate<RouteInformationState>
     if (match == null) {
       // No route found, navigate to not found route if available
       if (config.notFoundRoute != null) {
-        await _navigateToRoute(
+        return await _navigateToRoute<T>(
           config.notFoundRoute!,
           RouteData(
             path: path,
@@ -112,7 +117,7 @@ class JetRouterDelegate extends RouterDelegate<RouteInformationState>
           clearStack: clearStack,
         );
       }
-      return;
+      return null;
     }
 
     // Check if we're already on this exact route (initial route scenario)
@@ -120,7 +125,7 @@ class JetRouterDelegate extends RouterDelegate<RouteInformationState>
         _pages.first.route.path == match.route.path &&
         arguments == null) {
       // We're already on this route (initial route), don't add it again
-      return;
+      return null;
     }
 
     // Check route guards
@@ -129,9 +134,9 @@ class JetRouterDelegate extends RouterDelegate<RouteInformationState>
       // Find redirect from guards
       final redirectPath = await _getRedirectFromGuards(match.route);
       if (redirectPath != null) {
-        await _navigate(redirectPath, arguments: arguments);
+        return await _navigate<T>(redirectPath, arguments: arguments);
       }
-      return;
+      return null;
     }
 
     // Add arguments to route data
@@ -142,7 +147,7 @@ class JetRouterDelegate extends RouterDelegate<RouteInformationState>
       arguments: arguments,
     );
 
-    await _navigateToRoute(
+    return await _navigateToRoute<T>(
       match.route,
       dataWithArguments,
       replace: replace,
@@ -179,43 +184,84 @@ class JetRouterDelegate extends RouterDelegate<RouteInformationState>
   }
 
   /// Navigates to a specific route.
-  Future<void> _navigateToRoute(
+  Future<T?> _navigateToRoute<T>(
     JetRoute route,
     RouteData data, {
     bool replace = false,
     bool clearStack = false,
   }) async {
-    final page = JetPage(
+    // Create completer for result handling
+    final completer = Completer<T?>();
+
+    final page = JetPage<T>(
       route: route,
       data: data,
+      completer: completer,
       key: ValueKey('${route.path}_${DateTime.now().millisecondsSinceEpoch}'),
     );
 
     if (clearStack) {
+      // Complete all existing pages' completers before clearing
+      for (final existingPage in _pages) {
+        if (existingPage.completer != null &&
+            !existingPage.completer!.isCompleted) {
+          existingPage.completer!.complete(null);
+        }
+      }
       _pages.clear();
     }
 
     if (replace && _pages.isNotEmpty) {
-      _pages.removeLast();
+      final replacedPage = _pages.removeLast();
+      // Complete the replaced page's completer
+      if (replacedPage.completer != null &&
+          !replacedPage.completer!.isCompleted) {
+        replacedPage.completer!.complete(null);
+      }
     }
 
     _pages.add(page);
     notifyListeners();
+
+    // Return the completer's future
+    return completer.future;
   }
 
   /// Pushes a new route onto the stack.
-  Future<void> push(String path, {Object? arguments}) async {
-    await _navigate(path, arguments: arguments);
+  ///
+  /// Returns a [Future] that completes with a result when the route is popped.
+  ///
+  /// Example:
+  /// ```dart
+  /// final result = await push<String>('/profile');
+  /// print(result); // Value passed to pop()
+  /// ```
+  Future<T?> push<T>(String path, {Object? arguments}) async {
+    return await _navigate<T>(path, arguments: arguments);
   }
 
   /// Replaces the current route with a new one.
-  Future<void> replace(String path, {Object? arguments}) async {
-    await _navigate(path, arguments: arguments, replace: true);
+  ///
+  /// Returns a [Future] that completes with a result when the route is popped.
+  ///
+  /// Example:
+  /// ```dart
+  /// final result = await replace<bool>('/settings');
+  /// ```
+  Future<T?> replace<T>(String path, {Object? arguments}) async {
+    return await _navigate<T>(path, arguments: arguments, replace: true);
   }
 
   /// Pushes a route and clears the entire stack.
-  Future<void> pushAndRemoveAll(String path, {Object? arguments}) async {
-    await _navigate(path, arguments: arguments, clearStack: true);
+  ///
+  /// Returns a [Future] that completes with a result when the route is popped.
+  ///
+  /// Example:
+  /// ```dart
+  /// await pushAndRemoveAll<void>('/login');
+  /// ```
+  Future<T?> pushAndRemoveAll<T>(String path, {Object? arguments}) async {
+    return await _navigate<T>(path, arguments: arguments, clearStack: true);
   }
 
   /// Pops the current route.

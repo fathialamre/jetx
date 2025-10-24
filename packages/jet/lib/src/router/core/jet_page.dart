@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 import '../config/jet_route.dart';
 import '../models/route_data.dart';
@@ -11,10 +13,14 @@ class JetPage<T> extends Page<T> {
   /// The route data including path and query parameters.
   final RouteData data;
 
+  /// Completer for returning results when this page is popped.
+  final Completer<T?>? completer;
+
   /// Creates a JetPage.
   const JetPage({
     required this.route,
     required this.data,
+    this.completer,
     super.key,
     super.name,
     super.arguments,

@@ -1,6 +1,7 @@
-library jet_router;
+library;
 
 // Core
+export 'src/router/core/jet_router.dart';
 export 'src/router/core/jet_page.dart';
 export 'src/router/core/jet_page_route.dart';
 export 'src/router/core/jet_route_information_parser.dart';
@@ -21,6 +22,7 @@ export 'src/router/transitions/transition_type.dart';
 
 // Navigation
 export 'src/router/navigation/navigation_extensions.dart';
+export 'src/router/navigation/jet_router_extension.dart';
 
 // Models
 export 'src/router/models/route_data.dart';

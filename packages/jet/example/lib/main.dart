@@ -1,9 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:jet/jet_router.dart';
+import 'pages/router_examples_page.dart';
+import 'pages/push_example_page.dart';
+import 'pages/params_example_page.dart';
+import 'pages/replace_example_page.dart';
+import 'pages/result_example_page.dart';
+import 'pages/login_page.dart';
+import 'pages/protected_page.dart';
+import 'guards/auth_guard.dart';
 
 void main() {
   runApp(const MyApp());
 }
+
+// Create the router instance
+final jetRouter = JetRouter(routes: appRoutes);
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -11,129 +22,94 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      title: 'Jet Router Example',
+      title: 'Jet Router Examples',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
       ),
-      routerDelegate: JetRouterDelegate(config: RouteConfig(routes: appRoutes)),
-      routeInformationParser: JetRouteInformationParser(),
+      routerConfig: jetRouter.routerConfig,
     );
   }
 }
 
 // Define your routes
 final appRoutes = [
+  // Main examples page
   JetRoute(
     path: '/',
-    builder: (context, data) => const HomePage(),
+    builder: (context, data) => const RouterExamplesPage(),
     initialRoute: true,
   ),
+
+  // Push navigation examples
   JetRoute(
-    path: '/profile/:userId',
-    builder: (context, data) =>
-        ProfilePage(userId: data.pathParams['userId'] ?? ''),
+    path: '/push-example',
+    builder: (context, data) => const PushExamplePage(),
     transition: const TransitionType.slideRight(),
   ),
   JetRoute(
-    path: '/settings',
-    builder: (context, data) => const SettingsPage(),
+    path: '/push-example-2',
+    builder: (context, data) => const PushExamplePage2(),
+    transition: const TransitionType.slideLeft(),
+  ),
+
+  // Parameters and arguments examples
+  JetRoute(
+    path: '/params-example',
+    builder: (context, data) => const ParamsExamplePage(),
     transition: const TransitionType.fade(),
   ),
+  JetRoute(
+    path: '/user/:userId',
+    builder: (context, data) => const UserPage(),
+    transition: const TransitionType.slideUp(),
+  ),
+  JetRoute(
+    path: '/search',
+    builder: (context, data) => const SearchPage(),
+    transition: const TransitionType.scale(),
+  ),
+
+  // Replace navigation examples
+  JetRoute(
+    path: '/replace-example',
+    builder: (context, data) => const ReplaceExamplePage(),
+    transition: const TransitionType.slideRight(),
+  ),
+  JetRoute(
+    path: '/replace-target',
+    builder: (context, data) => const ReplaceTargetPage(),
+    transition: const TransitionType.fade(),
+  ),
+
+  // Result handling examples
+  JetRoute(
+    path: '/result-example',
+    builder: (context, data) => const ResultExamplePage(),
+    transition: const TransitionType.slideRight(),
+  ),
+  JetRoute(
+    path: '/result-dialog',
+    builder: (context, data) => const ResultDialogPage(),
+    transition: const TransitionType.slideUp(),
+  ),
+
+  // Guards examples
+  JetRoute(
+    path: '/login',
+    builder: (context, data) => const LoginPage(),
+    transition: const TransitionType.slideUp(),
+  ),
+  JetRoute(
+    path: '/protected',
+    builder: (context, data) => const ProtectedPage(),
+    guards: const [AuthGuard()],
+    transition: const TransitionType.slideRight(),
+  ),
+  JetRoute(
+    path: '/protected-details',
+    builder: (context, data) => const ProtectedDetailsPage(),
+    guards: const [AuthGuard()],
+    transition: const TransitionType.slideLeft(),
+  ),
 ];
-
-// Example pages
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Home')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text('Welcome to Jet Router!'),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                context.push('/profile/123');
-              },
-              child: const Text('Go to Profile'),
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () {
-                context.push('/settings');
-              },
-              child: const Text('Go to Settings'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class ProfilePage extends StatelessWidget {
-  final String userId;
-
-  const ProfilePage({super.key, required this.userId});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profile'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
-        ),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('Profile Page for User: $userId'),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () => context.pop(),
-              child: const Text('Go Back'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class SettingsPage extends StatelessWidget {
-  const SettingsPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Settings'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
-        ),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text('Settings Page'),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () => context.pushAndRemoveAll('/'),
-              child: const Text('Go Home (Clear Stack)'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}

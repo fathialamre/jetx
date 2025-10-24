@@ -7,6 +7,7 @@ A modern, context-aware Flutter router based on Navigator 2.0, designed to addre
 - ✅ **Context-aware navigation** - All navigation requires BuildContext (no global access)
 - ✅ **Explicit dependencies** - No service locator pattern
 - ✅ **Type-safe routing** - Compile-time safety with code generation support
+- ✅ **Return results from routes** - Like go_router and auto_route, await results from navigation
 - ✅ **Route guards** - Protect routes with authentication and authorization
 - ✅ **Custom transitions** - Beautiful page transitions with customizable animations
 - ✅ **Deep linking** - Full support for web URLs and app links
@@ -53,12 +54,47 @@ final appRoutes = [
 
 ### 2. Configure MaterialApp
 
+Create a `JetRouter` instance and use it with `MaterialApp.router`:
+
+```dart
+// Create the router instance
+final jetRouter = JetRouter(
+  routes: appRoutes,
+);
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp.router(
+      routerConfig: jetRouter.routerConfig,
+    );
+  }
+}
+```
+
+**Alternative (explicit properties for advanced control)**:
 ```dart
 MaterialApp.router(
-  routerDelegate: JetRouterDelegate(
-    config: RouteConfig(routes: appRoutes),
-  ),
-  routeInformationParser: JetRouteInformationParser(),
+  routerDelegate: jetRouter.routerDelegate,
+  routeInformationParser: jetRouter.routeInformationParser,
+  backButtonDispatcher: jetRouter.backButtonDispatcher,
+  // You can also add routeInformationProvider if needed
+);
+```
+
+**Advanced configuration**:
+```dart
+final jetRouter = JetRouter(
+  routes: appRoutes,
+  initialRoute: '/home', // Optional: override initial route
+  useHashUrl: false, // Web: use path-based URLs (default)
+  navigatorKey: myNavigatorKey, // Optional: custom navigator key
 );
 ```
 
@@ -66,21 +102,52 @@ MaterialApp.router(
 
 ```dart
 // Push a new route
-context.push('/profile/123');
+context.router.push('/profile/123');
 
 // Replace current route
-context.replace('/login');
+context.router.replace('/login');
 
 // Pop current route
-context.pop();
+context.router.pop();
 
 // Clear stack and navigate
-context.pushAndRemoveAll('/');
+context.router.pushAndRemoveAll('/');
 
 // Access route data
-final userId = context.pathParam('userId');
-final query = context.queryParam('search');
+final userId = context.router.pathParam('userId');
+final query = context.router.queryParam('search');
 ```
+
+### 4. Return Results from Routes
+
+Just like **go_router** and **auto_route**, you can await results from pushed routes:
+
+```dart
+// Navigate and await a result
+final result = await context.router.push<String>('/edit-profile');
+if (result != null) {
+  print('Profile updated: $result');
+}
+
+// Return a result when popping
+ElevatedButton(
+  onPressed: () {
+    context.router.pop('user_updated');
+  },
+  child: Text('Save'),
+)
+
+// Type-safe results with any type
+final isConfirmed = await context.router.push<bool>('/confirm-dialog');
+if (isConfirmed == true) {
+  // User confirmed
+}
+
+// Works with replace and pushAndRemoveAll too
+final data = await context.router.replace<Map<String, dynamic>>('/form');
+```
+
+This follows the exact same pattern as go_router's `context.push<T>()` and auto_route's result handling.
 
 ## Advanced Usage
 
