@@ -818,16 +818,26 @@ extension GetNavigationExt on JetInterface {
       times = 1;
     }
 
+    final delegate = searchDelegate(id);
+
+    // Validate navigator state exists before attempting navigation
+    if (delegate.navigatorKey.currentState == null) {
+      Jet.log('Cannot navigate back: navigator state is null', isError: true);
+      return;
+    }
+
     if (times > 1) {
       var count = 0;
-      return searchDelegate(id).backUntil((route) => count++ == times);
+      return delegate.backUntil((route) => count++ == times);
     } else {
       if (canPop) {
-        if (searchDelegate(id).canBack == true) {
-          return searchDelegate(id).back<T>(result);
+        // Check if we can actually pop before attempting
+        final canActuallyPop = delegate.canBack;
+        if (canActuallyPop == true) {
+          return delegate.back<T>(result);
         }
       } else {
-        return searchDelegate(id).back<T>(result);
+        return delegate.back<T>(result);
       }
     }
   }
@@ -876,8 +886,8 @@ extension GetNavigationExt on JetInterface {
   void closeAllDialogsAndBottomSheets(
     String? id,
   ) {
-    // It can not be divided, because dialogs and bottomsheets can not be consecutive
-    while ((isDialogOpen! && isBottomSheetOpen!)) {
+    // Close all dialogs and bottomsheets that are open
+    while ((isDialogOpen! || isBottomSheetOpen!)) {
       closeOverlay(id: id);
     }
   }
@@ -910,7 +920,18 @@ extension GetNavigationExt on JetInterface {
     String? id,
     T? result,
   }) {
-    searchDelegate(id).navigatorKey.currentState?.pop(result);
+    final delegate = searchDelegate(id);
+    final navigatorState = delegate.navigatorKey.currentState;
+
+    // Validate navigator state and that we can actually pop
+    if (navigatorState == null) {
+      Jet.log('Cannot close overlay: navigator state is null', isError: true);
+      return;
+    }
+
+    if (navigatorState.canPop()) {
+      navigatorState.pop(result);
+    }
   }
 
   void closeAllBottomSheets({

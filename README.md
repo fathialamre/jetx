@@ -37,6 +37,7 @@ JetX builds upon the solid foundation with exclusive enhancements:
   - [State management](#state-management)
     - [Reactive State Manager](#reactive-state-manager)
     - [More details about state management](#more-details-about-state-management)
+    - [Computed Observables](#computed-observables)
   - [Route management](#route-management)
     - [More details about route management](#more-details-about-route-management)
     - [Route Generator](#route-generator)
@@ -79,7 +80,7 @@ Add Jet to your pubspec.yaml file:
 
 ```yaml
 dependencies:
-  jetx:
+  jetx: ^0.1.0-alpha.5
 ```
 
 Import jet in files that it will be used:
@@ -204,6 +205,30 @@ That's all. It's _that_ simple.
 **See an more in-depth explanation of state management [here](./documentation/en_US/state_management.md). There you will see more examples and also the difference between the simple state manager and the reactive state manager**
 
 You will get a good idea of JetX power.
+
+### Computed Observables
+
+Computed observables are derived reactive values that automatically update when their dependencies change. They're perfect for eliminating manual state synchronization and keeping your code clean and maintainable.
+
+Create a computed value that automatically tracks its dependencies:
+
+```dart
+final price = 100.0.obs;
+final quantity = 2.obs;
+
+// Computed automatically tracks price and quantity
+final total = Computed(() => price.value * quantity.value);
+
+// Use in UI - automatically updates when price or quantity changes
+Obx(() => Text('Total: \$${total}'))
+
+// Update dependencies - computed value updates automatically
+price.value = 150.0; // total automatically becomes 300.0
+```
+
+Computed values are lazy, cached, and only recompute when their dependencies change. They can depend on multiple observables and even other computed values, creating powerful reactive chains.
+
+**See the complete [Computed Observables Guide](./documentation/computed_observables.md) for detailed documentation, advanced features, and best practices.**
 
 ## Route management
 

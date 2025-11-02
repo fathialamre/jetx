@@ -1,6 +1,6 @@
 name: jetx_annotations
 description: "Annotations for JetX route generation. Use with jetx_generator to automatically generate type-safe routes."
-version: 0.1.0-alpha.4
+version: 0.1.0-alpha.5
 homepage: https://github.com/fathialamre/jetx
 
 environment:

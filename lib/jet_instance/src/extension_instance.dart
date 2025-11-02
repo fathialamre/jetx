@@ -357,60 +357,116 @@ extension Inst on JetInterface {
   bool delete<S>({String? tag, String? key, bool force = false}) {
     final newKey = key ?? _getKey(S, tag);
 
+    // Check if instance exists
     if (!_singl.containsKey(newKey)) {
       Jet.log('Instance "$newKey" already removed.', isError: true);
       return false;
     }
 
     final dep = _singl[newKey];
-
     if (dep == null) return false;
 
-    final _InstanceBuilderFactory builder;
-    if (dep.isDirty) {
-      builder = dep.lateRemove ?? dep;
-    } else {
-      builder = dep;
+    // Resolve the actual builder to delete (handle dirty instances)
+    final builder = _resolveBuilder(dep);
+
+    // Check if deletion is allowed
+    if (!_canDelete(builder, newKey, force)) {
+      return false;
     }
 
+    // Call lifecycle cleanup
+    _callLifecycleCleanup(builder, newKey);
+
+    // Handle deletion based on fenix mode
+    return _performDeletion(builder, dep, newKey);
+  }
+
+  /// Resolves which builder to use (handles isDirty/lateRemove complexity)
+  _InstanceBuilderFactory _resolveBuilder(_InstanceBuilderFactory dep) {
+    // If the instance is marked as dirty and has a lateRemove reference,
+    // use the lateRemove builder; otherwise use the current builder
+    return (dep.isDirty && dep.lateRemove != null) ? dep.lateRemove! : dep;
+  }
+
+  /// Checks if an instance can be deleted
+  bool _canDelete(
+    _InstanceBuilderFactory builder,
+    String key,
+    bool force,
+  ) {
+    // Cannot delete permanent instances unless forced
     if (builder.permanent && !force) {
       Jet.log(
-        // ignore: lines_longer_than_80_chars
-        '"$newKey" has been marked as permanent, SmartManagement is not authorized to delete it.',
+        '"$key" is marked as permanent. SmartManagement cannot delete it. '
+        'Use force=true to override.',
         isError: true,
       );
       return false;
     }
-    final i = builder.dependency;
 
-    if (i is JetxServiceMixin && !force) {
+    // Cannot delete services unless forced
+    final instance = builder.dependency;
+    if (instance is JetxServiceMixin && !force) {
+      Jet.log(
+        '"$key" is a JetxService and cannot be deleted. '
+        'Use Jet.reset() or force=true.',
+        isError: false,
+      );
       return false;
     }
 
-    if (i is JetLifeCycleMixin) {
-      i.onDelete();
-      Jet.log('"$newKey" onDelete() called');
-    }
+    return true;
+  }
 
-    if (builder.fenix) {
-      builder.dependency = null;
-      builder.isInit = false;
-      return true;
-    } else {
-      if (dep.lateRemove != null) {
-        dep.lateRemove = null;
-        Jet.log('"$newKey" deleted from memory');
-        return false;
-      } else {
-        _singl.remove(newKey);
-        if (_singl.containsKey(newKey)) {
-          Jet.log('Error removing object "$newKey"', isError: true);
-        } else {
-          Jet.log('"$newKey" deleted from memory');
-        }
-        return true;
+  /// Calls lifecycle cleanup on the instance
+  void _callLifecycleCleanup(_InstanceBuilderFactory builder, String key) {
+    final instance = builder.dependency;
+
+    if (instance is JetLifeCycleMixin && !instance.isClosed) {
+      try {
+        instance.onDelete();
+        Jet.log('"$key" lifecycle cleanup completed');
+      } catch (e, stackTrace) {
+        Jet.log(
+          'Error during "$key" cleanup: $e\n$stackTrace',
+          isError: true,
+        );
       }
     }
+  }
+
+  /// Performs the actual deletion based on fenix mode
+  bool _performDeletion(
+    _InstanceBuilderFactory builder,
+    _InstanceBuilderFactory originalDep,
+    String key,
+  ) {
+    if (builder.fenix) {
+      // Fenix mode: clear instance but keep builder for resurrection
+      builder.dependency = null;
+      builder.isInit = false;
+      Jet.log('"$key" cleared (fenix mode - can be recreated)');
+      return true;
+    }
+
+    // Handle lateRemove cleanup
+    if (originalDep.lateRemove != null) {
+      originalDep.lateRemove = null;
+      Jet.log('"$key" late remove reference cleared');
+      return false;
+    }
+
+    // Complete removal from registry
+    _singl.remove(key);
+
+    // Verify removal
+    if (_singl.containsKey(key)) {
+      Jet.log('Failed to remove "$key" from memory', isError: true);
+      return false;
+    }
+
+    Jet.log('"$key" deleted from memory');
+    return true;
   }
 
   /// Delete all registered Class Instances and, closes any open

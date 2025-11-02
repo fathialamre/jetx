@@ -1,6 +1,6 @@
 name: jetx_generator
 description: "Code generator for JetX routes. Generates type-safe route classes from @RoutablePage annotations."
-version: 0.1.0-alpha.4
+version: 0.1.0-alpha.5
 homepage: https://github.com/fathialamre/jetx
 
 environment:

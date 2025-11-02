@@ -7,6 +7,17 @@ part of '../rx_types.dart';
 mixin RxObjectMixin<T> on GetListenable<T> {
   //late T _value;
 
+  /// Optional custom equality function for value comparison.
+  /// If not set, uses the default `==` operator.
+  /// This is useful for complex objects where reference equality isn't sufficient.
+  ///
+  /// Example:
+  /// ```dart
+  /// final user = User(id: 1, name: 'John').obs;
+  /// user.equals = (a, b) => a?.id == b?.id; // Compare by ID only
+  /// ```
+  bool Function(T? a, T? b)? equals;
+
   /// Makes a direct update of [value] adding it to the Stream
   /// useful when you make use of Rx for custom Types to refresh your UI.
   ///
@@ -67,7 +78,7 @@ mixin RxObjectMixin<T> on GetListenable<T> {
     return value;
   }
 
-  bool firstRebuild = true;
+  bool _firstRebuild = true;
   bool sentToStream = false;
 
   /// Same as `toString()` but using a getter.
@@ -94,14 +105,38 @@ mixin RxObjectMixin<T> on GetListenable<T> {
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => value.hashCode;
 
+  /// Checks if two values are equal using custom equality or default comparison
+  bool _valuesEqual(T? a, T? b) {
+    if (equals != null) {
+      return equals!(a, b);
+    }
+    return a == b;
+  }
+
   /// Updates the [value] and adds it to the stream, updating the observer
   /// Widget, only if it's different from the previous value.
+  ///
+  /// The first update always triggers a rebuild to ensure initial state is set.
+  /// Subsequent updates only trigger if the value actually changes.
   @override
   set value(T val) {
     if (isDisposed) return;
+
     sentToStream = false;
-    if (value == val && !firstRebuild) return;
-    firstRebuild = false;
+
+    // Always allow first update to ensure initial render
+    if (_firstRebuild) {
+      _firstRebuild = false;
+      sentToStream = true;
+      super.value = val;
+      return;
+    }
+
+    // For subsequent updates, only update if value changed
+    if (_valuesEqual(value, val)) {
+      return;
+    }
+
     sentToStream = true;
     super.value = val;
   }
@@ -198,11 +233,11 @@ abstract class _RxImpl<T> extends GetListenable<T> with RxObjectMixin<T> {
   /// ```
   ///
   void trigger(T v) {
-    var firstRebuild = this.firstRebuild;
+    var wasFirstRebuild = _firstRebuild;
     value = v;
     // If it's not the first rebuild, the listeners have been called already
-    // So we won't call them again.
-    if (!firstRebuild && !sentToStream) {
+    // So we manually trigger the update if it was skipped.
+    if (!wasFirstRebuild && !sentToStream) {
       subject.add(v);
     }
   }

@@ -1,6 +1,6 @@
 name: jetx
 description: A library for building Flutter applications with JetX it's a fork of GetX.
-version: 0.1.0-alpha.4
+version: 0.1.0-alpha.5
 homepage: https://github.com/fathialamre/jetx
 
 environment:

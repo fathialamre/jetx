@@ -17,6 +17,7 @@ mixin JetLifeCycleMixin {
   @protected
   @mustCallSuper
   void onInit() {
+    assert(!_initialized, 'onInit() called more than once');
     Engine.instance.addPostFrameCallback((_) => onReady());
   }
 
@@ -46,8 +47,11 @@ mixin JetLifeCycleMixin {
   @mustCallSuper
   @nonVirtual
   void onStart() {
-    // _checkIfAlreadyConfigured();
-    if (_initialized) return;
+    // Prevent double initialization
+    if (_initialized) {
+      assert(false, 'onStart() called on an already initialized instance');
+      return;
+    }
     onInit();
     _initialized = true;
   }
@@ -61,9 +65,23 @@ mixin JetLifeCycleMixin {
   @mustCallSuper
   @nonVirtual
   void onDelete() {
-    if (_isClosed) return;
+    // Prevent double-close
+    if (_isClosed) {
+      assert(false, 'onDelete() called on an already closed instance');
+      return;
+    }
+
     _isClosed = true;
-    onClose();
+
+    try {
+      onClose();
+    } catch (e, stackTrace) {
+      // Log cleanup errors but don't prevent disposal
+      Jet.log(
+        'Error during onClose(): $e\n$stackTrace',
+        isError: true,
+      );
+    }
   }
 
 //   void _checkIfAlreadyConfigured() {

@@ -71,10 +71,15 @@ mixin ScrollMixin on JetLifeCycleMixin {
   /// The scroll controller used to detect scroll position
   final ScrollController scroll = ScrollController();
 
+  /// Flag to track if scroll controller has been disposed
+  bool _scrollDisposed = false;
+
   @override
   void onInit() {
     super.onInit();
-    scroll.addListener(_listener);
+    if (!_scrollDisposed) {
+      scroll.addListener(_listener);
+    }
   }
 
   /// Flag to prevent multiple simultaneous bottom fetches
@@ -84,12 +89,18 @@ mixin ScrollMixin on JetLifeCycleMixin {
   bool _canFetchTop = true;
 
   void _listener() {
+    // Guard against accessing disposed scroll controller
+    if (_scrollDisposed || !scroll.hasClients) return;
+
     if (scroll.position.atEdge) {
       _checkIfCanLoadMore();
     }
   }
 
   Future<void> _checkIfCanLoadMore() async {
+    // Guard against accessing disposed scroll controller
+    if (_scrollDisposed || !scroll.hasClients) return;
+
     if (scroll.position.pixels == 0) {
       if (!_canFetchTop) return;
       _canFetchTop = false;
@@ -111,8 +122,20 @@ mixin ScrollMixin on JetLifeCycleMixin {
 
   @override
   void onClose() {
-    scroll.removeListener(_listener);
-    scroll.dispose();
+    if (!_scrollDisposed) {
+      _scrollDisposed = true;
+      // Safely remove listener and dispose
+      try {
+        // Check if has clients before removing listener
+        if (scroll.hasClients) {
+          scroll.removeListener(_listener);
+        }
+        scroll.dispose();
+      } catch (e) {
+        // Catch any disposal errors to prevent blocking other cleanup
+        Jet.log('Error disposing scroll controller: $e', isError: true);
+      }
+    }
     super.onClose();
   }
 }

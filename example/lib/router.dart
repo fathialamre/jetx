@@ -17,6 +17,9 @@ class AppRouter {
     JetPage(name: SettingsPageRoute.path, page: () => SettingsPageRoute.page()),
     JetPage(
       name: ComputedExamplePageRoute.path,
+      binds: [
+        Bind.lazyPut(() => ProductController()),
+      ],
       page: () => ComputedExamplePageRoute.page(),
     ),
   ];

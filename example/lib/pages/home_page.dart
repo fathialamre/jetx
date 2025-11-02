@@ -1,8 +1,6 @@
-import 'package:example/pages/computed_example_page.dart';
 import 'package:example/pages/profile_page.dart';
 import 'package:example/router.dart';
 import 'package:flutter/material.dart';
-import 'package:jetx/jet.dart';
 import 'package:jetx_annotations/jetx_annotations.dart';
 
 @RoutablePage(path: '/home')
