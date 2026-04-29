@@ -1,3 +1,12 @@
+## [1.0.0-dev.1]
+
+- Forked from GetX 5.0.0-release-candidate-9.3.2 as JetX.
+- Renamed package `get` -> `jetx`, classes `Get*` -> `Jet*`, singleton `Get` -> `Jet`, widget `GetX` -> `JetX`.
+- Renamed `lib/get_*` subdirectories to `lib/jet_*`; entry file `lib/get.dart` -> `lib/jetx.dart`.
+- Renamed extension method `BuildContext.get<T>()` -> `BuildContext.jet<T>()`.
+- Removed all non-English README translations.
+- No behavior changes; mechanical rename only.
+
 ## [5.0.0-release-candidate-9.3.2]
 
 - Fix pana score

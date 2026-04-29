@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/state_manager.dart';
+import 'package:jetx/state_manager.dart';
 
 int times = 30;
 
@@ -82,7 +82,7 @@ Future<int> stream() {
 // Future<int> getStream() {
 //   final c = Completer<int>();
 
-//   final value = GetStream<int>();
+//   final value = JetStream<int>();
 //   final timer = Stopwatch();
 //   timer.start();
 
@@ -148,15 +148,15 @@ referenceValue is ${calculePercentage(referenceValue, requestedValue)}% more tha
     printValue('-----------');
 
     times = 30000;
-    final getx = await getValue();
+    final jetx = await getValue();
     final dart = await valueNotifier();
     printValue('-----------');
 
     printValue('ValueNotifier delay $dart ms to made $times requests');
-    printValue('GetValue delay $getx ms to made $times requests');
+    printValue('JetValue delay $jetx ms to made $times requests');
     printValue('-----------');
     printValue('''
-GetValue is ${calculePercentage(dart, getx).round()}% faster than Default ValueNotifier with $times requests''');
+JetValue is ${calculePercentage(dart, jetx).round()}% faster than Default ValueNotifier with $times requests''');
   });
 
   test('run benchmarks from Streams', () async {
@@ -164,33 +164,33 @@ GetValue is ${calculePercentage(dart, getx).round()}% faster than Default ValueN
     printValue('============================================');
     printValue('DART STREAM X GET_STREAM X GET_MINI_STREAM TEST');
     printValue('-----------');
-    // var getx = await getStream();
+    // var jetx = await getStream();
     var mini = await miniStream();
     var dart = await stream();
     printValue('-----------');
     printValue('''
-GetStream is ${calculePercentage(dart, mini).round()}% faster than Default Stream with $times requests''');
+JetStream is ${calculePercentage(dart, mini).round()}% faster than Default Stream with $times requests''');
     printValue('-----------');
 
     times = 30000;
     dart = await stream();
-    // getx = await getStream();
+    // jetx = await getStream();
     mini = await miniStream();
 
     times = 60000;
     dart = await stream();
-    // getx = await getStream();
+    // jetx = await getStream();
     mini = await miniStream();
     printValue('-----------');
     printValue('dart_stream delay $dart ms to made $times requests');
-    // printValue('getx_stream delay $getx ms to made $times requests');
-    printValue('getx_mini_stream delay $mini ms to made $times requests');
+    // printValue('jetx_stream delay $jetx ms to made $times requests');
+    printValue('jetx_mini_stream delay $mini ms to made $times requests');
     printValue('-----------');
     printValue('''
-GetStream is ${calculePercentage(dart, mini).round()}% faster than Default Stream with $times requests''');
+JetStream is ${calculePercentage(dart, mini).round()}% faster than Default Stream with $times requests''');
   });
 }
 
-int calculePercentage(int dart, int getx) {
-  return (dart / getx * 100).round() - 100;
+int calculePercentage(int dart, int jetx) {
+  return (dart / jetx * 100).round() - 100;
 }

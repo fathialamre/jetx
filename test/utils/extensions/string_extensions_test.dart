@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/utils.dart';
+import 'package:jetx/utils.dart';
 
 void main() {
   group('String extensions', () {
@@ -18,7 +18,7 @@ void main() {
 
     test('var.capitalizeAllWordsFirstLetter()', () {
       final List<String> sentences = [
-        "getx",
+        "jetx",
         "this is an example sentence",
         "this is an example sentence with a number 5",
         "this is an example sentence with a number 5 and a special character #",
@@ -34,7 +34,7 @@ void main() {
       expect(alphaNumeric.capitalizeAllWordsFirstLetter(), "123asd");
       expect(numbers.capitalizeAllWordsFirstLetter(), "123");
       expect(letters.capitalizeAllWordsFirstLetter(), "Foo");
-      expect(sentences[0].capitalizeAllWordsFirstLetter(), "Getx");
+      expect(sentences[0].capitalizeAllWordsFirstLetter(), "Jetx");
       expect(sentences[1].capitalizeAllWordsFirstLetter(),
           "This Is An Example Sentence");
       expect(sentences[2].capitalizeAllWordsFirstLetter(),
@@ -74,7 +74,7 @@ void main() {
 
     test('var.isVectorFileName', () {
       const path = "logo.svg";
-      const fullPath = "C:/Users/Getx/Documents/logo.svg";
+      const fullPath = "C:/Users/Jetx/Documents/logo.svg";
       expect(path.isVectorFileName, true);
       expect(fullPath.isVectorFileName, true);
       expect(alphaNumeric.isVectorFileName, false);

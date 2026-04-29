@@ -3,9 +3,9 @@ name: build
 # Trigger the workflow on push or pull request
 on:
   push:
-    branches: [master]
+    branches: [master, main]
   pull_request:
-    branches: [master]
+    branches: [master, main]
 #A workflow run is made up of one or more jobs. Jobs run in parallel by default.
 jobs:
   test:
@@ -26,7 +26,7 @@ jobs:
           flutter-version: "3.32.1"
           channel: "stable"
       - run: flutter pub get
-      #- run: flutter analyze
+      - run: flutter analyze
       # run  flutter widgets tests  and unit tests
       - run: flutter test --coverage
       # Upload coverage reports to Codecov

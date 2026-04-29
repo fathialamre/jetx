@@ -4,14 +4,14 @@ void main() {
   //   // final scaffoldKey = GlobalKey();
 
   //   await tester.pumpWidget(
-  //     GetCupertinoApp(
+  //     JetCupertinoApp(
   //       popGesture: true,
   //       home: CupertinoPageScaffold(
   //         // key: scaffoldKey,
   //         child: Center(
   //           child: CupertinoButton(
   //             onPressed: () {
-  //               Get.to(
+  //               Jet.to(
   //                   () => CupertinoPageScaffold(
   //                         child: Center(child: Text('route')),
   //                       ),

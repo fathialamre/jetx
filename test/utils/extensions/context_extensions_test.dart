@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/get.dart';
+import 'package:jetx/jetx.dart';
 
 import '../../navigation/utils/wrapper.dart';
 
 void main() {
-  testWidgets("Get.defaultDialog smoke test", (tester) async {
+  testWidgets("Jet.defaultDialog smoke test", (tester) async {
     await tester.pumpWidget(Wrapper(child: Container()));
     await tester.pumpAndSettle();
 
