@@ -83,3 +83,7 @@ example/macos/Flutter/GeneratedPluginRegistrant.swift
 
 # Coverage files
 coverage/
+
+# Claude Code
+CLAUDE.md
+.claude/

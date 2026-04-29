@@ -138,9 +138,10 @@ class JetBackGestureDetectorState<T> extends State<JetBackGestureDetector<T>> {
   double _dragAreaWidth(BuildContext context) {
     // For devices with notches, the drag area needs to be larger on the side
     // that has the notch.
+    final padding = MediaQuery.paddingOf(context);
     final dragAreaWidth = Directionality.of(context) == TextDirection.ltr
-        ? context.mediaQuery.padding.left
-        : context.mediaQuery.padding.right;
+        ? padding.left
+        : padding.right;
     return max(dragAreaWidth, widget.gestureWidth);
   }
 }

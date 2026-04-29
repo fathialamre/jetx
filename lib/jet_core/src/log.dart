@@ -6,5 +6,5 @@ typedef LogWriterCallback = void Function(String text, {bool isError});
 
 /// default logger from JetX
 void defaultLogWriterCallback(String value, {bool isError = false}) {
-  if (isError || Jet.isLogEnable) developer.log(value, name: 'GETX');
+  if (isError || Jet.isLogEnable) developer.log(value, name: 'JETX');
 }

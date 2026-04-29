@@ -65,7 +65,7 @@ class MiniStream<T> {
 
   void close() {
     if (_isClosed) {
-      throw 'You can not close a closed Stream';
+      throw StateError('Cannot close a closed MiniStream');
     }
     listenable._notifyDone();
     listenable.clear();
@@ -79,10 +79,18 @@ class FastList<T> {
   int _length = 0;
 
   void _notifyData(T data) {
+    if (_head == null) return;
+    // Snapshot listeners before dispatch — handlers may add/remove
+    // listeners synchronously and mutate the linked list mid-iteration.
+    final snapshot = <MiniSubscription<T>>[];
     var currentNode = _head;
     while (currentNode != null) {
-      currentNode.data?.data(data);
+      final sub = currentNode.data;
+      if (sub != null) snapshot.add(sub);
       currentNode = currentNode.next;
+    }
+    for (final sub in snapshot) {
+      sub.data(data);
     }
   }
 

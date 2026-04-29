@@ -70,6 +70,13 @@ class JetAnimatedBuilderState<T> extends State<JetAnimatedBuilder<T>>
   void initState() {
     super.initState();
 
+    // TODO(refactor): replace this `is OpacityAnimation` / `is FadeInAnimation`
+    // chain with polymorphic dispatch. The right design is a hook on the
+    // JetAnimatedBuilder base — e.g. `T computeIdleValue(BuildContext, bool isLast)`
+    // and `bool get resetOnDispose` — overridden by FadeInAnimation /
+    // FadeOutAnimation / OpacityAnimation. That removes the `as dynamic`
+    // cast on line 79 and lets new animations participate without editing
+    // this switch.
     if (widget is OpacityAnimation) {
       final current =
           context.findRootAncestorStateOfType<JetAnimatedBuilderState>();

@@ -10,8 +10,9 @@ T? bodyDecoded<T>(Request<T> request, String stringBody, String? mimeType) {
   if (mimeType != null && mimeType.contains('application/json')) {
     try {
       bodyToDecode = jsonDecode(stringBody);
-    } on FormatException catch (_) {
-      Jet.log('Cannot decode server response to json');
+    } on FormatException catch (e) {
+      Jet.log('JetConnect decoder failed: cannot decode server response to '
+          'json: $e');
       bodyToDecode = stringBody;
     }
   } else {
@@ -26,7 +27,8 @@ T? bodyDecoded<T>(Request<T> request, String stringBody, String? mimeType) {
     } else {
       body = request.decoder!(bodyToDecode);
     }
-  } on Exception catch (_) {
+  } on Exception catch (e) {
+    Jet.log('JetConnect decoder failed: $e');
     body = stringBody as T;
   }
 

@@ -17,10 +17,15 @@ class BaseWebSocket {
 
   ConnectionStatus? connectionStatus;
   Timer? _t;
+  StreamSubscription? _onOpenSub;
+  StreamSubscription? _onMessageSub;
+  StreamSubscription? _onCloseSub;
+  StreamSubscription? _onErrorSub;
+
   BaseWebSocket(
     this.url, {
     this.ping = const Duration(seconds: 5),
-    this.allowSelfSigned = true,
+    this.allowSelfSigned = false,
   }) {
     url = url.startsWith('https')
         ? url.replaceAll('https:', 'wss:')
@@ -39,30 +44,52 @@ class BaseWebSocket {
     }
   }
 
+  Future<void> _cancelStreamSubs() async {
+    await _onOpenSub?.cancel();
+    await _onMessageSub?.cancel();
+    await _onCloseSub?.cancel();
+    await _onErrorSub?.cancel();
+    _onOpenSub = null;
+    _onMessageSub = null;
+    _onCloseSub = null;
+    _onErrorSub = null;
+  }
+
   // ignore: use_setters_to_change_properties
   void connect() {
     try {
       connectionStatus = ConnectionStatus.connecting;
+      if (allowSelfSigned) {
+        Jet.log(
+          'BaseWebSocket: WARNING - allowSelfSigned=true. '
+          'Browsers ignore this flag; TLS validation is enforced by the host '
+          'browser. Set up correct certificates for production.',
+        );
+      }
+      // Cancel any prior subscriptions so reconnects don't accumulate listeners.
+      _cancelStreamSubs();
+      _t?.cancel();
       socket = html.WebSocket(url);
-      socket!.onOpen.listen((e) {
+      _onOpenSub = socket!.onOpen.listen((e) {
         socketNotifier?.open();
-        _t = Timer?.periodic(ping, (t) {
+        _t?.cancel();
+        _t = Timer.periodic(ping, (t) {
           socket!.send(''.toJSBox);
         });
         connectionStatus = ConnectionStatus.connected;
       });
 
-      socket!.onMessage.listen((event) {
+      _onMessageSub = socket!.onMessage.listen((event) {
         socketNotifier!.notifyData(event.data);
       });
 
-      socket!.onClose.listen((e) {
+      _onCloseSub = socket!.onClose.listen((e) {
         _t?.cancel();
 
         connectionStatus = ConnectionStatus.closed;
         socketNotifier!.notifyClose(Close(e.reason, e.code));
       });
-      socket!.onError.listen((event) {
+      _onErrorSub = socket!.onError.listen((event) {
         _t?.cancel();
         socketNotifier!.notifyError(Close(event.toString(), 0));
         connectionStatus = ConnectionStatus.closed;
@@ -76,6 +103,9 @@ class BaseWebSocket {
   }
 
   void dispose() {
+    _t?.cancel();
+    _t = null;
+    _cancelStreamSubs();
     socketNotifier!.dispose();
     socketNotifier = null;
     isDisposed = true;

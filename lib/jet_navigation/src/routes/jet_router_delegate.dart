@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import '../../../jet_instance/src/bindings_interface.dart';
 import '../../../jet_utils/src/platform/platform.dart';
 import '../../../route_manager.dart';
+import '../router_report.dart';
 
 class JetDelegate extends RouterDelegate<RouteDecoder>
     with
@@ -109,15 +110,22 @@ class JetDelegate extends RouterDelegate<RouteDecoder>
       return config;
     }
     var iterator = config;
+    void completeOnce() {
+      final completer = config.route?.completer;
+      if (completer != null && !completer.isCompleted) {
+        completer.complete();
+      }
+    }
+
     for (var item in middlewares) {
       var redirectRes = await item.redirectDelegate(iterator);
 
       if (redirectRes == null) {
-        config.route?.completer?.complete();
+        completeOnce();
         return null;
       }
       if (config != redirectRes) {
-        config.route?.completer?.complete();
+        completeOnce();
         Jet.log('Redirect to ${redirectRes.pageSettings?.name}');
       }
 
@@ -486,7 +494,7 @@ class JetDelegate extends RouterDelegate<RouteDecoder>
     final newPredicate = predicate ?? (route) => false;
 
     while (_activePages.length > 1 && !newPredicate(_activePages.last.route!)) {
-      _popWithResult();
+      _popAndNotifyDispose();
     }
 
     return _replace(args, route);
@@ -505,10 +513,27 @@ class JetDelegate extends RouterDelegate<RouteDecoder>
     if (route == null) return null;
 
     while (_activePages.length > 1) {
-      _activePages.removeLast();
+      _popAndNotifyDispose();
     }
 
     return _replaceNamed(route);
+  }
+
+  /// Removes the last entry from `_activePages` *and* notifies
+  /// [RouterReportManager] that the page is disposing so route-bound
+  /// dependencies (controllers/bindings) can be released. Used by
+  /// [offAll]/[offAllNamed] which previously cleared the stack without
+  /// any disposal signal, leaking controllers across navigations.
+  void _popAndNotifyDispose() {
+    final removed = _activePages.removeLast();
+    final route = removed.route;
+    if (route != null) {
+      RouterReportManager.instance.reportRouteWillDispose(route);
+    }
+    final completer = route?.completer;
+    if (completer != null && !completer.isCompleted) {
+      completer.complete();
+    }
   }
 
   @override

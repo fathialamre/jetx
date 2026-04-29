@@ -327,11 +327,14 @@ class JetSnackBarState extends State<JetSnackBar>
   @override
   void dispose() {
     _fadeController?.dispose();
+    // Caller owns `progressIndicatorController` lifecycle; only detach our
+    // listener. Disposing here would double-dispose on the caller side.
     widget.progressIndicatorController?.removeListener(_updateProgress);
-    widget.progressIndicatorController?.dispose();
 
+    // Detach the focus attachment before disposing the FocusScopeNode and
+    // before super.dispose so the focus listener is removed safely.
     _focusAttachment.detach();
-    _focusNode!.dispose();
+    _focusNode?.dispose();
     super.dispose();
   }
 

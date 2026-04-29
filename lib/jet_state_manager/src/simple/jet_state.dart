@@ -504,17 +504,21 @@ class BindElement<T> extends InheritedElement {
       _wasStarted = true;
     }
 
+    // Always tear down the previous subscription (if any) before wiring up
+    // a new one — `update()` can call this method again when `widget.id`
+    // changes, and reassigning `_remove` without invoking the old one
+    // would leak the previous listener.
+    _remove?.call();
+    _remove = null;
+
     if (localController is JetxController) {
-      _remove?.call();
       _remove = (widget.id == null)
           ? localController.addListener(filter)
           : localController.addListenerId(widget.id, filter);
     } else if (localController is Listenable) {
-      _remove?.call();
       localController.addListener(filter);
       _remove = () => localController.removeListener(filter);
     } else if (localController is StreamController) {
-      _remove?.call();
       final stream = localController.stream.listen((_) => filter());
       _remove = () => stream.cancel();
     }

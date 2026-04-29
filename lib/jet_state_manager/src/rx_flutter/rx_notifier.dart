@@ -116,14 +116,27 @@ class JetListenable<T> extends ListNotifierSingle implements RxInterface<T> {
   JetListenable(T val) : _value = val;
 
   StreamController<T>? _controller;
+  Disposer? _streamSubscription;
 
   StreamController<T> get subject {
     if (_controller == null) {
-      _controller =
-          StreamController<T>.broadcast(onCancel: addListener(_streamListener));
+      _controller = StreamController<T>.broadcast(
+        onListen: () {
+          // Wire the listener exactly once when the stream gains its first
+          // subscriber, and tear it down when the last one cancels. The
+          // previous implementation passed `addListener(_streamListener)`
+          // (which *runs* `addListener` and uses its return value as the
+          // `onCancel` callback), causing the listener to be registered
+          // up-front and re-registered on every cancellation — i.e. a
+          // subscription leak that grew the listener list unbounded.
+          _streamSubscription ??= addListener(_streamListener);
+        },
+        onCancel: () {
+          _streamSubscription?.call();
+          _streamSubscription = null;
+        },
+      );
       _controller?.add(_value);
-
-      ///TODO: report to controller dispose
     }
     return _controller!;
   }
@@ -135,7 +148,10 @@ class JetListenable<T> extends ListNotifierSingle implements RxInterface<T> {
   @override
   @mustCallSuper
   void close() {
-    removeListener(_streamListener);
+    // Tear down the stream-bridge listener if it was wired up (lazily, on
+    // the first stream subscriber). Skips no-op `removeListener` calls.
+    _streamSubscription?.call();
+    _streamSubscription = null;
     _controller?.close();
     dispose();
   }
@@ -223,7 +239,12 @@ class Value<T> extends ListNotifier
   @override
   String toString() => value.toString();
 
-  dynamic toJson() => (value as dynamic)?.toJson();
+  /// Forwards to the wrapped value's `toJson()` (if any).
+  ///
+  /// Return type widened from `dynamic` to `Object?` so callers can opt in
+  /// to a typed cast (`as Map<String, dynamic>?`) instead of silently
+  /// inheriting `dynamic` and losing static analysis.
+  Object? toJson() => (value as dynamic)?.toJson();
 }
 
 /// JetNotifier has a native status and state implementation, with the

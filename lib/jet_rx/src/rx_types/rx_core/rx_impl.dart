@@ -100,6 +100,8 @@ mixin RxObjectMixin<T> on JetListenable<T> {
   set value(T val) {
     if (isDisposed) return;
     sentToStream = false;
+    // Load-bearing: trigger() relies on sentToStream staying false on
+    // equal-value writes so it can manually emit on the stream.
     if (value == val && !firstRebuild) return;
     firstRebuild = false;
     sentToStream = true;

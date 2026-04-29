@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io' as io;
 
+import '../../../../../jet_core/jet_core.dart';
 import '../../certificates/certificates.dart';
 import '../../exceptions/exceptions.dart';
 import '../../request/request.dart';
@@ -364,7 +365,7 @@ class HttpRequestImpl extends IClient {
   io.SecurityContext? _securityContext;
 
   HttpRequestImpl({
-    bool allowAutoSignedCert = true,
+    bool allowAutoSignedCert = false,
     List<TrustedCertificate>? trustedCertificates,
     bool withCredentials = false,
     String Function(Uri url)? findProxy,
@@ -379,7 +380,15 @@ class HttpRequestImpl extends IClient {
     }
 
     _httpClient = io.HttpClient(context: _securityContext);
-    _httpClient!.badCertificateCallback = (_, __, ___) => allowAutoSignedCert;
+    if (allowAutoSignedCert) {
+      Jet.log(
+        'JetHttpClient: WARNING - allowAutoSignedCert=true. '
+        'Bad/self-signed TLS certificates will be ACCEPTED. '
+        'This bypasses transport security and is vulnerable to MITM. '
+        'Use only in development.',
+      );
+      _httpClient!.badCertificateCallback = (_, __, ___) => true;
+    }
     _httpClient!.findProxy = findProxy;
   }
 

@@ -52,44 +52,41 @@ extension LocalesIntl on JetInterface {
   }
 }
 
+/// Resolves the cache-key form (`languageCode_countryCode`) of a [Locale]
+/// without re-allocating on every `.tr` call. Strings are interned by Dart, so
+/// this is a constant-time concat after the first invocation per locale.
+String _localeKey(Locale locale) =>
+    '${locale.languageCode}_${locale.countryCode}';
+
 extension Trans on String {
   // Checks whether the language code and country code are present, and
   // whether the key is also present.
   bool get _fullLocaleAndKey {
-    return Jet.translations.containsKey(
-            "${Jet.locale!.languageCode}_${Jet.locale!.countryCode}") &&
-        Jet.translations[
-                "${Jet.locale!.languageCode}_${Jet.locale!.countryCode}"]!
-            .containsKey(this);
+    final key = _localeKey(Jet.locale!);
+    final map = Jet.translations[key];
+    return map != null && map.containsKey(this);
   }
 
   // Checks if there is a callback language in the absence of the specific
-  // country, and if it contains that key.
+  // country, and if it contains that key. We avoid the previous
+  // `Map.map(...)` that allocated a new map on every call by walking the
+  // existing keys and short-circuiting on first language match.
   Map<String, String>? get _getSimilarLanguageTranslation {
-    final translationsWithNoCountry = Jet.translations
-        .map((key, value) => MapEntry(key.split("_").first, value));
-    final containsKey = translationsWithNoCountry
-        .containsKey(Jet.locale!.languageCode.split("_").first);
-
-    if (!containsKey) {
-      return null;
+    final lang = Jet.locale!.languageCode.split('_').first;
+    for (final entry in Jet.translations.entries) {
+      if (entry.key.split('_').first == lang) {
+        return entry.value;
+      }
     }
-
-    return translationsWithNoCountry[Jet.locale!.languageCode.split("_").first];
+    return null;
   }
 
   String get tr {
-    // print('language');
-    // print(Jet.locale!.languageCode);
-    // print('contains');
-    // print(Jet.translations.containsKey(Jet.locale!.languageCode));
-    // print(Jet.translations.keys);
     // Returns the key if locale is null.
     if (Jet.locale?.languageCode == null) return this;
 
     if (_fullLocaleAndKey) {
-      return Jet.translations[
-          "${Jet.locale!.languageCode}_${Jet.locale!.countryCode}"]![this]!;
+      return Jet.translations[_localeKey(Jet.locale!)]![this]!;
     }
     final similarTranslation = _getSimilarLanguageTranslation;
     if (similarTranslation != null && similarTranslation.containsKey(this)) {
@@ -98,18 +95,22 @@ extension Trans on String {
       // the key.
     } else if (Jet.fallbackLocale != null) {
       final fallback = Jet.fallbackLocale!;
-      final key = "${fallback.languageCode}_${fallback.countryCode}";
+      final key = _localeKey(fallback);
 
-      if (Jet.translations.containsKey(key) &&
-          Jet.translations[key]!.containsKey(this)) {
-        return Jet.translations[key]![this]!;
+      final fullMap = Jet.translations[key];
+      if (fullMap != null && fullMap.containsKey(this)) {
+        return fullMap[this]!;
       }
-      if (Jet.translations.containsKey(fallback.languageCode) &&
-          Jet.translations[fallback.languageCode]!.containsKey(this)) {
-        return Jet.translations[fallback.languageCode]![this]!;
+      final langMap = Jet.translations[fallback.languageCode];
+      if (langMap != null && langMap.containsKey(this)) {
+        return langMap[this]!;
       }
+      Jet.log(
+          'Missing translation key "$this" for locale ${_localeKey(Jet.locale!)} (fallback ${_localeKey(fallback)})');
       return this;
     } else {
+      Jet.log(
+          'Missing translation key "$this" for locale ${_localeKey(Jet.locale!)} (no fallbackLocale set)');
       return this;
     }
   }

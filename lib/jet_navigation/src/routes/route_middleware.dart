@@ -111,16 +111,33 @@ class MiddlewareRunner {
 
   JetPage? runOnPageCalled(JetPage? page) {
     for (final middleware in _middlewares) {
-      page = middleware.onPageCalled(page);
+      try {
+        page = middleware.onPageCalled(page);
+      } catch (e, st) {
+        Jet.log(
+          'Middleware ${middleware.runtimeType}.onPageCalled threw: $e\n$st',
+          isError: true,
+        );
+        // Abort modification, keep last good page.
+      }
     }
     return page;
   }
 
   RouteSettings? runRedirect(String? route) {
     for (final middleware in _middlewares) {
-      final redirectTo = middleware.redirect(route);
-      if (redirectTo != null) {
-        return redirectTo;
+      try {
+        final redirectTo = middleware.redirect(route);
+        if (redirectTo != null) {
+          return redirectTo;
+        }
+      } catch (e, st) {
+        Jet.log(
+          'Middleware ${middleware.runtimeType}.redirect threw: $e\n$st',
+          isError: true,
+        );
+        // Abort navigation gracefully on middleware failure.
+        return null;
       }
     }
     return null;
@@ -128,28 +145,56 @@ class MiddlewareRunner {
 
   List<R>? runOnBindingsStart<R>(List<R>? bindings) {
     for (final middleware in _middlewares) {
-      bindings = middleware.onBindingsStart(bindings);
+      try {
+        bindings = middleware.onBindingsStart(bindings);
+      } catch (e, st) {
+        Jet.log(
+          'Middleware ${middleware.runtimeType}.onBindingsStart threw: $e\n$st',
+          isError: true,
+        );
+      }
     }
     return bindings;
   }
 
   JetPageBuilder? runOnPageBuildStart(JetPageBuilder? page) {
     for (final middleware in _middlewares) {
-      page = middleware.onPageBuildStart(page);
+      try {
+        page = middleware.onPageBuildStart(page);
+      } catch (e, st) {
+        Jet.log(
+          'Middleware ${middleware.runtimeType}.onPageBuildStart threw: $e\n$st',
+          isError: true,
+        );
+      }
     }
     return page;
   }
 
   Widget runOnPageBuilt(Widget page) {
     for (final middleware in _middlewares) {
-      page = middleware.onPageBuilt(page);
+      try {
+        page = middleware.onPageBuilt(page);
+      } catch (e, st) {
+        Jet.log(
+          'Middleware ${middleware.runtimeType}.onPageBuilt threw: $e\n$st',
+          isError: true,
+        );
+      }
     }
     return page;
   }
 
   void runOnPageDispose() {
     for (final middleware in _middlewares) {
-      middleware.onPageDispose();
+      try {
+        middleware.onPageDispose();
+      } catch (e, st) {
+        Jet.log(
+          'Middleware ${middleware.runtimeType}.onPageDispose threw: $e\n$st',
+          isError: true,
+        );
+      }
     }
   }
 }

@@ -28,18 +28,24 @@ class InstanceInfo {
 }
 
 extension ResetInstance on JetInterface {
-  /// Clears all registered instances (and/or tags).
-  /// Even the persistent ones.
-  /// This should be used at the end or tearDown of unit tests.
+  /// Clears registered instances (and/or tags).
   ///
-  /// `clearFactory` clears the callbacks registered by [lazyPut]
-  /// `clearRouteBindings` clears Instances associated with routes.
+  /// By default this preserves entries marked as `permanent` (typically
+  /// [JetxService] instances) so that calling `Jet.reset()` between routes
+  /// or test cases does not silently nuke long-lived services.
   ///
-  bool resetInstance({bool clearRouteBindings = true}) {
-    //  if (clearFactory) _factory.clear();
-    // deleteAll(force: true);
+  /// - [clearRouteBindings] clears Instances associated with routes.
+  /// - [force] when `true`, also clears permanent entries (legacy behavior).
+  ///   Use this in `tearDown`/`tearDownAll` of tests when you really want
+  ///   a clean slate.
+  bool resetInstance({bool clearRouteBindings = true, bool force = false}) {
     if (clearRouteBindings) RouterReportManager.instance.clearRouteKeys();
-    Inst._singl.clear();
+    if (force) {
+      Inst._singl.clear();
+    } else {
+      // Preserve permanent entries; remove the rest.
+      Inst._singl.removeWhere((_, value) => !value.permanent);
+    }
 
     return true;
   }
@@ -47,6 +53,12 @@ extension ResetInstance on JetInterface {
 
 extension Inst on JetInterface {
   T call<T>() => find<T>();
+
+  /// Separator used between the type name and the optional tag when
+  /// composing the lookup key in [_singl]. Without it, types/tags whose
+  /// names happen to concatenate to the same string would collide
+  /// (e.g. `Foo` + `Bar` collides with `FooBar` + `null`).
+  static const _kKeySep = '|';
 
   /// Holds references to every registered Instance when using
   /// `Jet.put()`
@@ -190,12 +202,19 @@ extension Inst on JetInterface {
   /// work properly.
   S? _initDependencies<S>({String? name}) {
     final key = _getKey(S, name);
-    final isInit = _singl[key]!.isInit;
+    if (!_singl.containsKey(key)) {
+      throw JetMissingDependency(
+        'No dependency for key "$key". '
+        'Call Jet.put<$S>(...) (or Jet.lazyPut<$S>(...)) before find().',
+      );
+    }
+    final factory = _singl[key]!;
+    final isInit = factory.isInit;
     S? i;
     if (!isInit) {
-      final isSingleton = _singl[key]?.isSingleton ?? false;
+      final isSingleton = factory.isSingleton ?? false;
       if (isSingleton) {
-        _singl[key]!.isInit = true;
+        factory.isInit = true;
       }
       i = _startController<S>(tag: name);
 
@@ -260,14 +279,16 @@ extension Inst on JetInterface {
     return i;
   }
 
+  /// Finds the registered instance of <[S]> (or [tag]) if one exists.
+  /// Otherwise builds it via [dep] and registers it as a singleton.
+  ///
+  /// The builder [dep] is **never** invoked when an instance is already
+  /// registered, avoiding wasted work and side effects from constructors.
   S putOrFind<S>(InstanceBuilderCallback<S> dep, {String? tag}) {
-    final key = _getKey(S, tag);
-
-    if (_singl.containsKey(key)) {
-      return _singl[key]!.getDependency() as S;
-    } else {
-      return put(dep(), tag: tag);
+    if (isRegistered<S>(tag: tag)) {
+      return find<S>(tag: tag);
     }
+    return put<S>(dep(), tag: tag);
   }
 
   /// Finds the registered type <[S]> (or [tag])
@@ -334,8 +355,11 @@ extension Inst on JetInterface {
 
   /// Generates the key based on [type] (and optionally a [name])
   /// to register an Instance Builder in the hashmap.
+  ///
+  /// Uses [_kKeySep] between the type and the tag to avoid collisions
+  /// between e.g. `Foo` + tag `Bar` and `FooBar` + no tag.
   String _getKey(Type type, String? name) {
-    return name == null ? type.toString() : type.toString() + name;
+    return name == null ? type.toString() : '$type$_kKeySep$name';
   }
 
   /// Delete registered Class Instance [S] (or [tag]) and, closes any open
@@ -494,13 +518,28 @@ extension Inst on JetInterface {
 
 typedef InstanceBuilderCallback<S> = S Function();
 
+// TODO(jetx): The [BuildContext] parameter on [InstanceCreateBuilderCallback]
+// is currently unused by all production call sites; consider removing the
+// parameter (breaking change for users of `Jet.create`) once a deprecation
+// cycle has been planned.
 typedef InstanceCreateBuilderCallback<S> = S Function(BuildContext _);
 
 // typedef InstanceBuilderCallback<S> = S Function();
 
 // typedef InjectorBuilderCallback<S> = S Function(Inst);
 
+// TODO(jetx): [AsyncInstanceBuilderCallback] is currently unused. Either
+// wire it into a real async-put API or drop it in the next major.
 typedef AsyncInstanceBuilderCallback<S> = Future<S> Function();
+
+/// Thrown by [Inst.find] / [Inst._initDependencies] when an instance is
+/// requested before it has been registered with `Jet.put` / `Jet.lazyPut`.
+class JetMissingDependency implements Exception {
+  JetMissingDependency(this.message);
+  final String message;
+  @override
+  String toString() => 'JetMissingDependency: $message';
+}
 
 /// Internal class to register instances with `Jet.put<S>()`.
 class _InstanceBuilderFactory<S> {

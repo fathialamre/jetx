@@ -269,7 +269,7 @@ class SlideInLeftAnimation extends SlideAnimation {
     super.idleValue = 0,
   }) : super(
           offsetBuild: (context, value) =>
-              Offset(value * MediaQuery.of(context).size.width, 0),
+              Offset(value * MediaQuery.sizeOf(context).width, 0),
         );
 }
 
@@ -285,7 +285,7 @@ class SlideInRightAnimation extends SlideAnimation {
     super.idleValue = 0,
   }) : super(
           offsetBuild: (context, value) =>
-              Offset((1 - value) * MediaQuery.of(context).size.width, 0),
+              Offset((1 - value) * MediaQuery.sizeOf(context).width, 0),
         );
 }
 
@@ -301,7 +301,7 @@ class SlideInUpAnimation extends SlideAnimation {
     super.idleValue = 0,
   }) : super(
           offsetBuild: (context, value) =>
-              Offset(0, value * MediaQuery.of(context).size.height),
+              Offset(0, value * MediaQuery.sizeOf(context).height),
         );
 }
 
@@ -317,7 +317,7 @@ class SlideInDownAnimation extends SlideAnimation {
     super.idleValue = 0,
   }) : super(
           offsetBuild: (context, value) =>
-              Offset(0, (1 - value) * MediaQuery.of(context).size.height),
+              Offset(0, (1 - value) * MediaQuery.sizeOf(context).height),
         );
 }
 

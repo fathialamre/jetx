@@ -10,8 +10,15 @@ extension JetNumUtils on num {
   bool isEqual(num b) => JetUtils.isEqual(this, b);
 
   /// Utility to delay some callback (or code execution).
-  /// TODO: Add a separated implementation of delay() with the ability
-  /// to stop it.
+  ///
+  /// NOTE: this delay cannot be cancelled — it is a thin wrapper over
+  /// [Future.delayed]. If you need a stoppable delay, build a
+  /// `CancellableDelay` helper around `Timer` (`timer.cancel()` to abort) or
+  /// use `Future.any([_delay, _cancellation.future])` and resolve a
+  /// completer to break out early. We intentionally do not bundle a
+  /// cancellable variant here because cancellation semantics (early-resolve
+  /// vs. error vs. silent drop) are caller-specific and adding the wrong
+  /// default is worse than leaving the helper minimal.
   ///
   /// Sample:
   /// ```

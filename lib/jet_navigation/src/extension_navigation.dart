@@ -12,6 +12,36 @@ import 'root/jet_root.dart';
 /// Navigator.push(context, YourRoute());
 NavigatorState? get navigator => JetNavigationExt(Jet).key.currentState;
 
+/// Returns the root context attached to the JetX navigator key, or throws
+/// a [FlutterError] naming the call site. Replaces silent `context!` NPEs
+/// that bit callers when no overlay/context was attached (early call,
+/// popped route, no JetMaterialApp).
+BuildContext _requireRootContext(String callSite) {
+  final ctx = Jet.context;
+  if (ctx == null) {
+    throw FlutterError(
+      'Jet.$callSite called without a valid root context. Ensure your '
+      'app is wrapped with JetMaterialApp / JetCupertinoApp and that '
+      'this call happens after the first frame has been rendered.',
+    );
+  }
+  return ctx;
+}
+
+/// Returns the current overlay context, or throws a [FlutterError] naming
+/// the call site if it is unavailable.
+BuildContext _requireOverlayContext(String callSite) {
+  final ctx = Jet.overlayContext;
+  if (ctx == null) {
+    throw FlutterError(
+      'Jet.$callSite called before a JetMaterialApp / JetCupertinoApp '
+      'overlay was attached. Ensure this call happens after the first '
+      'frame has been rendered.',
+    );
+  }
+  return ctx;
+}
+
 extension ExtensionBottomSheet on JetInterface {
   Future<T?> bottomSheet<T>(
     Widget bottomsheet, {
@@ -31,16 +61,17 @@ extension ExtensionBottomSheet on JetInterface {
     Duration? exitBottomSheetDuration,
     Curve? curve,
   }) {
-    return Navigator.of(overlayContext!, rootNavigator: useRootNavigator)
+    final overlay = _requireOverlayContext('bottomSheet');
+    final rootCtx = _requireRootContext('bottomSheet');
+    return Navigator.of(overlay, rootNavigator: useRootNavigator)
         .push(JetModalBottomSheetRoute<T>(
       builder: (_) => bottomsheet,
       isPersistent: persistent,
-      // theme: Theme.of(key.currentContext, shadowThemeOnly: true),
-      theme: Theme.of(key.currentContext!),
+      theme: Theme.of(rootCtx),
       isScrollControlled: isScrollControlled,
 
-      barrierLabel: MaterialLocalizations.of(key.currentContext!)
-          .modalBarrierDismissLabel,
+      barrierLabel:
+          MaterialLocalizations.of(rootCtx).modalBarrierDismissLabel,
 
       backgroundColor: backgroundColor ?? Colors.transparent,
       elevation: elevation,
@@ -52,9 +83,9 @@ extension ExtensionBottomSheet on JetInterface {
       settings: settings,
       enableDrag: enableDrag,
       enterBottomSheetDuration:
-          enterBottomSheetDuration ?? const Duration(milliseconds: 250),
+          enterBottomSheetDuration ?? kBottomSheetEnterDuration,
       exitBottomSheetDuration:
-          exitBottomSheetDuration ?? const Duration(milliseconds: 200),
+          exitBottomSheetDuration ?? kBottomSheetExitDuration,
       curve: curve,
     ));
   }
@@ -78,10 +109,10 @@ extension ExtensionDialog on JetInterface {
     RouteSettings? routeSettings,
     String? id,
   }) {
-    assert(debugCheckHasMaterialLocalizations(context!));
+    final ctx = _requireRootContext('dialog');
+    assert(debugCheckHasMaterialLocalizations(ctx));
 
-    //  final theme = Theme.of(context, shadowThemeOnly: true);
-    final theme = Theme.of(context!);
+    final theme = Theme.of(ctx);
     return generalDialog<T>(
       pageBuilder: (buildContext, animation, secondaryAnimation) {
         final pageChild = widget;
@@ -94,7 +125,7 @@ extension ExtensionDialog on JetInterface {
         return dialog;
       },
       barrierDismissible: barrierDismissible,
-      barrierLabel: MaterialLocalizations.of(context!).modalBarrierDismissLabel,
+      barrierLabel: MaterialLocalizations.of(ctx).modalBarrierDismissLabel,
       barrierColor: barrierColor ?? Colors.black54,
       transitionDuration: transitionDuration ?? defaultDialogTransitionDuration,
       transitionBuilder: (context, animation, secondaryAnimation, child) {
@@ -119,17 +150,17 @@ extension ExtensionDialog on JetInterface {
       bool barrierDismissible = false,
       String? barrierLabel,
       Color barrierColor = const Color(0x80000000),
-      Duration transitionDuration = const Duration(milliseconds: 200),
+      Duration transitionDuration = kDialogTransitionDuration,
       RouteTransitionsBuilder? transitionBuilder,
       GlobalKey<NavigatorState>? navigatorKey,
       RouteSettings? routeSettings,
       String? id}) {
     assert(!barrierDismissible || barrierLabel != null);
     final key = navigatorKey ?? Jet.nestedKey(id)?.navigatorKey;
+    // Overlay context always returns the root navigator.
     final nav = key?.currentState ??
-        Navigator.of(overlayContext!,
-            rootNavigator:
-                true); //overlay context will always return the root navigator
+        Navigator.of(_requireOverlayContext('generalDialog'),
+            rootNavigator: true);
     return nav.push<T>(
       JetDialogRoute<T>(
         pageBuilder: pageBuilder,
@@ -549,26 +580,6 @@ extension JetNavigationExt on JetInterface {
       preventDuplicateHandlingMode: preventDuplicateHandlingMode,
     );
   }
-
-//   JetPageBuilder _resolvePage(dynamic page, String method) {
-//     if (page is JetPageBuilder) {
-//       return page;
-//     } else if (page is Widget) {
-//       Jet.log(
-//           '''WARNING, consider using: "Jet.$method(() => Page())"
-//instead of "Jet.$method(Page())".
-// Using a widget function instead of a widget fully guarantees that the widget
-//and its controllers will be removed from memory when they are no longer used.
-//       ''');
-//       return () => page;
-//     } else if (page is String) {
-//       throw '''Unexpected String,
-// use toNamed() instead''';
-//     } else {
-//       throw '''Unexpected format,
-// you can only use widgets and widget functions here''';
-//     }
-//   }
 
   /// **Navigation.pushNamed()** shortcut.<br><br>
   ///
@@ -1180,6 +1191,13 @@ extension JetNavigationExt on JetInterface {
   }
 
   JetDelegate? nestedKey(String? key) {
+    if (!JetRoot.treeInitialized) {
+      throw FlutterError(
+        'Jet.nestedKey($key) called before JetRoot has been mounted. '
+        'Wrap your app with JetMaterialApp / JetCupertinoApp and ensure '
+        'this call happens after the first build.',
+      );
+    }
     return rootController.nestedKey(key);
   }
 
@@ -1263,15 +1281,31 @@ extension JetNavigationExt on JetInterface {
     return WidgetsFlutterBinding.ensureInitialized();
   }
 
-  /// The window to which this binding is bound.
-  ui.PlatformDispatcher get window => engine.platformDispatcher;
+  /// The platform dispatcher to which this binding is bound. Renamed from
+  /// `window` (which historically aliased the now-deprecated `ui.window`).
+  ui.PlatformDispatcher get window =>
+      WidgetsBinding.instance.platformDispatcher;
 
-  Locale? get deviceLocale => window.locale;
+  Locale? get deviceLocale => WidgetsBinding.instance.platformDispatcher.locale;
+
+  /// Throws a [FlutterError] when no implicit view exists (e.g. multi-view
+  /// embedders) instead of silently NPEing on `implicitView!`.
+  ui.FlutterView get _implicitView {
+    final view = WidgetsBinding.instance.platformDispatcher.implicitView;
+    if (view == null) {
+      throw FlutterError(
+        'Jet view metric requested but PlatformDispatcher.implicitView is '
+        'null. Likely running in a multi-view embedder; resolve the size '
+        'from a widget context (e.g. MediaQuery) instead.',
+      );
+    }
+    return view;
+  }
 
   ///The number of device pixels for each logical pixel.
-  double get pixelRatio => window.implicitView!.devicePixelRatio;
+  double get pixelRatio => _implicitView.devicePixelRatio;
 
-  Size get size => window.implicitView!.physicalSize / pixelRatio;
+  Size get size => _implicitView.physicalSize / pixelRatio;
 
   ///The horizontal extent of this size.
   double get width => size.width;
@@ -1281,20 +1315,22 @@ extension JetNavigationExt on JetInterface {
 
   ///The distance from the top edge to the first unpadded pixel,
   ///in physical pixels.
-  double get statusBarHeight => window.implicitView!.padding.top;
+  double get statusBarHeight => _implicitView.padding.top;
 
   ///The distance from the bottom edge to the first unpadded pixel,
   ///in physical pixels.
-  double get bottomBarHeight => window.implicitView!.padding.bottom;
+  double get bottomBarHeight => _implicitView.padding.bottom;
 
   ///The system-reported text scale.
-  double get textScaleFactor => window.textScaleFactor;
+  double get textScaleFactor =>
+      WidgetsBinding.instance.platformDispatcher.textScaleFactor;
 
   /// give access to TextTheme.of(context)
   TextTheme get textTheme => theme.textTheme;
 
   /// give access to Mediaquery.of(context)
-  MediaQueryData get mediaQuery => MediaQuery.of(context!);
+  MediaQueryData get mediaQuery =>
+      MediaQuery.of(_requireRootContext('mediaQuery'));
 
   /// Check if dark mode theme is enable
   bool get isDarkMode => (theme.brightness == Brightness.dark);
@@ -1362,6 +1398,9 @@ extension JetNavigationExt on JetInterface {
   //   rootController.parameters = newParameters;
   // }
 
+  // TODO(testMode): JetTestMode is global mutable state, not zone-scoped.
+  // It leaks across parallel/concurrent tests. Migrate to zone-scoped or
+  // per-instance configuration in a follow-up; needs design decision.
   // @Deprecated('Use JetTestMode.active=true instead')
   set testMode(bool isTest) => JetTestMode.active = isTest;
 
@@ -1388,8 +1427,16 @@ extension OverlayExt on JetInterface {
     Widget? loadingWidget,
     double opacity = .5,
   }) async {
+    final overlayContext = Jet.overlayContext;
+    if (overlayContext == null) {
+      throw FlutterError(
+        'Jet.showOverlay called before a JetMaterialApp / JetCupertinoApp '
+        'overlay was attached. Ensure you call this after the first frame '
+        'has been rendered.',
+      );
+    }
     final navigatorState =
-        Navigator.of(Jet.overlayContext!, rootNavigator: false);
+        Navigator.of(overlayContext, rootNavigator: false);
     final overlayState = navigatorState.overlay!;
 
     final overlayEntryOpacity = OverlayEntry(builder: (context) {

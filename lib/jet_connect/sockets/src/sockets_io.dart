@@ -15,10 +15,12 @@ class BaseWebSocket {
   bool allowSelfSigned;
   ConnectionStatus? connectionStatus;
 
+  StreamSubscription? _socketSubscription;
+
   BaseWebSocket(
     this.url, {
     this.ping = const Duration(seconds: 5),
-    this.allowSelfSigned = true,
+    this.allowSelfSigned = false,
   });
 
   void close([int? status, String? reason]) {
@@ -32,6 +34,14 @@ class BaseWebSocket {
     }
     try {
       connectionStatus = ConnectionStatus.connecting;
+      if (allowSelfSigned) {
+        Jet.log(
+          'BaseWebSocket: WARNING - allowSelfSigned=true. '
+          'Self-signed/invalid TLS certificates will be accepted. '
+          'This bypasses transport security and is vulnerable to MITM. '
+          'Use only in development.',
+        );
+      }
       socket = allowSelfSigned
           ? await _connectForSelfSignedCert(url)
           : await WebSocket.connect(url);
@@ -40,7 +50,8 @@ class BaseWebSocket {
       socketNotifier?.open();
       connectionStatus = ConnectionStatus.connected;
 
-      socket!.listen((data) {
+      await _socketSubscription?.cancel();
+      _socketSubscription = socket!.listen((data) {
         socketNotifier!.notifyData(data);
       }, onError: (err) {
         socketNotifier!.notifyError(Close(err.toString(), 1005));
@@ -59,6 +70,8 @@ class BaseWebSocket {
   }
 
   void dispose() {
+    _socketSubscription?.cancel();
+    _socketSubscription = null;
     socketNotifier!.dispose();
     socketNotifier = null;
     isDisposed = true;

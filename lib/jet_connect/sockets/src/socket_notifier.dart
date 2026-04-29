@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import '../../../jet_core/jet_core.dart';
+
 /// Signature for [SocketNotifier.addCloses].
 typedef CloseSocket = void Function(Close);
 
@@ -94,7 +96,8 @@ class SocketNotifier {
         _onEvents![event]!(data);
       }
       // ignore: avoid_catches_without_on_clauses
-    } catch (_) {
+    } catch (e) {
+      Jet.log('SocketNotifier: failed to decode/dispatch event payload: $e');
       return;
     }
   }

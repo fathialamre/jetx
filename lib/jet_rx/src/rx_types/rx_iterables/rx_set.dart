@@ -8,7 +8,7 @@ class RxSet<E> extends JetListenable<Set<E>>
   /// inside the List,
   RxSet<E> operator +(Set<E> val) {
     addAll(val);
-    //refresh();
+    refresh();
     return this;
   }
 
@@ -105,7 +105,7 @@ class RxSet<E> extends JetListenable<Set<E>>
 
 extension SetExtension<E> on Set<E> {
   RxSet<E> get obs {
-    return RxSet<E>(<E>{})..addAll(this);
+    return RxSet<E>(Set<E>.from(this));
   }
 
   // /// Add [item] to [List<E>] only if [item] is not null.

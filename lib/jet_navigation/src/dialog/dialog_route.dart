@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 
 import '../router_report.dart';
+import '../snackbar/snackbar_controller.dart' show kDialogTransitionDuration;
 
 class JetDialogRoute<T> extends PopupRoute<T> {
   JetDialogRoute({
@@ -8,7 +9,7 @@ class JetDialogRoute<T> extends PopupRoute<T> {
     bool barrierDismissible = true,
     String? barrierLabel,
     Color barrierColor = const Color(0x80000000),
-    Duration transitionDuration = const Duration(milliseconds: 200),
+    Duration transitionDuration = kDialogTransitionDuration,
     RouteTransitionsBuilder? transitionBuilder,
     super.settings,
   })  : widget = pageBuilder,
@@ -28,6 +29,10 @@ class JetDialogRoute<T> extends PopupRoute<T> {
 
   @override
   void dispose() {
+    // Report disposal first so route-bound dependencies can run their
+    // `onClose`/`Jet.markAsDirty` cleanup before the framework tears
+    // the route down.
+    RouterReportManager.instance.reportRouteWillDispose(this);
     RouterReportManager.instance.reportRouteDispose(this);
     super.dispose();
   }

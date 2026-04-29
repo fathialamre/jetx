@@ -30,9 +30,9 @@ abstract class IEquality<E> {
   /// This should be a proper equality relation.
   bool equals(E e1, E e2);
 
-  /// Jet a hashcode of an element.
+  /// Get a hash code of an element.
   ///
-  /// The hashcode should be compatible with [equals], so that if
+  /// The hash code should be compatible with [equals], so that if
   /// `equals(a, b)` then `hash(a) == hash(b)`.
   int hash(E e);
 

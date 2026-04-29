@@ -65,10 +65,30 @@ class ValueBuilderState<T> extends State<ValueBuilder<T>> {
   void dispose() {
     super.dispose();
     widget.onDispose?.call();
-    if (value is ChangeNotifier) {
-      (value as ChangeNotifier?)?.dispose();
-    } else if (value is StreamController) {
-      (value as StreamController?)?.close();
+    final v = value;
+    // Use exhaustive type checks rather than dynamic casts so that future
+    // additions (Sink, AnimationController, etc.) fall into the no-op
+    // branch instead of throwing or silently leaking. The `assert` warns
+    // in debug builds when the held value is not a known disposable type.
+    if (v is ChangeNotifier) {
+      v.dispose();
+    } else if (v is StreamController) {
+      v.close();
+    } else {
+      assert(() {
+        // Acceptable: primitives and immutable values. We only flag types
+        // that *look* disposable (have `dispose()`/`close()` semantics)
+        // but aren't handled here. Hard to detect generically, so we just
+        // surface the type for the developer to inspect.
+        if (v is Sink) {
+          // ignore: avoid_print
+          print(
+            'ValueBuilder<$T>.dispose: held value is a Sink ($v); '
+            'consider closing it explicitly via onDispose.',
+          );
+        }
+        return true;
+      }());
     }
   }
 }

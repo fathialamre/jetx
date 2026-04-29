@@ -46,11 +46,11 @@ class JetHttpClient {
   String Function(Uri url)? findProxy;
 
   JetHttpClient({
-    this.userAgent = 'jetx-client',
+    this.userAgent = 'jetx-client/1.0.0-dev.1',
     this.timeout = const Duration(seconds: 8),
     this.followRedirects = true,
     this.maxRedirects = 5,
-    this.sendUserAgent = false,
+    this.sendUserAgent = true,
     this.sendContentLength = true,
     this.maxAuthRetries = 1,
     bool allowAutoSignedCert = false,
@@ -92,11 +92,30 @@ class JetHttpClient {
     if (baseUrl != null) {
       url = baseUrl! + url!;
     }
-    final uri = Uri.parse(url!);
-    if (query != null) {
-      return uri.replace(queryParameters: query);
+    if (url == null || url.isEmpty) {
+      throw ArgumentError.value(url, 'url', 'URL must not be null or empty');
     }
-    return uri;
+    // Use tryParse to surface a clearer error than the default FormatException.
+    final parsed = Uri.tryParse(url);
+    if (parsed == null) {
+      throw ArgumentError.value(url, 'url', 'URL is not a valid URI');
+    }
+    if (query == null || query.isEmpty) {
+      return parsed;
+    }
+    // Encode query params explicitly. Uri.replace(queryParameters:) accepts
+    // String / Iterable<String> values; coerce other types via toString and
+    // let Uri perform percent-encoding.
+    final encoded = <String, dynamic>{};
+    query.forEach((key, value) {
+      if (value == null) return;
+      if (value is Iterable && value is! String) {
+        encoded[key] = value.map((v) => v?.toString() ?? '').toList();
+      } else {
+        encoded[key] = value.toString();
+      }
+    });
+    return parsed.replace(queryParameters: encoded);
   }
 
   Future<Request<T>> _requestWithBody<T>(
@@ -207,6 +226,17 @@ class JetHttpClient {
     }
   }
 
+  /// Validates a header value and rejects CRLF injection attempts.
+  static void _validateHeaderValue(String key, String value) {
+    if (value.contains('\r') || value.contains('\n')) {
+      throw ArgumentError.value(
+        value,
+        'headers[$key]',
+        'Header value must not contain CR or LF characters (CRLF injection)',
+      );
+    }
+  }
+
   Future<Response<T>> _performRequest<T>(
     HandlerExecute<T> handler, {
     bool authenticate = false,
@@ -216,6 +246,7 @@ class JetHttpClient {
     var request = await handler();
 
     headers?.forEach((key, value) {
+      _validateHeaderValue(key, value);
       request.headers[key] = value;
     });
 
@@ -229,9 +260,16 @@ class JetHttpClient {
       final newResponse =
           await _modifier.modifyResponse<T>(newRequest, response);
 
+      // `maxAuthRetries == 1` means "after a 401, retry the request once with
+      // a refreshed token". Each retry uses exponential backoff capped at 2s
+      // to avoid hammering the auth endpoint.
       if (HttpStatus.unauthorized == newResponse.statusCode &&
           _modifier.authenticator != null &&
           requestNumber <= maxAuthRetries) {
+        final attempt = requestNumber - 1;
+        final backoffMs = 200 * (1 << attempt);
+        final cappedMs = backoffMs > 2000 ? 2000 : backoffMs;
+        await Future<void>.delayed(Duration(milliseconds: cappedMs));
         return _performRequest<T>(
           handler,
           authenticate: true,

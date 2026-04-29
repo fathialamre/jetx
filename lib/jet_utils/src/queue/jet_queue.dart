@@ -20,12 +20,12 @@ class JetMicrotask {
 }
 
 class JetQueue {
-  final List<_Item> _queue = [];
+  final List<_Item<dynamic>> _queue = [];
   bool _active = false;
 
-  Future<T> add<T>(Function job) {
-    var completer = Completer<T>();
-    _queue.add(_Item(completer, job));
+  Future<T> add<T>(Future<T> Function() job) {
+    final completer = Completer<T>();
+    _queue.add(_Item<T>(completer, job));
     _check();
     return completer.future;
   }
@@ -34,24 +34,30 @@ class JetQueue {
     _queue.clear();
   }
 
-  void _check() async {
-    if (!_active && _queue.isNotEmpty) {
-      _active = true;
-      var item = _queue.removeAt(0);
-      try {
-        item.completer.complete(await item.job());
-      } on Exception catch (e) {
-        item.completer.completeError(e);
+  Future<void> _check() async {
+    if (_active) return;
+    _active = true;
+    try {
+      while (_queue.isNotEmpty) {
+        final item = _queue.removeAt(0);
+        try {
+          final result = await item.job();
+          item.completer.complete(result);
+        } on Exception catch (e, st) {
+          item.completer.completeError(e, st);
+        }
       }
+    } finally {
       _active = false;
-      _check();
     }
   }
 }
 
-class _Item {
-  final dynamic completer;
-  final dynamic job;
+/// A queued unit of work. Generic in [T] so the [Completer] preserves the
+/// caller's return type instead of decaying to `dynamic`.
+class _Item<T> {
+  final Completer<T> completer;
+  final Future<T> Function() job;
 
   _Item(this.completer, this.job);
 }

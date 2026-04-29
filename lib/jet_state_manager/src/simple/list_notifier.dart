@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:developer' as developer;
 
 import 'package:flutter/foundation.dart';
 
@@ -60,23 +61,38 @@ mixin ListNotifierSingleMixin on Listenable {
   }
 
   void _notifyUpdate() {
-    // if (_microtaskVersion == _version) {
-    //   _microtaskVersion++;
-    //   scheduleMicrotask(() {
-    //     _version++;
-    //     _microtaskVersion = _version;
-    final list = _updaters?.toList() ?? [];
+    // Snapshot the listener list so additions/removals during dispatch
+    // don't surprise us. Each callback is run inside its own try/catch so
+    // a single misbehaving listener can't starve the rest of the list.
+    final list = _updaters?.toList() ?? const [];
 
-    for (var element in list) {
-      element();
+    for (final element in list) {
+      try {
+        element();
+      } catch (error, stackTrace) {
+        developer.log(
+          'JetX ListNotifier: listener threw during _notifyUpdate.',
+          name: 'GETX',
+          error: error,
+          stackTrace: stackTrace,
+        );
+      }
     }
-    //   });
-    // }
   }
 
   bool get isDisposed => _updaters == null;
 
   bool _debugAssertNotDisposed() {
+    if (isDisposed) {
+      // Log in release builds too — silent dispose-after-use bugs are
+      // notoriously hard to chase. The assert below still throws in debug
+      // and tests, preserving the loud-fail behavior developers expect.
+      developer.log(
+        'JetX ListNotifier: $runtimeType used after dispose().',
+        name: 'GETX',
+        level: 1000, // SEVERE
+      );
+    }
     assert(() {
       if (isDisposed) {
         throw FlutterError('''A $runtimeType was used after being disposed.\n
@@ -126,6 +142,13 @@ mixin ListNotifierGroupMixin on Listenable {
   }
 
   bool _debugAssertNotDisposed() {
+    if (_updatersGroupIds == null) {
+      developer.log(
+        'JetX ListNotifierGroup: $runtimeType used after dispose().',
+        name: 'GETX',
+        level: 1000, // SEVERE
+      );
+    }
     assert(() {
       if (_updatersGroupIds == null) {
         throw FlutterError('''A $runtimeType was used after being disposed.\n

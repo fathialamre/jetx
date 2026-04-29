@@ -7,6 +7,25 @@ import 'package:flutter/material.dart';
 import '../../../jetx.dart';
 import '../root/jet_root.dart';
 
+/// Default snackbar enter animation duration. Used when an animation finishes
+/// from the swipe-dismiss path before resetting the controller.
+const Duration kSnackbarEnterDuration = Duration(milliseconds: 200);
+
+/// Default bottom sheet enter / exit animation durations.
+const Duration kBottomSheetEnterDuration = Duration(milliseconds: 250);
+const Duration kBottomSheetExitDuration = Duration(milliseconds: 200);
+
+/// Default modal route transition for [JetModalBottomSheetRoute].
+const Duration kBottomSheetTransitionDuration = Duration(milliseconds: 700);
+
+/// Default dialog transition duration shared across [JetDialogRoute] and
+/// helpers in `extension_navigation.dart`.
+const Duration kDialogTransitionDuration = Duration(milliseconds: 200);
+
+/// Reasons a snackbar may be dismissed; used to coalesce concurrent close
+/// signals from overlay tap, swipe-dismiss, and timer expiration.
+enum SnackbarDismissReason { none, timer, swipe, tap, programmatic }
+
 class SnackbarController {
   final key = GlobalKey<JetSnackBarState>();
 
@@ -23,9 +42,17 @@ class SnackbarController {
   late final Alignment? _initialAlignment;
   late final Alignment? _endAlignment;
 
-  bool _wasDismissedBySwipe = false;
+  /// Coalesces dismissal signals (overlay tap, swipe, timer, programmatic)
+  /// to prevent double-close races.
+  SnackbarDismissReason _dismissReason = SnackbarDismissReason.none;
 
-  bool _onTappedDismiss = false;
+  /// Atomic guard around close paths. Set on first dismissal regardless of
+  /// reason; consulted before kicking off another close.
+  bool _isClosing = false;
+
+  /// Tracks AnimationController lifecycle so dispose is idempotent across
+  /// the early-close + swipe-dismiss + status-listener paths.
+  bool _controllerDisposed = false;
 
   Timer? _timer;
 
@@ -50,6 +77,16 @@ class SnackbarController {
 
   /// Close the snackbar with animation
   Future<void> close({bool withAnimations = true}) async {
+    if (_isClosing && _dismissReason == SnackbarDismissReason.none) {
+      // already closing via another path; just await final transition.
+      if (!withAnimations) _removeOverlay();
+      await future;
+      return;
+    }
+    _isClosing = true;
+    if (_dismissReason == SnackbarDismissReason.none) {
+      _dismissReason = SnackbarDismissReason.programmatic;
+    }
     if (!withAnimations) {
       _removeOverlay();
       return;
@@ -69,6 +106,7 @@ class SnackbarController {
     if (_timer != null && _timer!.isActive) {
       _timer!.cancel();
     }
+    _timer = null;
   }
 
   // ignore: avoid_returning_this
@@ -118,15 +156,12 @@ class SnackbarController {
   }
 
   void _configureTimer() {
+    // Always cancel + null any existing timer before creating a new one
+    // so a previously scheduled fire cannot survive replacement.
+    _timer?.cancel();
+    _timer = null;
     if (snackbar.duration != null) {
-      if (_timer != null && _timer!.isActive) {
-        _timer!.cancel();
-      }
       _timer = Timer(snackbar.duration!, _removeEntry);
-    } else {
-      if (_timer != null) {
-        _timer!.cancel();
-      }
     }
   }
 
@@ -193,8 +228,9 @@ class SnackbarController {
         OverlayEntry(
           builder: (context) => GestureDetector(
             onTap: () {
-              if (snackbar.isDismissible && !_onTappedDismiss) {
-                _onTappedDismiss = true;
+              if (snackbar.isDismissible && !_isClosing) {
+                _isClosing = true;
+                _dismissReason = SnackbarDismissReason.tap;
                 close();
               }
             },
@@ -274,7 +310,10 @@ class SnackbarController {
       },
       key: const Key('dismissible'),
       onDismissed: (_) {
-        _wasDismissedBySwipe = true;
+        if (!_isClosing) {
+          _isClosing = true;
+        }
+        _dismissReason = SnackbarDismissReason.swipe;
         _removeEntry();
       },
       child: _getSnackbarContainer(child),
@@ -306,7 +345,8 @@ class SnackbarController {
         if (_overlayEntries.isNotEmpty) _overlayEntries.first.opaque = false;
         break;
       case AnimationStatus.dismissed:
-        assert(!_overlayEntries.first.opaque);
+        // Guard: overlay may already be cleared via early `_removeOverlay`.
+        assert(_overlayEntries.isEmpty || !_overlayEntries.first.opaque);
         _currentStatus = SnackbarStatus.closed;
         _snackbarStatus?.call(_currentStatus);
         _removeOverlay();
@@ -322,12 +362,24 @@ class SnackbarController {
 
     _cancelTimer();
 
-    if (_wasDismissedBySwipe) {
-      Timer(const Duration(milliseconds: 200), _controller.reset);
-      _wasDismissedBySwipe = false;
+    if (_dismissReason == SnackbarDismissReason.swipe) {
+      Timer(kSnackbarEnterDuration, () {
+        if (!_controllerDisposed) {
+          _controller.reset();
+        }
+      });
+      _dismissReason = SnackbarDismissReason.none;
     } else {
-      _controller.reverse();
+      if (!_controllerDisposed) {
+        _controller.reverse();
+      }
     }
+  }
+
+  void _disposeController() {
+    if (_controllerDisposed) return;
+    _controllerDisposed = true;
+    _controller.dispose();
   }
 
   void _removeOverlay() {
@@ -339,9 +391,11 @@ class SnackbarController {
 
     assert(!_transitionCompleter.isCompleted,
         'Cannot remove overlay from a disposed snackbar');
-    _controller.dispose();
+    _disposeController();
     _overlayEntries.clear();
-    _transitionCompleter.complete();
+    if (!_transitionCompleter.isCompleted) {
+      _transitionCompleter.complete();
+    }
   }
 
   Future<void> _show() {
@@ -383,16 +437,19 @@ class SnackBarQueue {
   }
 
   void disposeControllers() {
-    if (_currentSnackbar != null) {
-      _currentSnackbar?._removeOverlay();
-      _currentSnackbar?._controller.dispose();
-      _snackbarList.remove(_currentSnackbar);
+    final current = _currentSnackbar;
+    if (current != null) {
+      current._removeOverlay();
+      current._disposeController();
+      _snackbarList.remove(current);
     }
 
     _queue.cancelAllJobs();
 
-    for (var element in _snackbarList) {
-      element._controller.dispose();
+    // Snapshot via toList() so dispose() side-effects on _snackbarList
+    // (e.g. addJob removing entries) cannot mutate our iteration target.
+    for (final element in _snackbarList.toList()) {
+      element._disposeController();
     }
     _snackbarList.clear();
   }

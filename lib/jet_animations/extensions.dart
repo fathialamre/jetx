@@ -17,7 +17,7 @@ extension AnimationExtension on Widget {
     bool isSequential = false,
   }) {
     assert(isSequential || this is! FadeOutAnimation,
-        'Can not use fadeOut + fadeIn when isSequential is false');
+        'Cannot chain fadeIn() after fadeOutAnimation when isSequential is false. Pass isSequential: true to chain after a fadeOut.');
 
     return FadeInAnimation(
       duration: duration,
@@ -34,7 +34,7 @@ extension AnimationExtension on Widget {
     bool isSequential = false,
   }) {
     assert(isSequential || this is! FadeInAnimation,
-        'Can not use fadeOut() + fadeIn when isSequential is false');
+        'Cannot chain fadeOut() after fadeInAnimation when isSequential is false. Pass isSequential: true to chain after a fadeIn.');
 
     return FadeOutAnimation(
       duration: duration,
@@ -206,7 +206,7 @@ extension AnimationExtension on Widget {
 
   Duration _getDelay(bool isSequential, Duration delay) {
     assert(!(isSequential && delay != Duration.zero),
-        "Error: When isSequential is true, delay must be non-zero. Context: isSequential: $isSequential delay: $delay");
+        "When isSequential is true, delay must be Duration.zero — sequential animations reuse the previous animation's totalDuration. Got: isSequential=$isSequential delay=$delay");
 
     return isSequential
         ? (_currentAnimation?.totalDuration ?? Duration.zero)

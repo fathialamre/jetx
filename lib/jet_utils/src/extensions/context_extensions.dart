@@ -68,7 +68,20 @@ extension ContextExt on BuildContext {
   /// similar to [MediaQuery.paddingOf(context)]
   EdgeInsets get mediaQueryPadding => MediaQuery.paddingOf(this);
 
-  /// similar to [MediaQuery.of(context).padding]
+  /// Returns the full [MediaQueryData].
+  ///
+  /// Prefer the narrower accessors below ([mediaQuerySize],
+  /// [mediaQueryPadding], [mediaQueryViewPadding], [mediaQueryViewInsets],
+  /// [orientation], [devicePixelRatio], [textScaleFactor]) — calling
+  /// [MediaQuery.of] subscribes the calling element to *every* MediaQuery
+  /// change (size, padding, brightness, accessibility flags, …) and causes
+  /// unnecessary rebuilds. Only use this getter when you genuinely need
+  /// multiple fields at once.
+  @Deprecated(
+      'Use the narrower accessors (mediaQuerySize, mediaQueryPadding, '
+      'orientation, devicePixelRatio, textScaleFactor, …) which subscribe to '
+      'a single MediaQuery aspect and rebuild less. Use MediaQuery.of(context) '
+      'directly only if you really need every aspect.')
   MediaQueryData get mediaQuery => MediaQuery.of(this);
 
   /// similar to [MediaQuery.viewPaddingOf(context)]

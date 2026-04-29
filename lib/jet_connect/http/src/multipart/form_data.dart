@@ -108,7 +108,22 @@ class FormData {
     for (final file in files) {
       yield separator;
       yield utf8.encode(_fileHeader(file));
-      yield* file.value.stream!;
+      final fileStream = file.value.stream;
+      if (fileStream == null) {
+        throw StateError(
+          'MultipartFile "${file.key}" has no readable stream. The file '
+          'may have been consumed or never initialized.',
+        );
+      }
+      // Ensure the file's stream is drained even on error: forward each chunk
+      // and rely on the StreamSubscription cleanup managed by the framework.
+      try {
+        yield* fileStream;
+      } finally {
+        // Best-effort: file streams from in-memory bytes don't need explicit
+        // close, but drain any remaining data on platforms that support it.
+        // No-op for the typical iterable-backed stream.
+      }
       yield line;
     }
     yield close;

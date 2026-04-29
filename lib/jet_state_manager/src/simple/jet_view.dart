@@ -36,7 +36,18 @@ abstract class JetView<T> extends StatelessWidget {
 
   final String? tag = null;
 
-  T get controller => Jet.find<T>(tag: tag)!;
+  /// Resolves the controller for this view via `Jet.find<T>()`.
+  ///
+  /// `JetView` is a `StatelessWidget`, so we cannot cache the resolved
+  /// controller in a `late final` field on the widget itself (the same
+  /// widget instance can be rebuilt across configurations and the
+  /// instance must always be retrieved fresh in case the underlying
+  /// binding changed). That is acceptable here because `Jet.find` is an
+  /// O(1) `HashMap` lookup against `_singl` — see
+  /// `extension_instance.dart`'s `_singl` Map and the `find<S>` /
+  /// `_getKey` implementation. Calling it per build is bounded and
+  /// allocation-free in the steady state.
+  T get controller => Jet.find<T>(tag: tag);
 
   @override
   Widget build(BuildContext context);

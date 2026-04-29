@@ -272,18 +272,26 @@ class RxString extends Rx<String> implements Comparable<String>, Pattern {
 class RxnString extends Rx<String?> implements Comparable<String>, Pattern {
   RxnString([super.initial]);
 
+  // RxnString implements Pattern/Comparable, so a null value cannot satisfy
+  // those contracts — surface the misuse instead of throwing a generic NPE.
   @override
   Iterable<Match> allMatches(String string, [int start = 0]) {
-    return value!.allMatches(string, start);
+    final v = value;
+    if (v == null) throw StateError('RxnString value is null');
+    return v.allMatches(string, start);
   }
 
   @override
   Match? matchAsPrefix(String string, [int start = 0]) {
-    return value!.matchAsPrefix(string, start);
+    final v = value;
+    if (v == null) throw StateError('RxnString value is null');
+    return v.matchAsPrefix(string, start);
   }
 
   @override
   int compareTo(String other) {
-    return value!.compareTo(other);
+    final v = value;
+    if (v == null) throw StateError('RxnString value is null');
+    return v.compareTo(other);
   }
 }

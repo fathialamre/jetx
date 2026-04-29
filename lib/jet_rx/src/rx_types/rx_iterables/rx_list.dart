@@ -48,7 +48,7 @@ class RxList<E> extends JetListenable<List<E>>
   @override
   RxList<E> operator +(Iterable<E> val) {
     addAll(val);
-    // refresh();
+    refresh();
     return this;
   }
 

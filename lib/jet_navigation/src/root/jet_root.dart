@@ -432,6 +432,9 @@ class JetRootState extends State<JetRoot> with WidgetsBindingObserver {
     config = config.copyWith(parameters: newParameters);
   }
 
+  // TODO(testMode): JetTestMode is global mutable state with no parallel
+  // safety. Migrate to a zone-scoped or per-JetRootState mechanism so test
+  // suites can run in parallel without leaking.
   set testMode(bool isTest) {
     config = config.copyWith(testMode: isTest);
     JetTestMode.active = isTest;

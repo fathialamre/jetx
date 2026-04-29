@@ -18,10 +18,10 @@ class Workers {
   Workers(this.workers);
   final List<Worker> workers;
 
-  void dispose() {
+  Future<void> dispose() async {
     for (final worker in workers) {
       if (!worker._disposed) {
-        worker.dispose();
+        await worker.dispose();
       }
     }
   }
@@ -144,9 +144,7 @@ Worker once<T>(
   sub = listener.listen(
     (event) {
       if (!_conditional(condition)) return;
-      ref._disposed = true;
-      ref._log('called');
-      sub?.cancel();
+      ref.dispose();
       callback(event);
     },
     onError: onError,
@@ -238,7 +236,10 @@ Worker debounce<T>(
     onDone: onDone,
     cancelOnError: cancelOnError,
   );
-  return Worker(sub.cancel, '[debounce]');
+  return Worker(() async {
+    await sub.cancel();
+    newDebouncer.cancel();
+  }, '[debounce]');
 }
 
 class Worker {
@@ -259,13 +260,13 @@ class Worker {
     Jet.log('$runtimeType $type $msg');
   }
 
-  void dispose() {
+  Future<void> dispose() async {
     if (_disposed) {
       _log('already disposed');
       return;
     }
     _disposed = true;
-    worker();
+    await worker();
     _log('disposed');
   }
 

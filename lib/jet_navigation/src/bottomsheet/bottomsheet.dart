@@ -19,8 +19,8 @@ class JetModalBottomSheetRoute<T> extends PopupRoute<T> {
     this.enableDrag = true,
     required this.isScrollControlled,
     super.settings,
-    this.enterBottomSheetDuration = const Duration(milliseconds: 250),
-    this.exitBottomSheetDuration = const Duration(milliseconds: 200),
+    this.enterBottomSheetDuration = kBottomSheetEnterDuration,
+    this.exitBottomSheetDuration = kBottomSheetExitDuration,
     this.curve,
   }) {
     RouterReportManager.instance.reportCurrentRoute(this);
@@ -44,7 +44,7 @@ class JetModalBottomSheetRoute<T> extends PopupRoute<T> {
   final bool removeTop;
 
   @override
-  Duration get transitionDuration => const Duration(milliseconds: 700);
+  Duration get transitionDuration => kBottomSheetTransitionDuration;
 
   @override
   bool get barrierDismissible => isDismissible;
@@ -59,6 +59,12 @@ class JetModalBottomSheetRoute<T> extends PopupRoute<T> {
 
   @override
   void dispose() {
+    // Notify route-bound bindings/controllers that this sheet is going
+    // away so JetX can release dependencies linked to it. The
+    // [AnimationController] itself is owned by [TransitionRoute] and
+    // disposed by `super.dispose()` (since `willDisposeAnimationController`
+    // defaults to true), so we must NOT dispose it again here.
+    RouterReportManager.instance.reportRouteWillDispose(this);
     RouterReportManager.instance.reportRouteDispose(this);
     super.dispose();
   }

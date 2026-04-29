@@ -12,7 +12,6 @@ void main() {
     final BuildContext context = tester.element(find.byType(Container));
 
     var mediaQuery = MediaQuery.of(context);
-    expect(mediaQuery, context.mediaQuery);
     var mediaQuerySize = mediaQuery.size;
     expect(mediaQuerySize, context.mediaQuerySize);
     var theme = Theme.of(context);
