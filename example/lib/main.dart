@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:jetx/jetx.dart';
 
 // import 'lang/translation_service.dart';
 // import 'routes/app_pages.dart';
@@ -14,7 +14,7 @@ import 'package:get/get.dart';
 
 //   @override
 //   Widget build(BuildContext context) {
-//     return GetMaterialApp(
+//     return JetMaterialApp(
 //       theme: ThemeData(useMaterial3: true),
 //       debugShowCheckedModeBanner: false,
 //       enableLog: true,
@@ -38,22 +38,22 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
+    return JetMaterialApp(
       getPages: [
-        GetPage(
+        JetPage(
             participatesInRootNavigator: true,
             name: '/first',
             page: () => const First()),
-        GetPage(
+        JetPage(
           name: '/second',
           page: () => const Second(),
           transition: Transition.downToUp,
         ),
-        GetPage(
+        JetPage(
           name: '/third',
           page: () => const Third(),
         ),
-        GetPage(
+        JetPage(
           name: '/fourth',
           page: () => const Fourth(),
         ),
@@ -63,7 +63,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class FirstController extends GetxController {
+class FirstController extends JetxController {
   @override
   void onClose() {
     print('on close first');
@@ -77,14 +77,14 @@ class First extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print('First rebuild');
-    Get.put(FirstController());
+    Jet.put(FirstController());
     return Scaffold(
       appBar: AppBar(
         title: const Text('page one'),
         leading: IconButton(
           icon: const Icon(Icons.more),
           onPressed: () {
-            Get.snackbar(
+            Jet.snackbar(
               'title',
               "message",
               mainButton:
@@ -94,8 +94,8 @@ class First extends StatelessWidget {
               snackbarStatus: (status) => print(status),
             );
             // print('THEME CHANGED');
-            // Get.changeTheme(
-            //     Get.isDarkMode ? ThemeData.light() : ThemeData.dark());
+            // Jet.changeTheme(
+            //     Jet.isDarkMode ? ThemeData.light() : ThemeData.dark());
           },
         ),
       ),
@@ -105,7 +105,7 @@ class First extends StatelessWidget {
           width: 300,
           child: ElevatedButton(
             onPressed: () {
-              Get.toNamed('/second?id=123');
+              Jet.toNamed('/second?id=123');
             },
             child: const Text('next screen'),
           ),
@@ -115,7 +115,7 @@ class First extends StatelessWidget {
   }
 }
 
-class SecondController extends GetxController {
+class SecondController extends JetxController {
   final textEdit = TextEditingController();
   @override
   void onClose() {
@@ -130,14 +130,14 @@ class Second extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(SecondController());
+    final controller = Jet.put(SecondController());
     print('second rebuild');
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) => print('pop invoked'),
       child: Scaffold(
         appBar: AppBar(
-          title: Text('page two ${Get.parameters["id"]}'),
+          title: Text('page two ${Jet.parameters["id"]}'),
         ),
         body: Center(
           child: Column(
@@ -151,7 +151,7 @@ class Second extends StatelessWidget {
                 width: 300,
                 child: ElevatedButton(
                   onPressed: () {
-                    Get.toNamed('/third');
+                    Jet.toNamed('/third');
                   },
                   child: const Text('next screen'),
                 ),
@@ -180,8 +180,8 @@ class Third extends StatelessWidget {
           width: 300,
           child: ElevatedButton(
             onPressed: () {
-              Get.offNamedUntil('/fourth', (route) {
-                return Get.currentRoute == '/first';
+              Jet.offNamedUntil('/fourth', (route) {
+                return Jet.currentRoute == '/first';
               });
             },
             child: const Text('go to first screen'),
@@ -208,7 +208,7 @@ class Fourth extends StatelessWidget {
           width: 300,
           child: ElevatedButton(
             onPressed: () {
-              Get.back();
+              Jet.back();
             },
             child: const Text('go to first screen'),
           ),

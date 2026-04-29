@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:jetx/jetx.dart';
 
 import './services/auth_service.dart';
 import 'app/routes/app_pages.dart';
 
 void main() {
   runApp(
-    GetMaterialApp(
+    JetMaterialApp(
       title: "Application",
       binds: [
         Bind.put(AuthService()),
@@ -16,7 +16,7 @@ void main() {
       // builder: (context, child) {
       //   return FutureBuilder<void>(
       //     key: ValueKey('initFuture'),
-      //     future: Get.find<SplashService>().init(),
+      //     future: Jet.find<SplashService>().init(),
       //     builder: (context, snapshot) {
       //       if (snapshot.connectionState == ConnectionState.done) {
       //         return child ?? SizedBox.shrink();
@@ -25,10 +25,10 @@ void main() {
       //     },
       //   );
       // },
-      // routeInformationParser: GetInformationParser(
+      // routeInformationParser: JetInformationParser(
       //     // initialRoute: Routes.HOME,
       //     ),
-      // routerDelegate: GetDelegate(
+      // routerDelegate: JetDelegate(
       //   backButtonPopMode: PopMode.History,
       //   preventDuplicateHandlingMode:
       //       PreventDuplicateHandlingMode.ReorderRoutes,

@@ -1,4 +1,4 @@
-import 'package:get/get.dart';
+import 'package:jetx/jetx.dart';
 
 import '../data/home_api_provider.dart';
 import '../data/home_repository.dart';
@@ -10,8 +10,8 @@ class HomeBinding extends Binding {
   List<Bind> dependencies() {
     return [
       Bind.lazyPut<IHomeProvider>(() => HomeProvider()),
-      Bind.lazyPut<IHomeRepository>(() => HomeRepository(provider: Get.find())),
-      Bind.lazyPut(() => HomeController(homeRepository: Get.find())),
+      Bind.lazyPut<IHomeRepository>(() => HomeRepository(provider: Jet.find())),
+      Bind.lazyPut(() => HomeController(homeRepository: Jet.find())),
     ];
   }
 }

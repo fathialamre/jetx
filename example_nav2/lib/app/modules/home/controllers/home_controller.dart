@@ -1,3 +1,3 @@
-import 'package:get/get.dart';
+import 'package:jetx/jetx.dart';
 
-class HomeController extends GetxController {}
+class HomeController extends JetxController {}

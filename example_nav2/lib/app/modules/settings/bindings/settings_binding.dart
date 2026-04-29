@@ -1,4 +1,4 @@
-import 'package:get/get.dart';
+import 'package:jetx/jetx.dart';
 
 import '../controllers/settings_controller.dart';
 

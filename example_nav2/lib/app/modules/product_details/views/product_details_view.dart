@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:jetx/jetx.dart';
 
 import '../controllers/product_details_controller.dart';
 
-class ProductDetailsView extends GetWidget<ProductDetailsController> {
+class ProductDetailsView extends JetWidget<ProductDetailsController> {
   const ProductDetailsView({super.key});
 
   @override

@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:jetx/jetx.dart';
 
 import '../middleware/auth_middleware.dart';
 import '../modules/dashboard/bindings/dashboard_binding.dart';
@@ -29,14 +29,14 @@ class AppPages {
   static const initial = Routes.home;
 
   static final routes = [
-    GetPage(
+    JetPage(
       name: '/',
       page: () => const RootView(),
       bindings: [RootBinding()],
       participatesInRootNavigator: true,
       preventDuplicates: true,
       children: [
-        GetPage(
+        JetPage(
           middlewares: [
             //only enter this route when not authed
             EnsureNotAuthedMiddleware(),
@@ -45,7 +45,7 @@ class AppPages {
           page: () => const LoginView(),
           bindings: [LoginBinding()],
         ),
-        GetPage(
+        JetPage(
           preventDuplicates: true,
           name: _Paths.home,
           page: () => const HomeView(),
@@ -54,14 +54,14 @@ class AppPages {
           ],
           title: null,
           children: [
-            GetPage(
+            JetPage(
               name: _Paths.dashboard,
               page: () => const DashboardView(),
               bindings: [
                 DashboardBinding(),
               ],
             ),
-            GetPage(
+            JetPage(
               middlewares: [
                 //only enter this route when authed
                 EnsureAuthMiddleware(),
@@ -72,7 +72,7 @@ class AppPages {
               transition: Transition.size,
               bindings: [ProfileBinding()],
             ),
-            GetPage(
+            JetPage(
               name: _Paths.products,
               page: () => const ProductsView(),
               title: 'Products',
@@ -81,7 +81,7 @@ class AppPages {
               participatesInRootNavigator: false,
               bindings: [ProductsBinding(), ProductDetailsBinding()],
               children: [
-                GetPage(
+                JetPage(
                   name: _Paths.productDetails,
                   transition: Transition.cupertino,
                   showCupertinoParallax: true,
@@ -96,7 +96,7 @@ class AppPages {
             ),
           ],
         ),
-        GetPage(
+        JetPage(
           name: _Paths.settings,
           page: () => const SettingsView(),
           bindings: [
@@ -108,7 +108,7 @@ class AppPages {
   ];
 }
 
-class MainMiddleware extends GetMiddleware {
+class MainMiddleware extends JetMiddleware {
   @override
   void onPageDispose() {
     log('MainMiddleware onPageDispose');
@@ -122,7 +122,7 @@ class MainMiddleware extends GetMiddleware {
   }
 
   @override
-  GetPage? onPageCalled(GetPage? page) {
+  JetPage? onPageCalled(JetPage? page) {
     log('MainMiddleware onPageCalled for route: ${page?.name}');
     return super.onPageCalled(page);
   }
@@ -134,7 +134,7 @@ class MainMiddleware extends GetMiddleware {
   }
 
   @override
-  GetPageBuilder? onPageBuildStart(GetPageBuilder? page) {
+  JetPageBuilder? onPageBuildStart(JetPageBuilder? page) {
     log('MainMiddleware onPageBuildStart');
 
     return super.onPageBuildStart(page);

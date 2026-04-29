@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:jetx/jetx.dart';
 
 import '../../../../services/auth_service.dart';
 import '../../../routes/app_pages.dart';
 import '../controllers/login_controller.dart';
 
-class LoginView extends GetView<LoginController> {
+class LoginView extends JetView<LoginController> {
   const LoginView({super.key});
 
   @override
@@ -34,7 +34,7 @@ class LoginView extends GetView<LoginController> {
               onPressed: () {
                 AuthService.to.login();
                 final thenTo = context.params['then'];
-                Get.offNamed(thenTo ?? Routes.home);
+                Jet.offNamed(thenTo ?? Routes.home);
               },
             ),
           ],

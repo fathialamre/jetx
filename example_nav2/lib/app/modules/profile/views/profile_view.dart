@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:jetx/jetx.dart';
 
 import '../../../routes/app_pages.dart';
 import '../controllers/profile_controller.dart';
 
-class ProfileView extends GetView<ProfileController> {
+class ProfileView extends JetView<ProfileController> {
   const ProfileView({super.key});
 
   @override
@@ -27,7 +27,7 @@ class ProfileView extends GetView<ProfileController> {
               child: const Text('Show a test dialog'),
               onPressed: () {
                 //shows a dialog
-                Get.defaultDialog(
+                Jet.defaultDialog(
                   title: 'Test Dialog !!',
                   barrierDismissible: true,
                 );
@@ -37,11 +37,11 @@ class ProfileView extends GetView<ProfileController> {
               child: const Text('Show a test dialog in Home router outlet'),
               onPressed: () {
                 //shows a dialog
-                Get.defaultDialog(
+                Jet.defaultDialog(
                   title: 'Test Dialog In Home Outlet !!',
                   barrierDismissible: true,
                   id: Routes.home,
-                  // navigatorKey: Get.nestedKey(Routes.HOME),
+                  // navigatorKey: Jet.nestedKey(Routes.HOME),
                 );
               },
             )

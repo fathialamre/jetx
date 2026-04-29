@@ -1,11 +1,11 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:jetx/jetx.dart';
 
 import '../controllers/home_controller.dart';
 
-class HomeView extends GetView<HomeController> {
+class HomeView extends JetView<HomeController> {
   const HomeView({Key? key}) : super(key: key);
 
   @override
@@ -41,7 +41,7 @@ class HomeView extends GetView<HomeController> {
               leading: IconButton(
                 icon: const Icon(Icons.add, color: Colors.white, size: 28),
                 onPressed: () {
-                  Get.snackbar(
+                  Jet.snackbar(
                     'New Feature',
                     'Coming soon!',
                     snackPosition: SnackPosition.bottom,
@@ -81,7 +81,7 @@ class HomeView extends GetView<HomeController> {
                         shadowColor: Colors.blueAccent.withValues(alpha: 0.5),
                       ),
                       onPressed: () {
-                        Get.updateLocale(Get.locale?.languageCode == 'en'
+                        Jet.updateLocale(Jet.locale?.languageCode == 'en'
                             ? const Locale('pt', 'BR')
                             : const Locale('en', 'EN'));
                       },
@@ -112,10 +112,10 @@ class HomeView extends GetView<HomeController> {
                                 color: Colors.white.withValues(alpha: 0.9),
                                 child: ListTile(
                                   onTap: () async {
-                                    final data = await Get.toNamed(
+                                    final data = await Jet.toNamed(
                                         '/home/details',
                                         arguments: country);
-                                    if (data != null) Get.log(data);
+                                    if (data != null) Jet.log(data);
                                   },
                                   contentPadding: EdgeInsets.symmetric(
                                       horizontal: 20, vertical: 16),

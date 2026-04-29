@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/get.dart';
+import 'package:jetx/jetx.dart';
 
 import 'utils/wrapper.dart';
 
 void main() {
-  testWidgets("Get.bottomSheet smoke test", (tester) async {
+  testWidgets("Jet.bottomSheet smoke test", (tester) async {
     await tester.pumpWidget(
       Wrapper(child: Container()),
     );
 
     await tester.pump();
 
-    Get.bottomSheet(Wrap(
+    Jet.bottomSheet(Wrap(
       children: <Widget>[
         ListTile(
           leading: const Icon(Icons.music_note),
@@ -27,14 +27,14 @@ void main() {
     expect(find.byIcon(Icons.music_note), findsOneWidget);
   });
 
-  testWidgets("Get.bottomSheet close test", (tester) async {
+  testWidgets("Jet.bottomSheet close test", (tester) async {
     await tester.pumpWidget(
       Wrapper(child: Container()),
     );
 
     await tester.pump();
 
-    Get.bottomSheet(Wrap(
+    Jet.bottomSheet(Wrap(
       children: <Widget>[
         ListTile(
           leading: const Icon(Icons.music_note),
@@ -46,30 +46,30 @@ void main() {
 
     await tester.pumpAndSettle();
 
-    expect(Get.isBottomSheetOpen, true);
+    expect(Jet.isBottomSheetOpen, true);
 
-    Get.backLegacy();
+    Jet.backLegacy();
     await tester.pumpAndSettle();
 
-    expect(Get.isBottomSheetOpen, false);
+    expect(Jet.isBottomSheetOpen, false);
 
-    // expect(() => Get.bottomSheet(Container(), isScrollControlled: null),
+    // expect(() => Jet.bottomSheet(Container(), isScrollControlled: null),
     //     throwsAssertionError);
 
-    // expect(() => Get.bottomSheet(Container(), isDismissible: null),
+    // expect(() => Jet.bottomSheet(Container(), isDismissible: null),
     //     throwsAssertionError);
 
-    // expect(() => Get.bottomSheet(Container(), enableDrag: null),
+    // expect(() => Jet.bottomSheet(Container(), enableDrag: null),
     //     throwsAssertionError);
 
     await tester.pumpAndSettle();
   });
 
   // testWidgets(
-  //   "GetMaterialApp with debugShowMaterialGrid null",
+  //   "JetMaterialApp with debugShowMaterialGrid null",
   //   (tester) async {
   //     expect(
-  //       () => GetMaterialApp(
+  //       () => JetMaterialApp(
   //         debugShowMaterialGrid: null,
   //       ),
   //       throwsAssertionError,

@@ -1,12 +1,12 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:get_demo/pages/home/domain/entity/country_model.dart';
+import 'package:jetx/jetx.dart';
+import 'package:jetx_demo/pages/home/domain/entity/country_model.dart';
 
 import '../controllers/details_controller.dart';
 
-class DetailsView extends GetView<DetailsController> {
+class DetailsView extends JetView<DetailsController> {
   const DetailsView({Key? key}) : super(key: key);
 
   @override

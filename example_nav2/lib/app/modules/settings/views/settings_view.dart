@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:jetx/jetx.dart';
 
 import '../controllers/settings_controller.dart';
 
-class SettingsView extends GetView<SettingsController> {
+class SettingsView extends JetView<SettingsController> {
   const SettingsView({super.key});
 
   @override

@@ -1,8 +1,8 @@
-import 'package:get/get.dart';
+import 'package:jetx/jetx.dart';
 
 import '../../../../models/demo_product.dart';
 
-class ProductsController extends GetxController {
+class ProductsController extends JetxController {
   final products = <DemoProduct>[].obs;
 
   void loadDemoProductsFromSomeWhere() {
@@ -22,7 +22,7 @@ class ProductsController extends GetxController {
 
   @override
   void onClose() {
-    Get.printInfo(info: 'Products: onClose');
+    Jet.printInfo(info: 'Products: onClose');
     super.onClose();
   }
 }

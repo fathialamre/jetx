@@ -1,5 +1,5 @@
-import 'package:get/get.dart';
-import 'package:get_demo/pages/home/bindings/details_binding.dart';
+import 'package:jetx/jetx.dart';
+import 'package:jetx_demo/pages/home/bindings/details_binding.dart';
 
 import '../pages/home/bindings/home_binding.dart';
 import '../pages/home/presentation/views/details_view.dart';
@@ -12,12 +12,12 @@ class AppPages {
   static const INITIAL = Routes.HOME;
 
   static final routes = [
-    GetPage(
+    JetPage(
       name: Routes.HOME,
       page: () => const HomeView(),
       binding: HomeBinding(),
       children: [
-        GetPage(
+        JetPage(
             name: Routes.DETAILS,
             page: () => const DetailsView(),
             binding: DetailsBinding()),

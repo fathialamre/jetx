@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:jetx/jetx.dart';
 
 import '../../../routes/app_pages.dart';
 import '../controllers/home_controller.dart';
 
-class HomeView extends GetView<HomeController> {
+class HomeView extends JetView<HomeController> {
   const HomeView({super.key});
 
   @override
@@ -17,11 +17,11 @@ class HomeView extends GetView<HomeController> {
           height: 25,
         ),
         Expanded(
-          child: GetRouterOutlet.builder(
+          child: JetRouterOutlet.builder(
             route: Routes.home,
             builder: (context) {
               return Scaffold(
-                body: GetRouterOutlet(
+                body: JetRouterOutlet(
                   initialRoute: Routes.dashboard,
                   anchorRoute: Routes.home,
                 ),

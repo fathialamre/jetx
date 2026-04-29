@@ -1,4 +1,4 @@
-import 'package:get/get.dart';
+import 'package:jetx/jetx.dart';
 
 import '../controllers/product_details_controller.dart';
 
@@ -8,7 +8,7 @@ class ProductDetailsBinding extends Binding {
     return [
       Bind.spawn<ProductDetailsController>(
         () => ProductDetailsController(
-          Get.parameters['productId'] ?? '',
+          Jet.parameters['productId'] ?? '',
         ),
       )
     ];

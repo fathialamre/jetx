@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:jetx/jetx.dart';
 
 import '../../../routes/app_pages.dart';
 import '../controllers/root_controller.dart';
 import 'drawer.dart';
 
-class RootView extends GetView<RootController> {
+class RootView extends JetView<RootController> {
   const RootView({super.key});
 
   @override
@@ -21,7 +21,7 @@ class RootView extends GetView<RootController> {
       ),
       //body: HomeView(),
 
-      body: GetRouterOutlet(
+      body: JetRouterOutlet(
         initialRoute: Routes.home,
         anchorRoute: '/',
       ),

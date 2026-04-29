@@ -1,4 +1,4 @@
-import 'package:get/get.dart';
+import 'package:jetx/jetx.dart';
 
 import '../../domain/adapters/repository_adapter.dart';
 import '../../domain/entity/country_model.dart';
@@ -12,10 +12,10 @@ class DetailsController extends StateController<Country> {
   @override
   void onInit() {
     super.onInit();
-    country = Get.arguments;
+    country = Jet.arguments;
     final countryName = country?.country;
     if (countryName == null) {
-      change(GetStatus.error('Country not found'));
+      change(JetStatus.error('Country not found'));
     } else {
       //Loading, Success, Error handle with 1 line of code
       futurize(() => homeRepository.getCountry(countryName));

@@ -1,6 +1,6 @@
-import 'package:get/get.dart';
+import 'package:jetx/jetx.dart';
 
-class RootController extends GetxController {
+class RootController extends JetxController {
   final count = 0.obs;
   @override
   void onInit() {

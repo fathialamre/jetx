@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:jetx/jetx.dart';
 
 import '../../../routes/app_pages.dart';
 import '../controllers/products_controller.dart';
 
-class ProductsView extends GetView<ProductsController> {
+class ProductsView extends JetView<ProductsController> {
   const ProductsView({super.key});
   @override
   Widget build(BuildContext context) {
@@ -32,7 +32,7 @@ class ProductsView extends GetView<ProductsController> {
                     final item = controller.products[index];
                     return ListTile(
                       onTap: () {
-                        Get.toNamed(Routes.PRODUCT_DETAILS(item.id));
+                        Jet.toNamed(Routes.PRODUCT_DETAILS(item.id));
                       },
                       title: Text(item.name),
                       subtitle: Text(item.id),

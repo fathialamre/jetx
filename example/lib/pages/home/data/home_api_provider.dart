@@ -1,4 +1,4 @@
-import 'package:get/get.dart';
+import 'package:jetx/jetx.dart';
 
 import '../../../shared/constants/endpoints.dart';
 import '../domain/entity/country_model.dart';
@@ -10,7 +10,7 @@ abstract class IHomeProvider {
   Future<Response<Country>> getCountry(String path);
 }
 
-class HomeProvider extends GetConnect implements IHomeProvider {
+class HomeProvider extends JetConnect implements IHomeProvider {
   @override
   void onInit() {
     httpClient.baseUrl = API_URL;

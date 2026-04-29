@@ -2,12 +2,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/get.dart';
-import 'package:get/get_navigation/src/routes/test_kit.dart';
-import 'package:get_demo/pages/home/domain/adapters/repository_adapter.dart';
-import 'package:get_demo/pages/home/domain/entity/country_model.dart';
-import 'package:get_demo/pages/home/presentation/controllers/details_controller.dart';
-import 'package:get_demo/pages/home/presentation/controllers/home_controller.dart';
+import 'package:jetx/jetx.dart';
+import 'package:jetx/jet_navigation/src/routes/test_kit.dart';
+import 'package:jetx_demo/pages/home/domain/adapters/repository_adapter.dart';
+import 'package:jetx_demo/pages/home/domain/entity/country_model.dart';
+import 'package:jetx_demo/pages/home/presentation/controllers/details_controller.dart';
+import 'package:jetx_demo/pages/home/presentation/controllers/home_controller.dart';
 
 // Mock data
 const country1 = CountriesItem(
@@ -59,7 +59,7 @@ class TestHomeBinding extends Binding {
   List<Bind> dependencies() => [
         Bind.lazyPut<IHomeRepository>(() => repository),
         Bind.lazyPut<HomeController>(
-          () => HomeController(homeRepository: Get.find()),
+          () => HomeController(homeRepository: Jet.find()),
         ),
       ];
 }
@@ -72,7 +72,7 @@ class TestDetailsBinding extends Binding {
   List<Bind> dependencies() => [
         Bind.lazyPut<IHomeRepository>(() => repository),
         Bind.lazyPut<DetailsController>(
-          () => DetailsController(homeRepository: Get.find()),
+          () => DetailsController(homeRepository: Jet.find()),
         ),
       ];
 }
@@ -81,15 +81,15 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   setUpAll(() {
     HttpOverrides.global = null;
-    GetTestMode.active = true;
+    JetTestMode.active = true;
   });
 
-  setUp(() => Get.reset());
+  setUp(() => Jet.reset());
 
   group('HomeController Tests', () {
     test('Success Scenario', () async {
       TestHomeBinding(repository: MockRepositorySuccess()).dependencies();
-      final controller = Get.find<HomeController>();
+      final controller = Jet.find<HomeController>();
 
       expect(controller.initialized, isTrue);
 
@@ -102,7 +102,7 @@ void main() {
 
     test('Failure Scenario', () async {
       TestHomeBinding(repository: MockRepositoryFailure()).dependencies();
-      final controller = Get.find<HomeController>();
+      final controller = Jet.find<HomeController>();
 
       expect(controller.initialized, isTrue);
 
@@ -116,8 +116,8 @@ void main() {
   group('DetailsController Tests', () {
     test('Success Scenario', () async {
       TestDetailsBinding(repository: MockRepositorySuccess()).dependencies();
-      GetTestMode.setTestArguments(country1);
-      final controller = Get.find<DetailsController>();
+      JetTestMode.setTestArguments(country1);
+      final controller = Jet.find<DetailsController>();
 
       expect(controller.initialized, isTrue);
 
@@ -132,8 +132,8 @@ void main() {
 
     test('Failure Scenario', () async {
       TestDetailsBinding(repository: MockRepositoryFailure()).dependencies();
-      GetTestMode.setTestArguments(country1);
-      final controller = Get.find<DetailsController>();
+      JetTestMode.setTestArguments(country1);
+      final controller = Jet.find<DetailsController>();
 
       expect(controller.initialized, isTrue);
 

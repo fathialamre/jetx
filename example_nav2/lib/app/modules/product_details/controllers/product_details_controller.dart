@@ -1,18 +1,18 @@
-import 'package:get/get.dart';
+import 'package:jetx/jetx.dart';
 
-class ProductDetailsController extends GetxController {
+class ProductDetailsController extends JetxController {
   final String productId;
 
   ProductDetailsController(this.productId);
   @override
   void onInit() {
     super.onInit();
-    Get.log('ProductDetailsController created with id: $productId');
+    Jet.log('ProductDetailsController created with id: $productId');
   }
 
   @override
   void onClose() {
-    Get.log('ProductDetailsController close with id: $productId');
+    Jet.log('ProductDetailsController close with id: $productId');
 
     super.onClose();
   }

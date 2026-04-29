@@ -1,9 +1,9 @@
-import 'package:get/get.dart';
+import 'package:jetx/jetx.dart';
 
 import '../../services/auth_service.dart';
 import '../routes/app_pages.dart';
 
-class EnsureAuthMiddleware extends GetMiddleware {
+class EnsureAuthMiddleware extends JetMiddleware {
   @override
   Future<RouteDecoder?> redirectDelegate(RouteDecoder route) async {
     // you can do whatever you want here
@@ -18,7 +18,7 @@ class EnsureAuthMiddleware extends GetMiddleware {
   }
 }
 
-class EnsureNotAuthedMiddleware extends GetMiddleware {
+class EnsureNotAuthedMiddleware extends JetMiddleware {
   @override
   Future<RouteDecoder?> redirectDelegate(RouteDecoder route) async {
     if (AuthService.to.isLoggedInValue) {

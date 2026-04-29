@@ -1,7 +1,7 @@
-import 'package:get/get.dart';
+import 'package:jetx/jetx.dart';
 
-class AuthService extends GetxService {
-  static AuthService get to => Get.find();
+class AuthService extends JetxService {
+  static AuthService get to => Jet.find();
 
   /// Mocks a login process
   final isLoggedIn = false.obs;

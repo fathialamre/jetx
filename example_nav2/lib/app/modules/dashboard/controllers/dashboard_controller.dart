@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:get/get.dart';
+import 'package:jetx/jetx.dart';
 
-class DashboardController extends GetxController {
+class DashboardController extends JetxController {
   final now = DateTime.now().obs;
   @override
   void onReady() {
