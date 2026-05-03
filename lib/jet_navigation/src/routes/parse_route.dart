@@ -16,12 +16,11 @@ class RouteDecoder {
     final args = PageSettings(uri);
     final decoder =
         (Jet.rootController.rootDelegate).matchRoute(location, arguments: args);
-    decoder.route = decoder.route?.copyWith(
+    return decoder.replaceLast(decoder.route?.copyWith(
       completer: null,
       arguments: args,
       parameters: args.params,
-    );
-    return decoder;
+    ));
   }
 
   JetPage? get route =>
@@ -30,14 +29,32 @@ class RouteDecoder {
   JetPage routeOrUnknown(JetPage onUnknow) =>
       currentTreeBranch.isEmpty ? onUnknow : currentTreeBranch.last;
 
-  set route(JetPage? getPage) {
-    if (getPage == null) return;
+  /// Returns a copy of this decoder with the last entry of
+  /// [currentTreeBranch] replaced by [newRoute]. If the branch is empty
+  /// the new route becomes the only entry. Passing `null` returns `this`
+  /// unchanged.
+  ///
+  /// Use this in place of mutating the previous `set route` setter; the
+  /// type is `@immutable` and external mutation breaks equality + hash
+  /// invariants relied on by caching and observer code.
+  RouteDecoder replaceLast(JetPage? newRoute) {
+    if (newRoute == null) return this;
     if (currentTreeBranch.isEmpty) {
-      currentTreeBranch.add(getPage);
-    } else {
-      currentTreeBranch[currentTreeBranch.length - 1] = getPage;
+      return RouteDecoder([newRoute], pageSettings);
     }
+    final newBranch = List<JetPage>.from(currentTreeBranch);
+    newBranch[newBranch.length - 1] = newRoute;
+    return RouteDecoder(newBranch, pageSettings);
   }
+
+  RouteDecoder copyWith({
+    List<JetPage>? currentTreeBranch,
+    PageSettings? pageSettings,
+  }) =>
+      RouteDecoder(
+        currentTreeBranch ?? this.currentTreeBranch,
+        pageSettings ?? this.pageSettings,
+      );
 
   List<JetPage>? get currentChildren => route?.children;
 
@@ -74,7 +91,8 @@ class RouteDecoder {
   }
 
   @override
-  int get hashCode => currentTreeBranch.hashCode ^ pageSettings.hashCode;
+  int get hashCode =>
+      Object.hash(Object.hashAll(currentTreeBranch), pageSettings);
 
   @override
   String toString() =>

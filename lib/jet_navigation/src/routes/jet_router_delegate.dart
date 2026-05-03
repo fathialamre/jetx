@@ -551,7 +551,7 @@ class JetDelegate extends RouterDelegate<RouteDecoder>
     final newPredicate = predicate ?? (route) => false;
 
     while (_activePages.length > 1 && !newPredicate(_activePages.last.route!)) {
-      _activePages.removeLast();
+      _popAndNotifyDispose();
     }
 
     return _push(route);
@@ -584,7 +584,7 @@ class JetDelegate extends RouterDelegate<RouteDecoder>
     if (route == null) return null;
 
     while (_activePages.isNotEmpty && !predicate(_activePages.last.route!)) {
-      _popWithResult();
+      _popAndNotifyDispose();
     }
 
     return _push<T>(route);
@@ -597,7 +597,7 @@ class JetDelegate extends RouterDelegate<RouteDecoder>
     Object? arguments,
   ]) async {
     while (_activePages.isNotEmpty && !predicate(_activePages.last.route!)) {
-      _popWithResult();
+      _popAndNotifyDispose();
     }
 
     return to<T>(page, arguments: arguments);
@@ -739,56 +739,82 @@ class JetDelegate extends RouterDelegate<RouteDecoder>
       decoder.parameters.addAll(parameters);
     }
 
-    decoder.route = decoder.route?.copyWith(
+    return decoder.replaceLast(decoder.route?.copyWith(
       completer: _activePages.isEmpty ? null : Completer<T?>(),
       arguments: arguments,
       parameters: parameters,
       key: ValueKey(arguments.name),
-    );
-
-    return decoder;
+    ));
   }
 
+  /// Serialization lock for [_push]. Concurrent navigations awaiting async
+  /// middleware would otherwise interleave their `_activePages` mutations and
+  /// produce a stack whose order does not match the call order. Each `_push`
+  /// awaits the prior one before reading or writing `_activePages`.
+  Future<void>? _navigationLock;
+
   Future<T?> _push<T>(RouteDecoder decoder, {bool rebuildStack = true}) async {
-    var res = await runMiddleware(decoder);
-    if (res == null) return null;
-    // final res = mid ?? decoder;
-    // if (res == null) res = decoder;
+    final priorLock = _navigationLock;
+    final lockCompleter = Completer<void>();
+    _navigationLock = lockCompleter.future;
 
-    final preventDuplicateHandlingMode =
-        res.route?.preventDuplicateHandlingMode ??
-            PreventDuplicateHandlingMode.reorderRoutes;
+    try {
+      if (priorLock != null) {
+        await priorLock;
+      }
 
-    final onStackPage = _activePages
-        .firstWhereOrNull((element) => element.route?.key == res.route?.key);
+      final res = await runMiddleware(decoder);
+      if (res == null) {
+        // Middleware refused this navigation. Resolve the awaiting future on
+        // the original decoder's completer so callers of `Jet.toNamed` etc.
+        // do not hang forever.
+        final cancelled = decoder.route?.completer;
+        if (cancelled != null && !cancelled.isCompleted) {
+          cancelled.complete(null);
+        }
+        return null;
+      }
 
-    /// There are no duplicate routes in the stack
-    if (onStackPage == null) {
-      _activePages.add(res);
-    } else {
-      /// There are duplicate routes, reorder
-      switch (preventDuplicateHandlingMode) {
-        case PreventDuplicateHandlingMode.doNothing:
-          break;
-        case PreventDuplicateHandlingMode.reorderRoutes:
-          _activePages.remove(onStackPage);
-          _activePages.add(res);
-          break;
-        case PreventDuplicateHandlingMode.popUntilOriginalRoute:
-          while (_activePages.last == onStackPage) {
-            _popWithResult();
-          }
-          break;
-        case PreventDuplicateHandlingMode.recreate:
-          _activePages.remove(onStackPage);
-          _activePages.add(res);
+      final preventDuplicateHandlingMode =
+          res.route?.preventDuplicateHandlingMode ??
+              PreventDuplicateHandlingMode.reorderRoutes;
+
+      final onStackPage = _activePages
+          .firstWhereOrNull((element) => element.route?.key == res.route?.key);
+
+      /// There are no duplicate routes in the stack
+      if (onStackPage == null) {
+        _activePages.add(res);
+      } else {
+        /// There are duplicate routes, reorder
+        switch (preventDuplicateHandlingMode) {
+          case PreventDuplicateHandlingMode.doNothing:
+            break;
+          case PreventDuplicateHandlingMode.reorderRoutes:
+            _activePages.remove(onStackPage);
+            _activePages.add(res);
+            break;
+          case PreventDuplicateHandlingMode.popUntilOriginalRoute:
+            while (_activePages.last == onStackPage) {
+              _popWithResult();
+            }
+            break;
+          case PreventDuplicateHandlingMode.recreate:
+            _activePages.remove(onStackPage);
+            _activePages.add(res);
+        }
+      }
+      if (rebuildStack) {
+        notifyListeners();
+      }
+
+      return decoder.route?.completer?.future as Future<T?>?;
+    } finally {
+      lockCompleter.complete();
+      if (identical(_navigationLock, lockCompleter.future)) {
+        _navigationLock = null;
       }
     }
-    if (rebuildStack) {
-      notifyListeners();
-    }
-
-    return decoder.route?.completer?.future as Future<T?>?;
   }
 
   @override
