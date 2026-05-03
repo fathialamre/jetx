@@ -718,6 +718,14 @@ Cannot read the previousTitle for a route that has not yet been installed''',
                 child: child,
               ));
 
+        case Transition.predictiveBack:
+          return const PredictiveBackPageTransitionsBuilder().buildTransitions(
+              route,
+              context,
+              animation,
+              secondaryAnimation,
+              child);
+
         default:
           final customTransition = JetRoot.of(context).config.customTransition;
 

@@ -19,6 +19,12 @@ enum Transition {
   size,
   circularReveal,
   native,
+
+  /// Android 14+ predictive back gesture transition. On other platforms
+  /// (or older Android) Flutter's [PredictiveBackPageTransitionsBuilder]
+  /// degrades gracefully to the platform default, so it is safe to set
+  /// app-wide.
+  predictiveBack,
 }
 
 typedef JetPageBuilder = Widget Function();

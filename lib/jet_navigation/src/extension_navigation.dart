@@ -1331,6 +1331,70 @@ extension JetNavigationExt on JetInterface {
   /// give name from previous route
   String get previousRoute => routing.previous;
 
+  /// Pushes a typed route. Resolves `routeData.location` (the URL) and
+  /// forwards through [toNamed], passing `routeData.arguments` if any.
+  /// Returns the future that completes when the pushed route pops.
+  ///
+  /// Pair with [JetRouteData] to model navigation targets as classes
+  /// instead of raw strings; eliminates a class of typo bugs and
+  /// supports IDE refactors.
+  Future<T?>? go<T>(JetRouteData routeData) => toNamed<T>(
+        routeData.location,
+        arguments: routeData.arguments,
+      );
+
+  /// Replaces the current route with a typed [routeData]. Same
+  /// semantics as `Jet.offNamed(...)` but takes a [JetRouteData].
+  Future<T?>? goReplacement<T>(JetRouteData routeData) => offNamed<T>(
+        routeData.location,
+        arguments: routeData.arguments,
+      );
+
+  /// Builds a navigation URL from a route [pattern], substituting
+  /// `:name` segments with values from [pathParams] and appending
+  /// [queryParams] as a query string. Path values are URL-encoded.
+  ///
+  /// Example:
+  /// ```dart
+  /// Jet.buildUrl('/user/:id/posts/:postId',
+  ///     pathParams: {'id': 42, 'postId': 9},
+  ///     queryParams: {'sort': 'asc'});
+  /// // -> /user/42/posts/9?sort=asc
+  /// ```
+  ///
+  /// Throws [ArgumentError] if any `:name` in [pattern] is not present
+  /// in [pathParams]. Pass `null` for either map (both default to empty).
+  String buildUrl(
+    String pattern, {
+    Map<String, Object?>? pathParams,
+    Map<String, Object?>? queryParams,
+  }) {
+    final params = pathParams ?? const <String, Object?>{};
+    final filled = pattern.replaceAllMapped(
+      RegExp(r':(\w+)'),
+      (m) {
+        final key = m.group(1)!;
+        if (!params.containsKey(key)) {
+          throw ArgumentError.value(pattern, 'pattern',
+              'Missing path param ":$key" in pathParams');
+        }
+        final value = params[key];
+        return Uri.encodeComponent(value?.toString() ?? '');
+      },
+    );
+
+    if (queryParams == null || queryParams.isEmpty) return filled;
+
+    final query = queryParams.entries
+        .where((e) => e.value != null)
+        .map((e) =>
+            '${Uri.encodeQueryComponent(e.key)}=${Uri.encodeQueryComponent(e.value.toString())}')
+        .join('&');
+    if (query.isEmpty) return filled;
+    final sep = filled.contains('?') ? '&' : '?';
+    return '$filled$sep$query';
+  }
+
   /// Immutable snapshot of the current page stack as [RouteRecord]s,
   /// bottom-most route first. Mirrors [JetDelegate.history].
   List<RouteRecord> get history => rootController.rootDelegate.history;
