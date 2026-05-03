@@ -53,6 +53,15 @@ class JetPage<T> extends Page<T> {
 
   final PreventDuplicateHandlingMode preventDuplicateHandlingMode;
 
+  /// Per-route fallback widget rendered when [page] (or its synchronous
+  /// build path) throws. Receives the error and stack trace. If null,
+  /// JetX renders a default `Material(child: Text(...))` so the app does
+  /// not blank out. Errors thrown deeper in the descendant tree fall
+  /// through to Flutter's `ErrorWidget.builder`; this hook only catches
+  /// synchronous build-time exceptions in the page factory.
+  final Widget Function(BuildContext context, Object error, StackTrace stack)?
+      errorBuilder;
+
   static void _defaultPopInvokedHandler(bool didPop, Object? result) {}
 
   JetPage({
@@ -86,6 +95,7 @@ class JetPage<T> extends Page<T> {
         PreventDuplicateHandlingMode.reorderRoutes,
     this.completer,
     this.inheritParentPath = true,
+    this.errorBuilder,
     LocalKey? key,
     super.canPop,
     super.onPopInvoked = _defaultPopInvokedHandler,
@@ -133,6 +143,7 @@ class JetPage<T> extends Page<T> {
     bool? canPop,
     PopInvokedWithResultCallback<T>? onPopInvoked,
     String? restorationId,
+    Widget Function(BuildContext, Object, StackTrace)? errorBuilder,
   }) {
     return JetPage(
       key: key ?? this.key,
@@ -169,6 +180,7 @@ class JetPage<T> extends Page<T> {
       canPop: canPop ?? this.canPop,
       onPopInvoked: onPopInvoked ?? this.onPopInvoked,
       restorationId: restorationId ?? restorationId,
+      errorBuilder: errorBuilder ?? this.errorBuilder,
     );
   }
 

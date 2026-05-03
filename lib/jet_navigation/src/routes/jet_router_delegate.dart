@@ -22,6 +22,8 @@ class JetDelegate extends RouterDelegate<RouteDecoder>
     PreventDuplicateHandlingMode preventDuplicateHandlingMode =
         PreventDuplicateHandlingMode.reorderRoutes,
     GlobalKey<NavigatorState>? navigatorKey,
+    Future<String?> Function(RouteRecord current)? globalRedirect,
+    Listenable? refreshListenable,
   }) {
     return JetDelegate(
       notFoundRoute: notFoundRoute,
@@ -31,6 +33,8 @@ class JetDelegate extends RouterDelegate<RouteDecoder>
       preventDuplicateHandlingMode: preventDuplicateHandlingMode,
       pages: pages,
       navigatorKey: navigatorKey,
+      globalRedirect: globalRedirect,
+      refreshListenable: refreshListenable,
     );
   }
 
@@ -47,6 +51,40 @@ class JetDelegate extends RouterDelegate<RouteDecoder>
       pickPagesForRootNavigator;
 
   List<RouteDecoder> get activePages => _activePages;
+
+  /// Listeners notified whenever the top-of-stack route changes. Powers
+  /// `Jet.addRouteChangeListener`. A `Set` so duplicate registrations are
+  /// silently no-op'd. Deduped by [RouteRecord] equality so rebuilds that
+  /// don't change the visible route stay quiet.
+  ///
+  /// We do not expose this as a `Stream` because broadcast subscriptions
+  /// kept `flutter_test`'s `pumpAndSettle` from terminating. A simple
+  /// listener API is enough for analytics / breadcrumb use cases and
+  /// avoids the test-framework interaction.
+  final Set<void Function(RouteRecord)> _routeChangeListeners =
+      <void Function(RouteRecord)>{};
+  RouteRecord? _lastEmittedRecord;
+
+  /// Register a callback fired on every distinct top-of-stack change.
+  /// Returns the same callback so the caller can later
+  /// [removeRouteChangeListener] it. Adding the same callback twice has
+  /// no effect.
+  void Function(RouteRecord) addRouteChangeListener(
+      void Function(RouteRecord) listener) {
+    _routeChangeListeners.add(listener);
+    return listener;
+  }
+
+  void removeRouteChangeListener(void Function(RouteRecord) listener) {
+    _routeChangeListeners.remove(listener);
+  }
+
+  /// Immutable snapshot of the current page stack as [RouteRecord]s,
+  /// bottom of stack first.
+  List<RouteRecord> get history => _activePages
+      .map((d) => d.toRecord())
+      .whereType<RouteRecord>()
+      .toList(growable: false);
 
   final _routeTree = ParseRouteTree(routes: []);
 
@@ -79,6 +117,20 @@ class JetDelegate extends RouterDelegate<RouteDecoder>
 
   final String? restorationScopeId;
 
+  /// Optional global pre-middleware redirect. Receives the [RouteRecord]
+  /// being navigated to; returning a non-null path swaps the destination
+  /// before per-route middleware runs. Returning null means "proceed".
+  /// Used together with [refreshListenable] to model auth flows where
+  /// changing observable state (login/logout) should re-evaluate the
+  /// current route.
+  final Future<String?> Function(RouteRecord current)? globalRedirect;
+
+  /// Optional [Listenable] whose notifications trigger re-evaluation of
+  /// the current top route's redirect. Typical pattern: a
+  /// `ValueNotifier<bool>` watching auth state — when it flips, the
+  /// current route is redirected through [globalRedirect] again.
+  final Listenable? refreshListenable;
+
   JetDelegate({
     JetPage? notFoundRoute,
     this.navigatorObservers,
@@ -91,6 +143,8 @@ class JetDelegate extends RouterDelegate<RouteDecoder>
     bool showHashOnUrl = false,
     GlobalKey<NavigatorState>? navigatorKey,
     required List<JetPage> pages,
+    this.globalRedirect,
+    this.refreshListenable,
   })  : navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>(),
         notFoundRoute = notFoundRoute ??= JetPage(
           name: '/404',
@@ -101,7 +155,16 @@ class JetDelegate extends RouterDelegate<RouteDecoder>
     if (!showHashOnUrl && JetPlatform.isWeb) setUrlStrategy();
     addPages(pages);
     addPage(notFoundRoute);
+    refreshListenable?.addListener(_onRefreshTriggered);
     Jet.log('JetDelegate is created !');
+  }
+
+  void _onRefreshTriggered() {
+    final cfg = currentConfiguration;
+    if (cfg == null) return;
+    // Run setNewRoutePath which routes through _push and therefore
+    // replays globalRedirect against the current top route.
+    setNewRoutePath(cfg);
   }
 
   Future<RouteDecoder?> runMiddleware(RouteDecoder config) async {
@@ -763,6 +826,21 @@ class JetDelegate extends RouterDelegate<RouteDecoder>
         await priorLock;
       }
 
+      // Phase 1.3: global redirect. Runs BEFORE per-route middleware so
+      // a top-level guard (e.g. auth) can swap the destination without
+      // every route having to opt-in. Null target means "proceed".
+      if (globalRedirect != null) {
+        final record = decoder.toRecord();
+        if (record != null) {
+          final target = await globalRedirect!(record);
+          if (target != null && target != record.name) {
+            final args = _buildPageSettings(target);
+            final redirected = _getRouteDecoder<T>(args);
+            if (redirected != null) decoder = redirected;
+          }
+        }
+      }
+
       final res = await runMiddleware(decoder);
       if (res == null) {
         // Middleware refused this navigation. Resolve the awaiting future on
@@ -897,5 +975,19 @@ class JetDelegate extends RouterDelegate<RouteDecoder>
     final completer = removed.route?.completer;
     if (completer != null && !completer.isCompleted) completer.complete();
     notifyListeners();
+  }
+
+  @override
+  void notifyListeners() {
+    super.notifyListeners();
+    final record = currentConfiguration?.toRecord();
+    if (record == _lastEmittedRecord) return;
+    _lastEmittedRecord = record;
+    if (record != null && _routeChangeListeners.isNotEmpty) {
+      // Snapshot to allow listeners to add/remove during dispatch.
+      for (final listener in _routeChangeListeners.toList()) {
+        listener(record);
+      }
+    }
   }
 }

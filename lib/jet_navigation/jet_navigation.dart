@@ -1,6 +1,8 @@
 library;
 
 export 'src/bottomsheet/bottomsheet.dart';
+export 'src/bottomsheet/bottomsheet_config.dart';
+export 'src/dialog/dialog_config.dart';
 export 'src/extension_navigation.dart';
 export 'src/root/jet_cupertino_app.dart';
 export 'src/root/jet_material_app.dart';
@@ -13,4 +15,5 @@ export 'src/routes/observers/route_observer.dart';
 export 'src/routes/route_middleware.dart';
 export 'src/routes/transitions_type.dart';
 export 'src/snackbar/snackbar.dart';
+export 'src/snackbar/snackbar_config.dart';
 export 'src/snackbar/snackbar_controller.dart';

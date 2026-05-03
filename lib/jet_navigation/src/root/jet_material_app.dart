@@ -67,6 +67,21 @@ class JetMaterialApp extends StatelessWidget {
   final BackButtonDispatcher? backButtonDispatcher;
   final bool useInheritedMediaQuery;
 
+  /// Optional global hook invoked whenever a route's page builder throws.
+  /// Wired through to [ConfigData.onException]; consumers typically point
+  /// this at their crash reporter (Sentry, Crashlytics).
+  final void Function(Object error, StackTrace stack)? onException;
+
+  /// Optional app-level redirect. Runs before per-route middleware on
+  /// every navigation; returning a non-null path swaps the target.
+  /// Pair with [refreshListenable] to re-evaluate when reactive state
+  /// (auth, feature flags) changes.
+  final Future<String?> Function(RouteRecord current)? redirect;
+
+  /// Optional [Listenable] that triggers re-evaluation of the current
+  /// route's [redirect] when notified.
+  final Listenable? refreshListenable;
+
   const JetMaterialApp({
     super.key,
     this.navigatorKey,
@@ -124,6 +139,9 @@ class JetMaterialApp extends StatelessWidget {
     this.highContrastTheme,
     this.highContrastDarkTheme,
     this.actions,
+    this.onException,
+    this.redirect,
+    this.refreshListenable,
   })  : routeInformationProvider = null,
         backButtonDispatcher = null,
         routeInformationParser = null,
@@ -183,6 +201,9 @@ class JetMaterialApp extends StatelessWidget {
     this.getPages,
     this.navigatorObservers,
     this.unknownRoute,
+    this.onException,
+    this.redirect,
+    this.refreshListenable,
   })  : navigatorKey = null,
         onGenerateRoute = null,
         home = null,
@@ -226,6 +247,9 @@ class JetMaterialApp extends StatelessWidget {
         darkTheme: darkTheme,
         themeMode: themeMode,
         defaultPopGesture: popGesture,
+        onException: onException,
+        redirect: redirect,
+        refreshListenable: refreshListenable,
       ),
       // binds: [
       //   Bind.lazyPut<JetMaterialController>(

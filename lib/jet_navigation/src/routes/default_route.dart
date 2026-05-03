@@ -1,6 +1,7 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 import '../../../jetx.dart';
+import '../root/jet_root.dart';
 import '../router_report.dart';
 
 @optionalTypeArgs
@@ -63,6 +64,7 @@ class JetPageRoute<T> extends PageRoute<T>
     this.maintainState = true,
     super.fullscreenDialog,
     this.middlewares,
+    this.errorBuilder,
   })  : bindings = (binding == null) ? bindings : [...bindings, binding],
         _middlewareRunner = MiddlewareRunner(middlewares);
 
@@ -92,6 +94,8 @@ class JetPageRoute<T> extends PageRoute<T>
   final Curve? curve;
   final Alignment? alignment;
   final List<JetMiddleware>? middlewares;
+  final Widget Function(BuildContext context, Object error, StackTrace stack)?
+      errorBuilder;
 
   @override
   final Color? barrierColor;
@@ -123,6 +127,21 @@ class JetPageRoute<T> extends PageRoute<T>
 
     final pageToBuild = _middlewareRunner.runOnPageBuildStart(page)!;
 
+    Widget safeBuild() {
+      try {
+        return pageToBuild();
+      } catch (error, stack) {
+        // Pull global onException via JetRootState if the tree is up; the
+        // null check protects test harnesses that build a JetPageRoute
+        // outside a JetRoot subtree.
+        if (JetRoot.treeInitialized) {
+          Jet.rootController.config.onException?.call(error, stack);
+        }
+        return _ErrorPageHost(
+            errorBuilder: errorBuilder, error: error, stack: stack);
+      }
+    }
+
     if (bindingsToBind != null && bindingsToBind.isNotEmpty) {
       if (bindingsToBind is List<BindingsInterface>) {
         for (final item in bindingsToBind) {
@@ -130,19 +149,19 @@ class JetPageRoute<T> extends PageRoute<T>
           if (dep is List<Bind>) {
             _child = Binds(
               binds: dep,
-              child: _middlewareRunner.runOnPageBuilt(pageToBuild()),
+              child: _middlewareRunner.runOnPageBuilt(safeBuild()),
             );
           }
         }
       } else if (bindingsToBind is List<Bind>) {
         _child = Binds(
           binds: bindingsToBind,
-          child: _middlewareRunner.runOnPageBuilt(pageToBuild()),
+          child: _middlewareRunner.runOnPageBuilt(safeBuild()),
         );
       }
     }
 
-    return _child ??= _middlewareRunner.runOnPageBuilt(pageToBuild());
+    return _child ??= _middlewareRunner.runOnPageBuilt(safeBuild());
   }
 
   @override
@@ -158,4 +177,37 @@ class JetPageRoute<T> extends PageRoute<T>
 
   @override
   final double Function(BuildContext context)? gestureWidth;
+}
+
+/// Internal widget used by [JetPageRoute] to render either the per-route
+/// `errorBuilder` (if supplied) or a default Material fallback when the
+/// page factory throws synchronously. Lives in the widget tree so the
+/// builder runs with a real `BuildContext`.
+class _ErrorPageHost extends StatelessWidget {
+  const _ErrorPageHost({
+    required this.errorBuilder,
+    required this.error,
+    required this.stack,
+  });
+
+  final Widget Function(BuildContext context, Object error, StackTrace stack)?
+      errorBuilder;
+  final Object error;
+  final StackTrace stack;
+
+  @override
+  Widget build(BuildContext context) {
+    if (errorBuilder != null) return errorBuilder!(context, error, stack);
+    return Scaffold(
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Text(
+            'Error building page:\n$error',
+            style: const TextStyle(color: Colors.red),
+          ),
+        ),
+      ),
+    );
+  }
 }

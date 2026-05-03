@@ -56,6 +56,20 @@ class RouteDecoder {
         pageSettings ?? this.pageSettings,
       );
 
+  /// Returns a public, immutable [RouteRecord] view of the top entry on this
+  /// decoder's tree branch — the snapshot exposed via `Jet.history` /
+  /// `Jet.routeChanges`. Returns `null` if the branch is empty (no resolved
+  /// route, e.g. an unmatched URL before fallback).
+  RouteRecord? toRecord() {
+    final r = route;
+    if (r == null) return null;
+    return RouteRecord(
+      name: r.name,
+      arguments: pageSettings?.arguments,
+      parameters: parameters,
+    );
+  }
+
   List<JetPage>? get currentChildren => route?.children;
 
   Map<String, String> get parameters => pageSettings?.params ?? {};

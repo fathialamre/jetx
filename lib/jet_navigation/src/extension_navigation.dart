@@ -43,6 +43,29 @@ BuildContext _requireOverlayContext(String callSite) {
 }
 
 extension ExtensionBottomSheet on JetInterface {
+  /// Config-driven equivalent of [bottomSheet]. Lets callers build a
+  /// reusable [JetBottomSheetConfig] (e.g. brand defaults via
+  /// `copyWith`) instead of repeating 16 named parameters per call.
+  Future<T?> bottomSheetFromConfig<T>(JetBottomSheetConfig config) =>
+      bottomSheet<T>(
+        config.bottomsheet,
+        backgroundColor: config.backgroundColor,
+        elevation: config.elevation,
+        persistent: config.persistent,
+        shape: config.shape,
+        clipBehavior: config.clipBehavior,
+        barrierColor: config.barrierColor,
+        ignoreSafeArea: config.ignoreSafeArea,
+        isScrollControlled: config.isScrollControlled,
+        useRootNavigator: config.useRootNavigator,
+        isDismissible: config.isDismissible,
+        enableDrag: config.enableDrag,
+        settings: config.settings,
+        enterBottomSheetDuration: config.enterBottomSheetDuration,
+        exitBottomSheetDuration: config.exitBottomSheetDuration,
+        curve: config.curve,
+      );
+
   Future<T?> bottomSheet<T>(
     Widget bottomsheet, {
     Color? backgroundColor,
@@ -92,6 +115,22 @@ extension ExtensionBottomSheet on JetInterface {
 }
 
 extension ExtensionDialog on JetInterface {
+  /// Config-driven equivalent of [dialog]. Lets callers package the
+  /// 11 named params of [dialog] into a [JetDialogConfig] for reuse.
+  Future<T?> dialogFromConfig<T>(JetDialogConfig config) => dialog<T>(
+        config.content,
+        barrierDismissible: config.barrierDismissible,
+        barrierColor: config.barrierColor,
+        useSafeArea: config.useSafeArea,
+        navigatorKey: config.navigatorKey,
+        arguments: config.arguments,
+        transitionDuration: config.transitionDuration,
+        transitionCurve: config.transitionCurve,
+        name: config.name,
+        routeSettings: config.routeSettings,
+        id: config.id,
+      );
+
   /// Show a dialog.
   /// You can pass a [transitionDuration] and/or [transitionCurve],
   /// overriding the defaults when the dialog shows up and closes.
@@ -317,6 +356,50 @@ extension ExtensionDialog on JetInterface {
 }
 
 extension ExtensionSnackbar on JetInterface {
+  /// Config-driven equivalent of [snackbar]. Lets callers reuse a
+  /// [JetSnackbarConfig] (e.g. brand defaults, retry buttons) instead
+  /// of repeating 30+ named parameters per call.
+  SnackbarController snackbarFromConfig(JetSnackbarConfig c) => snackbar(
+        c.title,
+        c.message,
+        colorText: c.colorText,
+        duration: c.duration,
+        instantInit: c.instantInit,
+        snackPosition: c.snackPosition,
+        titleText: c.titleText,
+        messageText: c.messageText,
+        icon: c.icon,
+        shouldIconPulse: c.shouldIconPulse,
+        maxWidth: c.maxWidth,
+        margin: c.margin,
+        padding: c.padding,
+        borderRadius: c.borderRadius,
+        borderColor: c.borderColor,
+        borderWidth: c.borderWidth,
+        backgroundColor: c.backgroundColor,
+        leftBarIndicatorColor: c.leftBarIndicatorColor,
+        boxShadows: c.boxShadows,
+        backgroundGradient: c.backgroundGradient,
+        mainButton: c.mainButton,
+        onTap: c.onTap,
+        onHover: c.onHover,
+        isDismissible: c.isDismissible,
+        showProgressIndicator: c.showProgressIndicator,
+        dismissDirection: c.dismissDirection,
+        progressIndicatorController: c.progressIndicatorController,
+        progressIndicatorBackgroundColor: c.progressIndicatorBackgroundColor,
+        progressIndicatorValueColor: c.progressIndicatorValueColor,
+        snackStyle: c.snackStyle,
+        forwardAnimationCurve: c.forwardAnimationCurve,
+        reverseAnimationCurve: c.reverseAnimationCurve,
+        animationDuration: c.animationDuration,
+        barBlur: c.barBlur,
+        overlayBlur: c.overlayBlur,
+        snackbarStatus: c.snackbarStatus,
+        overlayColor: c.overlayColor,
+        userInputForm: c.userInputForm,
+      );
+
   SnackbarController rawSnackbar({
     String? title,
     String? message,
@@ -937,6 +1020,23 @@ extension JetNavigationExt on JetInterface {
     closeAllSnackbars();
   }
 
+  /// Closes every overlay layered above the current page — snackbars,
+  /// dialogs, and bottom sheets — without touching the page stack.
+  ///
+  /// Useful before pushing a fresh dialog or navigating to a new screen
+  /// when stale overlays would otherwise stack on top.
+  ///
+  /// Differs from [closeAllOverlays] which delegates to
+  /// [closeAllDialogsAndBottomSheets] (whose loop predicate requires a
+  /// dialog *and* a bottom sheet to be simultaneously open). This helper
+  /// closes each overlay type in isolation and works regardless of which
+  /// combination is currently visible.
+  void dismissUntilPage() {
+    closeAllSnackbars();
+    closeAllDialogs();
+    closeAllBottomSheets();
+  }
+
   /// **Navigation.popUntil()** (with predicate) shortcut .<br><br>
   ///
   /// Close as many routes as defined by [times]
@@ -1230,6 +1330,33 @@ extension JetNavigationExt on JetInterface {
 
   /// give name from previous route
   String get previousRoute => routing.previous;
+
+  /// Immutable snapshot of the current page stack as [RouteRecord]s,
+  /// bottom-most route first. Mirrors [JetDelegate.history].
+  List<RouteRecord> get history => rootController.rootDelegate.history;
+
+  /// Register a callback that fires whenever the top-of-stack route
+  /// changes. Returns the same callback so you can later
+  /// [removeRouteChangeListener] it. Use for analytics, breadcrumbs, or
+  /// reactive integrations that previously had to wrap `addListener` on
+  /// the delegate. Multiple registrations of the same callback are
+  /// deduped.
+  ///
+  /// No-op if called before [JetRoot] has mounted (e.g. eager wiring at
+  /// app startup) — the listener is silently dropped instead of
+  /// throwing, since the most common scenario is a fire-and-forget
+  /// registration whose mid-test failure would obscure the real test
+  /// outcome.
+  void Function(RouteRecord) addRouteChangeListener(
+      void Function(RouteRecord) listener) {
+    if (!JetRoot.treeInitialized) return listener;
+    return rootController.rootDelegate.addRouteChangeListener(listener);
+  }
+
+  void removeRouteChangeListener(void Function(RouteRecord) listener) {
+    if (!JetRoot.treeInitialized) return;
+    rootController.rootDelegate.removeRouteChangeListener(listener);
+  }
 
   /// check if snackbar is open
   bool get isSnackbarOpen =>

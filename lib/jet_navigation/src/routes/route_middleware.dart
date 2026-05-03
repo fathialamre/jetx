@@ -243,6 +243,7 @@ class PageRedirect {
       popGesture: r.popGesture,
       fullscreenDialog: r.fullscreenDialog,
       middlewares: r.middlewares,
+      errorBuilder: r.errorBuilder,
     );
   }
 

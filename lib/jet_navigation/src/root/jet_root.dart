@@ -48,6 +48,23 @@ class ConfigData {
   final Map<String, String?> parameters;
   final SnackBarQueue snackBarQueue = SnackBarQueue();
 
+  /// Optional global handler invoked whenever a `JetPage.page` factory
+  /// throws synchronously during build. Receives the raw exception and
+  /// stack trace so the host app can log to its crash reporter. The
+  /// rendered fallback widget is decided by the page's `errorBuilder`
+  /// (or a default) — `onException` is purely a notification hook.
+  final void Function(Object error, StackTrace stack)? onException;
+
+  /// Optional app-level redirect. Runs before per-route middleware on
+  /// every navigation; returning a non-null path swaps the target.
+  /// Common pattern: auth guard.
+  final Future<String?> Function(RouteRecord current)? redirect;
+
+  /// Optional [Listenable] that triggers re-evaluation of the current
+  /// route's [redirect] when notified. Use a `ValueNotifier` watching
+  /// auth state so logout immediately bounces the user to `/login`.
+  final Listenable? refreshListenable;
+
   ConfigData({
     required this.routingCallback,
     required this.defaultTransition,
@@ -88,6 +105,9 @@ class ConfigData {
     this.defaultDialogTransitionDuration = const Duration(milliseconds: 300),
     this.parameters = const {},
     required this.defaultPopGesture,
+    this.onException,
+    this.redirect,
+    this.refreshListenable,
     Routing? routing,
   }) : routing = routing ?? Routing();
 
@@ -132,6 +152,9 @@ class ConfigData {
     Duration? defaultDialogTransitionDuration,
     Routing? routing,
     Map<String, String?>? parameters,
+    void Function(Object error, StackTrace stack)? onException,
+    Future<String?> Function(RouteRecord current)? redirect,
+    Listenable? refreshListenable,
   }) {
     return ConfigData(
       routingCallback: routingCallback ?? this.routingCallback,
@@ -180,6 +203,9 @@ class ConfigData {
           this.defaultDialogTransitionDuration,
       routing: routing ?? this.routing,
       parameters: parameters ?? this.parameters,
+      onException: onException ?? this.onException,
+      redirect: redirect ?? this.redirect,
+      refreshListenable: refreshListenable ?? this.refreshListenable,
     );
   }
 
@@ -381,6 +407,8 @@ class JetRootState extends State<JetRoot> with WidgetsBindingObserver {
                 JetObserver(config.routingCallback, config.routing),
                 ...config.navigatorObservers!
               ]),
+        globalRedirect: config.redirect,
+        refreshListenable: config.refreshListenable,
       );
       config = config.copyWith(routerDelegate: newDelegate);
     }
