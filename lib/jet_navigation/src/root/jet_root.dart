@@ -65,6 +65,16 @@ class ConfigData {
   /// auth state so logout immediately bounces the user to `/login`.
   final Listenable? refreshListenable;
 
+  /// Optional resolver that picks a [Transition] per (from, to) page
+  /// pair. Returning `null` falls through to the destination's own
+  /// `transition` (or [defaultTransition]).
+  final Transition? Function(JetPage? from, JetPage to)? transitionResolver;
+
+  /// Forwarded to the underlying [Navigator]'s `restorationScopeId` and
+  /// to the host `MaterialApp.router`. Required for state restoration
+  /// across process death.
+  final String? restorationScopeId;
+
   ConfigData({
     required this.routingCallback,
     required this.defaultTransition,
@@ -108,6 +118,8 @@ class ConfigData {
     this.onException,
     this.redirect,
     this.refreshListenable,
+    this.transitionResolver,
+    this.restorationScopeId,
     Routing? routing,
   }) : routing = routing ?? Routing();
 
@@ -155,6 +167,8 @@ class ConfigData {
     void Function(Object error, StackTrace stack)? onException,
     Future<String?> Function(RouteRecord current)? redirect,
     Listenable? refreshListenable,
+    Transition? Function(JetPage? from, JetPage to)? transitionResolver,
+    String? restorationScopeId,
   }) {
     return ConfigData(
       routingCallback: routingCallback ?? this.routingCallback,
@@ -206,6 +220,8 @@ class ConfigData {
       onException: onException ?? this.onException,
       redirect: redirect ?? this.redirect,
       refreshListenable: refreshListenable ?? this.refreshListenable,
+      transitionResolver: transitionResolver ?? this.transitionResolver,
+      restorationScopeId: restorationScopeId ?? this.restorationScopeId,
     );
   }
 
@@ -409,6 +425,8 @@ class JetRootState extends State<JetRoot> with WidgetsBindingObserver {
               ]),
         globalRedirect: config.redirect,
         refreshListenable: config.refreshListenable,
+        transitionResolver: config.transitionResolver,
+        restorationScopeId: config.restorationScopeId,
       );
       config = config.copyWith(routerDelegate: newDelegate);
     }

@@ -17,6 +17,12 @@ class JetPage<T> extends Page<T> {
   final String? title;
   final Transition? transition;
   final Curve curve;
+
+  /// Optional curve used for the reverse (pop) direction. When null the
+  /// forward [curve] is used in both directions. Lets apps tune
+  /// "polish": e.g. a brisk easeOutQuad on push but a slow
+  /// easeInOutCubic on pop.
+  final Curve? reverseCurve;
   final bool? participatesInRootNavigator;
   final Alignment? alignment;
   final bool maintainState;
@@ -62,6 +68,20 @@ class JetPage<T> extends Page<T> {
   final Widget Function(BuildContext context, Object error, StackTrace stack)?
       errorBuilder;
 
+  /// Optional maximum time the page may stay on its initial frame
+  /// before JetX swaps it for [onTimeout]. Useful for data-loading
+  /// pages: if the network is slow, the user gets a fallback UI
+  /// (typically a timeout / retry screen) instead of an indefinite
+  /// spinner. The timer starts at first build of the page and is
+  /// cancelled when the page is popped.
+  ///
+  /// Has no effect unless [onTimeout] is also non-null.
+  final Duration? pageTimeout;
+
+  /// Widget rendered after [pageTimeout] elapses. Receives the same
+  /// `BuildContext` as the page itself.
+  final Widget Function(BuildContext context)? onTimeout;
+
   static void _defaultPopInvokedHandler(bool didPop, Object? result) {}
 
   JetPage({
@@ -73,6 +93,7 @@ class JetPage<T> extends Page<T> {
     // RouteSettings settings,
     this.maintainState = true,
     this.curve = Curves.linear,
+    this.reverseCurve,
     this.alignment,
     this.parameters,
     this.opaque = true,
@@ -96,6 +117,8 @@ class JetPage<T> extends Page<T> {
     this.completer,
     this.inheritParentPath = true,
     this.errorBuilder,
+    this.pageTimeout,
+    this.onTimeout,
     LocalKey? key,
     super.canPop,
     super.onPopInvoked = _defaultPopInvokedHandler,
@@ -144,6 +167,9 @@ class JetPage<T> extends Page<T> {
     PopInvokedWithResultCallback<T>? onPopInvoked,
     String? restorationId,
     Widget Function(BuildContext, Object, StackTrace)? errorBuilder,
+    Curve? reverseCurve,
+    Duration? pageTimeout,
+    Widget Function(BuildContext)? onTimeout,
   }) {
     return JetPage(
       key: key ?? this.key,
@@ -179,8 +205,11 @@ class JetPage<T> extends Page<T> {
       inheritParentPath: inheritParentPath ?? this.inheritParentPath,
       canPop: canPop ?? this.canPop,
       onPopInvoked: onPopInvoked ?? this.onPopInvoked,
-      restorationId: restorationId ?? restorationId,
+      restorationId: restorationId ?? this.restorationId,
       errorBuilder: errorBuilder ?? this.errorBuilder,
+      reverseCurve: reverseCurve ?? this.reverseCurve,
+      pageTimeout: pageTimeout ?? this.pageTimeout,
+      onTimeout: onTimeout ?? this.onTimeout,
     );
   }
 

@@ -411,7 +411,11 @@ Cannot read the previousTitle for a route that has not yet been installed''',
 
       /// Apply the curve by default...
       final iosAnimation = animation;
-      animation = CurvedAnimation(parent: animation, curve: finalCurve);
+      animation = CurvedAnimation(
+        parent: animation,
+        curve: finalCurve,
+        reverseCurve: route.reverseCurve,
+      );
 
       switch (route.transition ?? Jet.defaultTransition) {
         case Transition.leftToRight:

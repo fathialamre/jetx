@@ -244,6 +244,9 @@ class PageRedirect {
       fullscreenDialog: r.fullscreenDialog,
       middlewares: r.middlewares,
       errorBuilder: r.errorBuilder,
+      reverseCurve: r.reverseCurve,
+      pageTimeout: r.pageTimeout,
+      onTimeout: r.onTimeout,
     );
   }
 

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../../jetx.dart';
@@ -65,6 +67,9 @@ class JetPageRoute<T> extends PageRoute<T>
     super.fullscreenDialog,
     this.middlewares,
     this.errorBuilder,
+    this.reverseCurve,
+    this.pageTimeout,
+    this.onTimeout,
   })  : bindings = (binding == null) ? bindings : [...bindings, binding],
         _middlewareRunner = MiddlewareRunner(middlewares);
 
@@ -96,6 +101,9 @@ class JetPageRoute<T> extends PageRoute<T>
   final List<JetMiddleware>? middlewares;
   final Widget Function(BuildContext context, Object error, StackTrace stack)?
       errorBuilder;
+  final Curve? reverseCurve;
+  final Duration? pageTimeout;
+  final Widget Function(BuildContext context)? onTimeout;
 
   @override
   final Color? barrierColor;
@@ -129,7 +137,17 @@ class JetPageRoute<T> extends PageRoute<T>
 
     Widget safeBuild() {
       try {
-        return pageToBuild();
+        final built = pageToBuild();
+        // Phase 3.2: optional per-route timeout host. Wraps the built
+        // widget; after `pageTimeout` elapses, swaps to `onTimeout`.
+        if (pageTimeout != null && onTimeout != null) {
+          return _PageTimeoutHost(
+            timeout: pageTimeout!,
+            onTimeout: onTimeout!,
+            child: built,
+          );
+        }
+        return built;
       } catch (error, stack) {
         // Pull global onException via JetRootState if the tree is up; the
         // null check protects test harnesses that build a JetPageRoute
@@ -210,4 +228,51 @@ class _ErrorPageHost extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Internal widget that swaps its child for an `onTimeout` widget after
+/// a deadline. Used by [JetPageRoute] when the source [JetPage]
+/// declares both `pageTimeout` and `onTimeout`.
+///
+/// Contract: timer starts on first [State.initState] of this widget
+/// (i.e. the page's first build), is cancelled if the page is popped
+/// before the deadline, and shows the [onTimeout] widget for the rest
+/// of the page's lifetime once it fires.
+class _PageTimeoutHost extends StatefulWidget {
+  const _PageTimeoutHost({
+    required this.timeout,
+    required this.onTimeout,
+    required this.child,
+  });
+
+  final Duration timeout;
+  final Widget Function(BuildContext context) onTimeout;
+  final Widget child;
+
+  @override
+  State<_PageTimeoutHost> createState() => _PageTimeoutHostState();
+}
+
+class _PageTimeoutHostState extends State<_PageTimeoutHost> {
+  Timer? _timer;
+  bool _expired = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer(widget.timeout, () {
+      if (!mounted) return;
+      setState(() => _expired = true);
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) =>
+      _expired ? widget.onTimeout(context) : widget.child;
 }

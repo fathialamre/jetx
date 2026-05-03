@@ -24,6 +24,8 @@ class JetDelegate extends RouterDelegate<RouteDecoder>
     GlobalKey<NavigatorState>? navigatorKey,
     Future<String?> Function(RouteRecord current)? globalRedirect,
     Listenable? refreshListenable,
+    Transition? Function(JetPage? from, JetPage to)? transitionResolver,
+    String? restorationScopeId,
   }) {
     return JetDelegate(
       notFoundRoute: notFoundRoute,
@@ -35,6 +37,8 @@ class JetDelegate extends RouterDelegate<RouteDecoder>
       navigatorKey: navigatorKey,
       globalRedirect: globalRedirect,
       refreshListenable: refreshListenable,
+      transitionResolver: transitionResolver,
+      restorationScopeId: restorationScopeId,
     );
   }
 
@@ -131,6 +135,13 @@ class JetDelegate extends RouterDelegate<RouteDecoder>
   /// current route is redirected through [globalRedirect] again.
   final Listenable? refreshListenable;
 
+  /// Optional app-level resolver for picking a transition per
+  /// (from, to) page pair. Runs at push time after middleware; if it
+  /// returns non-null, the destination route's transition is patched
+  /// to the chosen value. Lets apps tune polish (slide on forward,
+  /// fade on back) without per-route bloat.
+  final Transition? Function(JetPage? from, JetPage to)? transitionResolver;
+
   JetDelegate({
     JetPage? notFoundRoute,
     this.navigatorObservers,
@@ -145,6 +156,7 @@ class JetDelegate extends RouterDelegate<RouteDecoder>
     required List<JetPage> pages,
     this.globalRedirect,
     this.refreshListenable,
+    this.transitionResolver,
   })  : navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>(),
         notFoundRoute = notFoundRoute ??= JetPage(
           name: '/404',
@@ -393,6 +405,7 @@ class JetDelegate extends RouterDelegate<RouteDecoder>
       onDidRemovePage: onDidRemovePage,
       pages: pages,
       observers: navigatorObservers,
+      restorationScopeId: restorationScopeId,
       transitionDelegate:
           transitionDelegate ?? const DefaultTransitionDelegate<dynamic>(),
     );
@@ -841,8 +854,8 @@ class JetDelegate extends RouterDelegate<RouteDecoder>
         }
       }
 
-      final res = await runMiddleware(decoder);
-      if (res == null) {
+      final mwResult = await runMiddleware(decoder);
+      if (mwResult == null) {
         // Middleware refused this navigation. Resolve the awaiting future on
         // the original decoder's completer so callers of `Jet.toNamed` etc.
         // do not hang forever.
@@ -851,6 +864,19 @@ class JetDelegate extends RouterDelegate<RouteDecoder>
           cancelled.complete(null);
         }
         return null;
+      }
+
+      // Phase 3.4: app-level transition resolver. Patches the
+      // destination's transition based on the (from, to) pair before
+      // we add it to the stack so the visual diff already reflects the
+      // chosen transition.
+      var res = mwResult;
+      if (transitionResolver != null && res.route != null) {
+        final from = _activePages.isEmpty ? null : _activePages.last.route;
+        final picked = transitionResolver!(from, res.route!);
+        if (picked != null) {
+          res = res.replaceLast(res.route!.copyWith(transition: picked));
+        }
       }
 
       final preventDuplicateHandlingMode =

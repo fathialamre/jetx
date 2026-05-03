@@ -82,6 +82,18 @@ class JetMaterialApp extends StatelessWidget {
   /// route's [redirect] when notified.
   final Listenable? refreshListenable;
 
+  /// Optional resolver picking a [Transition] per (from, to) page pair.
+  /// Returning `null` falls through to the destination's own
+  /// `transition` or [defaultTransition]. Centralizes navigation polish
+  /// (e.g. forward = slide, back = fade) without per-route opt-in.
+  final Transition? Function(JetPage? from, JetPage to)? transitionResolver;
+
+  /// Forwarded to both the underlying [Navigator] and to the host
+  /// `MaterialApp.router` so per-route + app-level state can survive
+  /// process death (Android in particular). Required for end-to-end
+  /// state restoration to actually persist.
+  final String? restorationScopeId;
+
   const JetMaterialApp({
     super.key,
     this.navigatorKey,
@@ -142,6 +154,8 @@ class JetMaterialApp extends StatelessWidget {
     this.onException,
     this.redirect,
     this.refreshListenable,
+    this.transitionResolver,
+    this.restorationScopeId,
   })  : routeInformationProvider = null,
         backButtonDispatcher = null,
         routeInformationParser = null,
@@ -204,6 +218,8 @@ class JetMaterialApp extends StatelessWidget {
     this.onException,
     this.redirect,
     this.refreshListenable,
+    this.transitionResolver,
+    this.restorationScopeId,
   })  : navigatorKey = null,
         onGenerateRoute = null,
         home = null,
@@ -250,6 +266,8 @@ class JetMaterialApp extends StatelessWidget {
         onException: onException,
         redirect: redirect,
         refreshListenable: refreshListenable,
+        transitionResolver: transitionResolver,
+        restorationScopeId: restorationScopeId,
       ),
       // binds: [
       //   Bind.lazyPut<JetMaterialController>(
@@ -304,6 +322,7 @@ class JetMaterialApp extends StatelessWidget {
           debugShowCheckedModeBanner: debugShowCheckedModeBanner,
           shortcuts: shortcuts,
           scrollBehavior: scrollBehavior,
+          restorationScopeId: restorationScopeId,
         );
       }),
     );
