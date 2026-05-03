@@ -327,7 +327,7 @@ class JetDelegate extends RouterDelegate<RouteDecoder>
     }
     return JetNavigator(
       key: navigatorKey,
-      onPopPage: _onPopVisualRoute,
+      onDidRemovePage: onDidRemovePage,
       pages: pages,
       observers: navigatorObservers,
       transitionDelegate:
@@ -848,24 +848,28 @@ class JetDelegate extends RouterDelegate<RouteDecoder>
     notifyListeners();
   }
 
-  bool _onPopVisualRoute(Route<dynamic> route, dynamic result) {
-    final didPop = route.didPop(result);
-    if (!didPop) {
-      return false;
-    }
-    _popWithResult(result);
-    // final settings = route.settings;
-    // if (settings is JetPage) {
-    //   final config = _activePages.cast<RouteDecoder?>().firstWhere(
-    //         (element) => element?.route == settings,
-    //         orElse: () => null,
-    //       );
-    //   if (config != null) {
-    //     _removeHistoryEntry(config, result);
-    //   }
-    // }
+  /// Called by [Navigator] (via [JetNavigator.onDidRemovePage]) AFTER the
+  /// framework removes a [Page] — e.g. system back gesture, AppBar back tap,
+  /// or a [PopScope] that allowed the pop. Result delivery already happened
+  /// through [Page.onPopInvoked]; this hook only reconciles [_activePages]
+  /// against the framework's view.
+  ///
+  /// Idempotent: imperative paths ([back], [off], [offAll]) mutate
+  /// [_activePages] first and then call [notifyListeners], so by the time the
+  /// resulting Navigator rebuild fires this callback the entry is already
+  /// gone — handler simply no-ops.
+  void onDidRemovePage(Page<Object?> page) {
+    final idx = _activePages.indexWhere((e) {
+      final route = e.route;
+      if (route == null) return false;
+      if (identical(route, page)) return true;
+      final routeKey = route.key;
+      return routeKey != null && routeKey == page.key;
+    });
+    if (idx == -1) return;
+    final removed = _activePages.removeAt(idx);
+    final completer = removed.route?.completer;
+    if (completer != null && !completer.isCompleted) completer.complete();
     notifyListeners();
-    //return !route.navigator!.userGestureInProgress;
-    return true;
   }
 }

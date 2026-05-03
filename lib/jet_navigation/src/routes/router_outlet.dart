@@ -115,7 +115,7 @@ class JetRouterOutlet extends RouterOutlet<JetDelegate, RouteDecoder> {
     Widget Function(JetDelegate delegate)? emptyWidget,
     JetPage Function(JetDelegate delegate)? emptyPage,
     required super.pickPages,
-    bool Function(Route<dynamic>, dynamic)? onPopPage,
+    void Function(Page<Object?>)? onDidRemovePage,
     String? restorationScopeId,
     GlobalKey<NavigatorState>? navigatorKey,
     JetDelegate? delegate,
@@ -132,14 +132,13 @@ class JetRouterOutlet extends RouterOutlet<JetDelegate, RouteDecoder> {
                     Jet.rootController.rootDelegate.navigatorKey,
                 child: JetNavigator(
                   restorationScopeId: restorationScopeId,
-                  onPopPage: onPopPage ??
-                      (route, result) {
-                        final didPop = route.didPop(result);
-                        if (!didPop) {
-                          return false;
-                        }
-                        return true;
-                      },
+                  // Default forwards to the shared JetDelegate so the
+                  // delegate's _activePages stays consistent with what the
+                  // outlet's nested Navigator just removed. Without this, a
+                  // framework-driven pop inside the outlet would update the
+                  // visual stack but leave the delegate's history desynced.
+                  onDidRemovePage:
+                      onDidRemovePage ?? rDelegate.onDidRemovePage,
                   pages: pageRes.toList(),
                   key: navigatorKey,
                 ),

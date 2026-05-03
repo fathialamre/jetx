@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 class JetNavigator extends Navigator {
   JetNavigator({
     super.key,
-    bool Function(Route<dynamic>, dynamic)? onPopPage,
+    void Function(Page<Object?>)? onDidRemovePage,
     required super.pages,
     List<NavigatorObserver>? observers,
     super.reportsRouteUpdateToEngine,
@@ -11,17 +11,8 @@ class JetNavigator extends Navigator {
     super.initialRoute,
     super.restorationScopeId,
   }) : super(
-          // ignore: deprecated_member_use
-          onPopPage: onPopPage ??
-              (route, result) {
-                final didPop = route.didPop(result);
-                if (!didPop) {
-                  return false;
-                }
-                return true;
-              },
+          onDidRemovePage: onDidRemovePage ?? ((_) {}),
           observers: [
-            // JetObserver(null, Jet.routing),
             HeroController(),
             ...?observers,
           ],
