@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jetx/jetx.dart';
 
-import 'pages/login_page.dart';
-import 'routes/app_pages.dart';
+import 'routes/app_router.dart';
 
 void main() {
   runApp(const MyApp());
@@ -20,7 +19,7 @@ class MyApp extends StatelessWidget {
       // no `AppRoutes.login` constant — the path lives on the page's
       // `@JetRoute` annotation as the single source of truth.
       initialRoute: const LoginPageRoute().location,
-      getPages: AppPages.pages,
+      getPages: AppRouter.pages,
       defaultTransition: Transition.fadeIn,
     );
   }

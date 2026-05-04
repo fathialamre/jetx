@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jetx/jetx.dart';
 
-part 'products_page.g.dart';
+import '../routes/app_router.dart';
 
 const _demoProducts = ['101', '202', '303'];
 

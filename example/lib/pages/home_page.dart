@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jetx/jetx.dart';
 
-import 'login_page.dart';
-import 'products_page.dart';
-
-part 'home_page.g.dart';
+import '../routes/app_router.dart';
 
 @JetRoute(path: '/home', transition: Transition.fadeIn)
 class HomePage extends StatelessWidget {

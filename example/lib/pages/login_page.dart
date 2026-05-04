@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jetx/jetx.dart';
 
-import 'home_page.dart';
-
-part 'login_page.g.dart';
+import '../routes/app_router.dart';
 
 @JetRoute(path: '/login', transition: Transition.fadeIn)
 class LoginPage extends StatelessWidget {

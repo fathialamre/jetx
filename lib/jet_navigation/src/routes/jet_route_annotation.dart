@@ -73,3 +73,37 @@ class JetRoute {
   /// widget-page form.
   final bool fullscreenDialog;
 }
+
+/// Marks a host class as the root of the app's typed-route table.
+/// `jetx_builder` scans the entire package's `lib/` for
+/// `@JetRoute(...)`-annotated widgets and emits a single
+/// `<host>.g.dart` containing every typed `<ClassName>Route` and a
+/// `_$<HostClassName>Pages` list of `JetPage` registrations.
+///
+/// Modeled after `auto_route`'s `@AutoRouterConfig` — the host class
+/// stays small while every page declares its own metadata next to its
+/// widget definition.
+///
+/// Usage:
+/// ```dart
+/// // app_router.dart
+/// import 'package:jetx/jetx.dart';
+///
+/// import 'pages/home_page.dart';     // exposes HomePage
+/// import 'pages/login_page.dart';    // exposes LoginPage
+/// import 'pages/products_page.dart'; // exposes ProductDetailPage etc.
+///
+/// part 'app_router.g.dart';
+///
+/// @JetXRouter()
+/// class AppRouter {
+///   static List<JetPage> get pages => _$AppRouterPages;
+/// }
+/// ```
+///
+/// The page widgets themselves keep the standard `@JetRoute(path: ...,
+/// bindings: [...], transition: ..., middlewares: [...])` annotation
+/// shown above. They do **not** need their own `part` directive.
+class JetXRouter {
+  const JetXRouter();
+}

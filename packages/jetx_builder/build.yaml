@@ -8,7 +8,6 @@ builders:
   jetx_builder:
     import: "package:jetx_builder/builder.dart"
     builder_factories: ["jetxBuilder"]
-    build_extensions: { ".dart": [".jetx_builder.g.part"] }
+    build_extensions: { ".dart": [".g.dart"] }
     auto_apply: dependents
-    build_to: cache
-    applies_builders: ["source_gen|combining_builder"]
+    build_to: source
