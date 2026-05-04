@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:jetx/jetx.dart';
 
+import 'pages/login_page.dart';
 import 'routes/app_pages.dart';
-import 'routes/app_routes.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,7 +16,10 @@ class MyApp extends StatelessWidget {
     return JetMaterialApp(
       title: 'JetX Example',
       theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.indigo),
-      initialRoute: AppRoutes.login,
+      // Initial route resolved via the typed Route. No string literal,
+      // no `AppRoutes.login` constant — the path lives on the page's
+      // `@JetRoute` annotation as the single source of truth.
+      initialRoute: const LoginPageRoute().location,
       getPages: AppPages.pages,
       defaultTransition: Transition.fadeIn,
     );

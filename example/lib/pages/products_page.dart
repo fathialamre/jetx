@@ -1,10 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:jetx/jetx.dart';
 
-import '../routes/typed_routes.dart';
+part 'products_page.g.dart';
 
 const _demoProducts = ['101', '202', '303'];
 
+/// Per-route binding. Lifecycle: instantiated when the route is pushed,
+/// `dependencies()` runs (registers controllers via `Jet.put`),
+/// disposed automatically when the route is popped — see
+/// `RouterReportManager`. Declared on the page's `@JetRoute(bindings:
+/// [...])` annotation; the generator wires it into the JetPage
+/// registration so consumers don't have to call `Jet.put` manually.
+class ProductDetailBinding extends BindingsInterface<List<Bind>> {
+  @override
+  List<Bind> dependencies() => [
+        Bind.lazyPut<ProductDetailController>(() => ProductDetailController()),
+      ];
+}
+
+class ProductDetailController extends JetxController {
+  /// Mock product description. Real apps would fetch from a repository.
+  String descriptionFor(String id) => 'Detailed write-up for product $id.';
+}
+
+@JetRoute(path: '/products', transition: Transition.rightToLeft)
 class ProductsPage extends StatelessWidget {
   const ProductsPage({super.key});
 
@@ -21,9 +40,7 @@ class ProductsPage extends StatelessWidget {
             leading: const Icon(Icons.shopping_bag_outlined),
             title: Text('Product $id'),
             trailing: const Icon(Icons.chevron_right),
-            // Typed deep-link via codegen. Tap "View specs" on detail
-            // page to see the optional ?tab=specs query param.
-            onTap: () => Jet.go<void>(ProductDetailRoute(id: id)),
+            onTap: () => Jet.go<void>(ProductDetailPageRoute(id: id)),
           );
         },
       ),
@@ -31,13 +48,23 @@ class ProductsPage extends StatelessWidget {
   }
 }
 
+@JetRoute(
+  path: '/products/:id',
+  transition: Transition.rightToLeft,
+  bindings: [ProductDetailBinding],
+)
 class ProductDetailPage extends StatelessWidget {
-  const ProductDetailPage({super.key});
+  const ProductDetailPage({super.key, required this.id, this.tab});
+
+  final String id;
+  final String? tab;
 
   @override
   Widget build(BuildContext context) {
-    final id = Jet.parameters['id'] ?? '?';
-    final tab = Jet.parameters['tab'];
+    // Pulled out of the binding registered by ProductDetailBinding.
+    // Demonstrates that Jet.find() works because the binding ran on
+    // route push and will dispose on pop.
+    final controller = Jet.find<ProductDetailController>();
     return Scaffold(
       appBar: AppBar(title: Text('Product $id')),
       body: Center(
@@ -45,6 +72,8 @@ class ProductDetailPage extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text('Product $id', style: const TextStyle(fontSize: 24)),
+            const SizedBox(height: 8),
+            Text(controller.descriptionFor(id)),
             if (tab != null) ...[
               const SizedBox(height: 8),
               Text('Tab: $tab'),
@@ -52,7 +81,7 @@ class ProductDetailPage extends StatelessWidget {
             const SizedBox(height: 24),
             FilledButton(
               onPressed: () => Jet.goReplacement<void>(
-                ProductDetailRoute(id: id, tab: 'specs'),
+                ProductDetailPageRoute(id: id, tab: 'specs'),
               ),
               child: const Text('View specs'),
             ),

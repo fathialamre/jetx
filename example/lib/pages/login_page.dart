@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:jetx/jetx.dart';
 
-import '../routes/typed_routes.dart';
+import 'home_page.dart';
 
+part 'login_page.g.dart';
+
+@JetRoute(path: '/login', transition: Transition.fadeIn)
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
@@ -12,9 +15,7 @@ class LoginPage extends StatelessWidget {
       appBar: AppBar(title: const Text('Login')),
       body: Center(
         child: FilledButton(
-          // Typed navigation via jetx_builder-generated routes — no
-          // string literals at the call site.
-          onPressed: () => Jet.goAll<void>(const HomeRoute()),
+          onPressed: () => Jet.goAll<void>(const HomePageRoute()),
           child: const Text('Sign in'),
         ),
       ),

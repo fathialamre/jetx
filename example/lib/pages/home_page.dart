@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:jetx/jetx.dart';
 
-import '../routes/typed_routes.dart';
+import 'login_page.dart';
+import 'products_page.dart';
 
+part 'home_page.g.dart';
+
+@JetRoute(path: '/home', transition: Transition.fadeIn)
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
@@ -15,7 +19,7 @@ class HomePage extends StatelessWidget {
           IconButton(
             tooltip: 'Logout',
             icon: const Icon(Icons.logout),
-            onPressed: () => Jet.goAll<void>(const LoginRoute()),
+            onPressed: () => Jet.goAll<void>(const LoginPageRoute()),
           ),
         ],
       ),
@@ -28,7 +32,7 @@ class HomePage extends StatelessWidget {
             FilledButton.icon(
               icon: const Icon(Icons.shopping_bag_outlined),
               label: const Text('Browse products'),
-              onPressed: () => Jet.go<void>(const ProductsRoute()),
+              onPressed: () => Jet.go<void>(const ProductsPageRoute()),
             ),
           ],
         ),
