@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:jetx/jetx.dart';
 
+import 'routes/app_pages.dart';
+import 'routes/app_routes.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -12,19 +15,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return JetMaterialApp(
       title: 'JetX Example',
-      home: const HomePage(),
-    );
-  }
-}
-
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('JetX Example')),
-      body: const Center(child: Text('Home')),
+      theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.indigo),
+      initialRoute: AppRoutes.login,
+      getPages: AppPages.pages,
+      defaultTransition: Transition.fadeIn,
     );
   }
 }

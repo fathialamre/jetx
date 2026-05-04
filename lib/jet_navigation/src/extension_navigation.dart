@@ -1350,6 +1350,14 @@ extension JetNavigationExt on JetInterface {
         arguments: routeData.arguments,
       );
 
+  /// Clears the entire stack and pushes the typed [routeData]. Same
+  /// semantics as `Jet.offAllNamed(...)` but takes a [JetRouteData].
+  /// Common use: post-login / post-logout redirect.
+  Future<T?>? goAll<T>(JetRouteData routeData) => offAllNamed<T>(
+        routeData.location,
+        arguments: routeData.arguments,
+      );
+
   /// Builds a navigation URL from a route [pattern], substituting
   /// `:name` segments with values from [pathParams] and appending
   /// [queryParams] as a query string. Path values are URL-encoded.
