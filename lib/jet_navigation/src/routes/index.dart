@@ -6,6 +6,7 @@ export 'jet_information_parser.dart';
 export 'jet_navigation_interface.dart';
 export 'jet_navigator.dart';
 export 'jet_route.dart';
+export 'jet_route_annotation.dart';
 export 'jet_route_data.dart';
 export 'jet_router_delegate.dart';
 export 'jet_transition_mixin.dart';
